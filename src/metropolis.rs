@@ -44,7 +44,7 @@ impl Metropolis for BruteForceMetropolis {
         let next_step = sys.random_particle_change(self.step_size);
         let wf_new: f64 = sys.wavefunction.evaluate_non_interacting(&next_step);
 
-        if Self::hastings_check(wf_old.powi(2) / wf_new.powi(2)) {
+        if Self::hastings_check(wf_new.powi(2) / wf_old.powi(2)) {
             sys.particles = next_step;
             let d_energy = sys.hamiltonian.energy_non_interacting(&sys.wavefunction, &mut sys.particles);
             let d_wf_deriv = sys.wavefunction.gradient_alpha(&sys.particles); 
