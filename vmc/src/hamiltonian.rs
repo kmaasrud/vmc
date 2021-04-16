@@ -24,7 +24,7 @@ impl Hamiltonian {
     }    
 
     pub fn hamiltonian(&self, wf: &WaveFunction, particles: &mut Vec<Particle>) -> f64{
-        self.kinetic(wf, particles)  + self.potential(wf, particles) + self.repulsive(particles)
+        kinetic(wf, particles)  + potential(wf, particles) + repulsive(particles)
     }
    
 }
