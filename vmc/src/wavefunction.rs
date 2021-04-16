@@ -7,6 +7,14 @@ pub struct WaveFunction {
 }
 
 impl WaveFunction {
+
+    //-- Trail wavefunction --
+    /// Wave function for the ground state of the two electron system
+    pub fn trail_wave(particles: &Vec<Particle>){
+        let sqrd_pos_sum: f64 = particles.iter().map(|x| x.squared_sum()).sum();
+        (- omega * 0.5 * sqrd_pos_sum)
+
+    }
     // --- Evaluation of wavefunctions ---
     /// Evaluate the wavefunction using only the single-particle part. Returns an f64 representing
     /// the wavefunction value.
@@ -14,6 +22,8 @@ impl WaveFunction {
         let squared_position_sum: f64 = particles.iter().map(|x| x.squared_sum_scaled_z(&self.beta)).sum();
         (- self.alpha * squared_position_sum).exp()
     }
+
+
     /// Evaluate the full wavefunction over particles: &Vec<Particles>. Returns an f64 representing
     /// the wavefunction value.
     pub fn evaluate(&self, particles: &Vec<Particle>) -> f64 {
