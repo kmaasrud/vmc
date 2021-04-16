@@ -10,7 +10,7 @@ impl WaveFunction {
 
     //-- Trail wavefunction --
     /// Wave function for the ground state of the two electron system
-    pub fn trail_wave(particles: &Vec<Particle>){
+    pub fn trail_wave(particles: &Vec<Particle>) -> f64{
         let sqrd_pos_sum: f64 = particles.iter().map(|x| x.squared_sum()).sum();
         (- omega * 0.5 * sqrd_pos_sum)
 
