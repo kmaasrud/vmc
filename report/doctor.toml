@@ -7,4 +7,4 @@ date = "today"
 # number-sections = true
 
 [build]
-pdf-engine = "pdflatex"
+engine = "pdflatex"
