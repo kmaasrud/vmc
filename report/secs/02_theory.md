@@ -1,7 +1,7 @@
 # Theory
 Electrons in a confined, two dimensional harmonic oscillator potnetial with the given (idealized) Hamiltionian below is in quantum mechanics called quantum dots. 
 
-$$ \hat{H}  = \sum_{i=1}^{N}{\left( -\frac{1}{2}\nabla^2_i + \frac{1}{2}\omega^2 r_i^2 \right) } + \sum_{i<j}{\frac{1}{r_{ij}} $$ [#eq:Hamiltonian],
+$$ \hat{H}  = \sum_{i=1}^{N}{\left( -\frac{1}{2}\nabla^2_i + \frac{1}{2}\omega^2 r_i^2 \right) } + \sum_{i<j}\frac{1}{r_{ij}}$$, [#eq:Hamiltonian]
 
 where $r_{ij} = |r_1 - r_2|$, the distance between the electrons. Natural units ($\hbar = c = e = m_e = 1$) are used and energies are in atomic units (a.u). The first term/sum of the hamiltonian is the harmonic oscillator part, well known from  quantum mechanic. It is whats called the unpertubated part. Because electrons repels each other, a repulsion term(the second sum) is added. This term is whats called the pertubation of the system. The modulus of the positions of the electrons ( for a given electron i) as
 
@@ -12,7 +12,7 @@ The system will be utilized for closed shells, ie. N = 2, 6, 12 and 20 electrons
 ### Wavefunction
 The wavefunction for a two dimentional system with the Harmonic Osccilator potential is given by 
 
-$$ \Phi_{n_x, n_y} (x,y) = A H_{n_x} (\sqrt{\omega} x) H_{n_y}(\sqrt{\omega}y \exp{\left[-\frac{\omega}{2}(x^2 + y^2)}\right] $$
+$$\Phi_{n_x, n_y} (x,y) = A H_{n_x} (\sqrt{\omega} x) H_{n_y}(\sqrt{\omega}y \exp{\left[-\frac{\omega}{2}(x^2 + y^2)\right]}$$
 
 where $H_{n_x}$ are Hermite polynomials, and A is the normaliation constant. For the lowest lying state $n_x = n_y = 0$ and hence the energy is $\epsilon_{n_x, n_y} = \omega(n_x + n_y + 1 = \omega$.  
 
