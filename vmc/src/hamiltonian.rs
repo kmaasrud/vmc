@@ -3,6 +3,9 @@ use crate::{WaveFunction, Particle};
 
 #[derive(Clone)]
 pub struct Hamiltonian {
+    kinetic: &f64,
+    potential: &f64,
+    repulsive: &f64,
 
 }
 
@@ -14,17 +17,18 @@ impl Hamiltonian {
     }
     // --- Potential energy ---
     fn potential(wf: &WaveFunction, particles: &mut Vec<Particle>) -> f64{
-        let sqrd_pos_sum: f64 = particles.iter().map(|x| x.squared_sum_scaled_z(&self.gamma_squared)).sum();
-        0.5 * omega.powf(2)*sqrd_pos_sum
+        let omega : f64 = 1.0;
+        let sqrd_pos_sum: f64 = particles.iter().map(|x| x.squared_sum()).sum();
+        0.5 * omega.powf(2.0)*sqrd_pos_sum
     }
    
     fn repulsive(particles: &mut Vec<Particle>)-> f64{
         let sqrd_pos_sum: f64 = particles.iter().map(|x| x.squared_sum()).sum();
-        1 / sqrd_pos_sum
+        1.0 / sqrd_pos_sum
     }    
 
-    pub fn hamiltonian(&self, wf: &WaveFunction, particles: &mut Vec<Particle>) -> f64{
-        kinetic(wf, particles)  + potential(wf, particles) + repulsive(particles)
+    pub fn energy(&self, wf: &WaveFunction, particles: &mut Vec<Particle>) -> f64{
+        self.kinetic  + self.potential + self.repulsive
     }
    
 }
