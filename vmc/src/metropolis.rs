@@ -26,8 +26,7 @@ pub trait Metropolis {
     }
     fn sample(sys: &mut System, non_interacting: bool) -> SampledValues {
         let d_wf_deriv = sys.wavefunction.gradient_alpha(&sys.particles); 
-        let d_energy = if non_interacting { sys.hamiltonian.energy_non_interacting(&sys.wavefunction, &mut sys.particles) }
-                                     else { sys.hamiltonian.energy(&sys.wavefunction, &mut sys.particles) };
+        let d_energy = sys.hamiltonian.energy(&sys.wavefunction, &mut sys.particles, non_interacting);
 
         SampledValues {
             energy: d_energy,
