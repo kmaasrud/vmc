@@ -108,3 +108,14 @@ impl Metropolis for ImportanceMetropolis {
     }
 }
 
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_hastings_check() {
+        assert!(BruteForceMetropolis::hastings_check(1. as f64));    //Panics if it returns false
+        assert!(BruteForceMetropolis::hastings_check(2.));
+        assert!(!BruteForceMetropolis::hastings_check(0.))    //Panics if it returns true
+    }
+}
