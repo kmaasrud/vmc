@@ -43,7 +43,8 @@ impl ThreadPool {
 #[cfg(test)]
 mod tests {
     use super::*; //pulls ThreadPool into scope
-    #[test]     fn test_threadpool() {
+    #[test]
+    fn test_threadpool() {
         let pool = ThreadPool::new(3);
         pool.execute( || println!("Hello from {:?}", std::thread::current().id()));
         pool.execute( || println!("Hello from {:?}", std::thread::current().id()));
