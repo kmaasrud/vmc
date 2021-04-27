@@ -10,5 +10,5 @@ number-sections = true
 bibliography-title = "References"
 
 [build]
-engine = "pdflatex"
+engine = "tectonic"
 filename = "report"
