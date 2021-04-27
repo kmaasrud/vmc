@@ -11,5 +11,5 @@ bibliography-title = "References"
 csl = "ieee"
 
 [build]
-engine = "tectonic"
+engine = "pdflatex"
 filename = "report"
