@@ -8,6 +8,7 @@ number-sections = true
 
 [bib]
 bibliography-title = "References"
+csl = "ieee"
 
 [build]
 engine = "tectonic"
