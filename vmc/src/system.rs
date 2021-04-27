@@ -1,6 +1,7 @@
 use crate::Particle;
 use crate::WaveFunction;
 use crate::Hamiltonian;
+
 use rand::distributions::{Distribution, Uniform};
 use rand::{prelude::random, thread_rng};
 use rand_distr::Normal;
