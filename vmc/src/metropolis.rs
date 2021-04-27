@@ -26,7 +26,10 @@ pub trait Metropolis {
     }
     fn sample(sys: &mut System, non_interacting: bool) -> SampledValues {
         let d_wf_deriv = sys.wavefunction.gradient_alpha(&sys.particles); 
-        let d_energy = sys.hamiltonian.energy(&sys.wavefunction, &mut sys.particles, non_interacting);
+        // The 1.0 inputted below is a placeholder for the omega value. We are testing over
+        // different omega values. TODO: Consider storing omega in the System struct instead of
+        // passing it through the stack.
+        let d_energy = sys.hamiltonian.energy(&sys.wavefunction, &mut sys.particles, 1.0, non_interacting);
 
         SampledValues {
             energy: d_energy,
