@@ -34,3 +34,25 @@ impl Hamiltonian {
     }
    
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    /// Test repulsive energy for two particles with a distance of 2 between
+    fn test_repulsive() {
+        let want: f64 = 0.5;
+        let got: f64 = Hamiltonian::repulsive(&mut vec![Particle{
+            position: vec![0., 0., 0.],
+            qforce: vec![0., 0., 0.],
+            dim: 3,
+        }, Particle{
+            position: vec![2., 0., 0.],
+            qforce: vec![0., 0., 0.],
+            dim: 3,
+        }]);
+
+        assert_eq!(want, got);
+    }
+}
