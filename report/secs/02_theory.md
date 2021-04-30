@@ -54,3 +54,12 @@ $$ \frac{d g(x)}{dx} \approx \frac{g(x + \Delta x) - g ( x - \Delta x) - 2 g(x)}
 
 $\Delta x$ is the stepsize which we let run towards zero. The error is proportional to $(\Delta x ^2 )$.
 
+
+## Testing
+
+Testing in Rust is normally divided in two categories: *unit tests* and *integration tests*. Unit tests are small codes to test specific functions inside the code. These tests are normally written in the same file as the functions themselves, but inside a module annotated with ```cfg(test)```.
+
+On the other hand, integration tests are written externally to the library, and is made to test the integration of the functions in the program. These tests are often much larger than unit tests, and are made to make sure that the internal functions works well together from the standpoint of an external user. Therefore, integration tests are normally written in a separate ```tests``` directory at the same level as the ```src``` directory.
+
+More on testing can be found in the official documentation of the Rust programming language[@Rust-docs-testing].
+

@@ -1,10 +1,15 @@
-[document]
+[meta]
 title = "Project 2"
 author = ["Amund Midtgård Raniseth", "Anna Stray Rongve", "Knut Magnus Aasrud"]
 date = "today"
 
-# This will be supported in Doctor v0.2.0
-# number-sections = true
+[style]
+number-sections = true
+
+[bib]
+bibliography-title = "References"
+csl = "ieee"
 
 [build]
 engine = "pdflatex"
+filename = "report"

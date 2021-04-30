@@ -2,33 +2,57 @@ use crate::{WaveFunction, Particle};
 
 
 #[derive(Clone)]
-pub struct Hamiltonian {
-    kinetic: &f64,
-    potential: &f64,
-    repulsive: &f64,
-
-}
+pub struct Hamiltonian;
 
 impl Hamiltonian {
-
     // --- Kinetic energy ---
     fn kinetic(wf: &WaveFunction, particles: &mut Vec<Particle>) -> f64{
         -0.5 * wf.laplace(particles, false) //??? interacting or not
     }
-    // --- Potential energy ---
-    fn potential(wf: &WaveFunction, particles: &mut Vec<Particle>) -> f64{
-        let omega : f64 = 1.0;
-        let sqrd_pos_sum: f64 = particles.iter().map(|x| x.squared_sum()).sum();
-        0.5 * omega.powf(2.0)*sqrd_pos_sum
-    }
-   
-    fn repulsive(particles: &mut Vec<Particle>)-> f64{
-        let sqrd_pos_sum: f64 = particles.iter().map(|x| x.squared_sum()).sum();
-        1.0 / sqrd_pos_sum
-    }    
 
-    pub fn energy(&self, wf: &WaveFunction, particles: &mut Vec<Particle>) -> f64{
-        self.kinetic  + self.potential + self.repulsive
+    // --- Potential energy ---
+    fn potential(omega: f64, particles: &Vec<Particle>) -> f64 {
+        let sqrd_pos_sum: f64 = particles.iter().map(|x| x.squared_sum()).sum();
+        0.5 * omega.powf(2.0) * sqrd_pos_sum
     }
    
+    // --- Repulsive energy ---
+    pub fn repulsive(particles: &mut Vec<Particle>)-> f64 {
+        let mut distance_sum: f64 = 0.;
+        for (i, particle) in particles.iter().enumerate() {
+            for other in particles[i+1..].iter() {
+                distance_sum += particle.distance_to(other);
+            }
+        }
+        1.0 / distance_sum
+    }
+
+    /// Calculates the energy of a system of `particles` described by `wf`.
+    /// If `non_interacting` is `true`, will calculate the non-interacting energy (unused for now).
+    pub fn energy(&self, wf: &WaveFunction, particles: &mut Vec<Particle>, omega: f64, _non_interacting: bool) -> f64{
+        Self::kinetic(wf, particles) + Self::potential(omega, particles) + Self::repulsive(particles)
+    }
+   
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    /// Test repulsive energy for two particles with a distance of 2 between
+    fn test_repulsive() {
+        let want: f64 = 0.5;
+        let got: f64 = Hamiltonian::repulsive(&mut vec![Particle{
+            position: vec![0., 0., 0.],
+            qforce: vec![0., 0., 0.],
+            dim: 3,
+        }, Particle{
+            position: vec![2., 0., 0.],
+            qforce: vec![0., 0., 0.],
+            dim: 3,
+        }]);
+
+        assert_eq!(want, got);
+    }
 }

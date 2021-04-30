@@ -26,8 +26,10 @@ pub trait Metropolis {
     }
     fn sample(sys: &mut System, non_interacting: bool) -> SampledValues {
         let d_wf_deriv = sys.wavefunction.gradient_alpha(&sys.particles); 
-        let d_energy = if non_interacting { sys.hamiltonian.energy_non_interacting(&sys.wavefunction, &mut sys.particles) }
-                                     else { sys.hamiltonian.energy(&sys.wavefunction, &mut sys.particles) };
+        // The 1.0 inputted below is a placeholder for the omega value. We are testing over
+        // different omega values. TODO: Consider storing omega in the System struct instead of
+        // passing it through the stack.
+        let d_energy = sys.hamiltonian.energy(&sys.wavefunction, &mut sys.particles, 1.0, non_interacting);
 
         SampledValues {
             energy: d_energy,
@@ -106,3 +108,14 @@ impl Metropolis for ImportanceMetropolis {
     }
 }
 
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_hastings_check() {
+        assert!(BruteForceMetropolis::hastings_check(1. as f64));    //Panics if it returns false
+        assert!(BruteForceMetropolis::hastings_check(2.));
+        assert!(!BruteForceMetropolis::hastings_check(0.))    //Panics if it returns true
+    }
+}
