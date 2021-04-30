@@ -1,4 +1,5 @@
-use crate::{Hamiltonian, Particle};
+use crate::Particle;
+//use crate::{Hamiltonian, Particle};
 
 
 pub struct WaveFunction {
@@ -9,29 +10,24 @@ pub struct WaveFunction {
 
 impl WaveFunction {
     //-- Trial wavefunction --
-    /// Wave function for the ground state of the two electron system
-    fn sqrd_pos_sum(particles: &Vec<Particle>) -> f64 {
-        let sum f64 = particles.iter().map(|x| x.squared_sum()).sum()
-    }
-    
-
+    // Wave function for the ground state of the two electron system
     pub fn trial_wave(&self, particles: &Vec<Particle>) -> f64{
-        let sqrd_pos_sum_1 = sqrd_pos_sum(particles)
-        let sqrd_pos_sum_2 = sqrd_pos_sum(particles)
-        let mut distance: f64 = 0.;
+        let omega: f64  = 1.0;
+        let c: f64      = 1.0 ; //normalization constant - dont know value
+
+        let sqrd_pos_sum_1: f64 = particles.iter().map(|x| x.squared_sum()).sum();
+        let sqrd_pos_sum_2: f64 = particles.iter().map(|x| x.squared_sum()).sum();
+
+        let mut fermion_distance: f64 = 0.;
         for (i, particle) in particles.iter().enumerate(){
             for other in particles[i + 1..].iter(){
-                distance = particle.distance_to(other);
-    
+                fermion_distance = particle.distance_to(other);
+                
+                c * (- self.alpha * omega * 0.5 * sqrd_pos_sum_1.powf(2.0) + sqrd_pos_sum_2.powf(2.0)).exp() * (self.a * fermion_distance / (1.0 + self.beta * fermion_distance))
             } 
         }
-       
-        let omega: f64 = 1.0;
-        let interaction: f64 = 1.0; // Placeholder variable
-        let c: f64 = 1.0 ; //normalization constant - dont know value
-
-        c * (- self.alpha * omega * 0.5 * sqrd_pos_sum_1.powf(2.0) + sqrd_pos_sum_2.powf(2.0)).exp() * (self.a * repulsive / (1.0 + self.beta * repulsive))
     }
+    
 
     // --- Evaluation of wavefunctions ---
     /// Evaluate the wavefunction using only the single-particle part. Returns an f64 representing
