@@ -17,7 +17,7 @@ impl Hamiltonian {
     }
    
     // --- Repulsive energy ---
-    fn repulsive(particles: &mut Vec<Particle>)-> f64 {
+    pub fn repulsive(particles: &mut Vec<Particle>)-> f64 {
         let mut distance_sum: f64 = 0.;
         for (i, particle) in particles.iter().enumerate() {
             for other in particles[i+1..].iter() {
