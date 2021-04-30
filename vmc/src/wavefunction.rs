@@ -10,7 +10,8 @@ pub struct WaveFunction {
 
 impl WaveFunction {
     //-- Trial wavefunction --
-    // Wave function for the ground state of the two electron system
+    /// Trial wavefunction for the ground state of the two electron/fermion system. 
+    /// Returns an f64 representing the wavefunction value
     pub fn trial_wave(&self, particles: &Vec<Particle>) -> f64{
         let omega: f64  = 1.0;
         let c: f64      = 1.0 ; //normalization constant - dont know value
@@ -18,11 +19,10 @@ impl WaveFunction {
         let sqrd_pos_sum_1: f64 = particles.iter().map(|x| x.squared_sum()).sum();
         let sqrd_pos_sum_2: f64 = particles.iter().map(|x| x.squared_sum()).sum();
 
-        let mut fermion_distance: f64 = 0.;
         for (i, particle) in particles.iter().enumerate(){
             for other in particles[i + 1..].iter(){
-                fermion_distance = particle.distance_to(other);
-                
+                let mut fermion_distance :f64 = particle.distance_to(other);
+    
                 c * (- self.alpha * omega * 0.5 * sqrd_pos_sum_1.powf(2.0) + sqrd_pos_sum_2.powf(2.0)).exp() * (self.a * fermion_distance / (1.0 + self.beta * fermion_distance))
             } 
         }
@@ -59,21 +59,23 @@ impl WaveFunction {
         self.evaluate_non_interacting(particles) * jastrow
     }
 
-    // --- Laplacian ---
+     // --- Laplacian ---
     /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
-    pub fn laplace(&self, particles: &mut Vec<Particle>, non_interacting: bool) -> f64 {
-        let h: f64 = 0.0001;
+    pub fn laplace(&self, particles: &mut Vec<Particle>) -> f64 {
+        let h: f64 = 0.0001; //stepsize
         let h2 = h.powi(2);
+        
         let mut laplace = 0.;
-        let wf = if non_interacting { self.evaluate_non_interacting(&particles) } else { self.evaluate(&particles) };
+
+        let wf = self.trial_wave(&particles);
 
         for i in 0..particles.len() {
             for dim in 0..particles[i].dim {
                 particles[i].bump_at_dim(dim, h); // Initial position +h
-                let wf_plus = if non_interacting { self.evaluate_non_interacting(&particles) } else { self.evaluate(&particles) };
+                let wf_plus = self.trial_wave(particles: &Vec<Particle>);
 
                 particles[i].bump_at_dim(dim, -2. * h); // Initial position -h
-                let wf_minus = if non_interacting { self.evaluate_non_interacting(&particles) } else { self.evaluate(&particles) };
+                let wf_minus = self.trial_wave(particles: &Vec<Particle>);
 
                 particles[i].bump_at_dim(dim, h); // Reset back to initial position
 
@@ -82,6 +84,7 @@ impl WaveFunction {
         }
         laplace / wf
     }
+   
 
     // --- Gradients ---
     /// Returns the gradient for a particle with regards to the non-interacting part of the
