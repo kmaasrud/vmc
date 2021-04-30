@@ -26,45 +26,28 @@ impl WaveFunction {
                 c * (- self.alpha * omega * 0.5 * sqrd_pos_sum_1.powf(2.0) + sqrd_pos_sum_2.powf(2.0)).exp() * (self.a * fermion_distance / (1.0 + self.beta * fermion_distance))
             } 
         }
-    }
-    
-
-    // --- Evaluation of wavefunctions ---
-    /// Evaluate the wavefunction using only the single-particle part. Returns an f64 representing
-    /// the wavefunction value.
-    pub fn evaluate_non_interacting(&self, particles: &Vec<Particle>) -> f64 {
-        let squared_position_sum: f64 = particles.iter().map(|x| x.squared_sum_scaled_z(&self.beta)).sum();
-        (- self.alpha * squared_position_sum).exp()
-    }
-
-    /// Evaluate the full wavefunction over particles: &Vec<Particles>. Returns an f64 representing
-    /// the wavefunction value.
-    pub fn evaluate(&self, particles: &Vec<Particle>) -> f64 {
-        let mut r: f64; 
-        let mut jastrow: f64 = 1.;
-        let a: f64 = 0.0043;
-
-        // Jastrow interaction
-        for i in 0..particles.len() {
-            for j in i+1..particles.len() {
-                r = particles[i].distance_to(&particles[j]);
-                // Check against hard-core diameter
-                if r <= a {
-                    jastrow *= 0.;
-                } else {
-                    jastrow *= 1. - a / r;
+            /*  
+            // Jastrow interaction
+            for i in 0..particles.len() {
+                for j in i+1..particles.len() {
+                    r = particles[i].distance_to(&particles[j]);
+                    // Check against hard-core diameter
+                    if r <= a {
+                        jastrow *= 0.;
+                    } else {
+                        jastrow *= 1. - a / r;
+                    }
                 }
-            }
-        }
-        self.evaluate_non_interacting(particles) * jastrow
+            } */
     }
+
 
      // --- Laplacian ---
     /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
     pub fn laplace(&self, particles: &mut Vec<Particle>) -> f64 {
         let h: f64 = 0.0001; //stepsize
         let h2 = h.powi(2);
-        
+
         let mut laplace = 0.;
 
         let wf = self.trial_wave(&particles);
