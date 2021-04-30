@@ -40,7 +40,7 @@ Where $a = 1$ when the two electrons in question have anti- parallell spins and 
 
 Hence, the local energy is shown to be ( see appendix) 
 
-$$ E_L = 2 \alpha \omega + \frac{1}{2} + \omega^2 (1 - \alpha^2) (r_1^2 + r_2^2) - \frac{a}{(1 + \beta r_{12})^2} \left( -\alpha \omega r_{12} + \frac{a}{(1 + \beta r_{12})^2} + \frac{1 - \beta r_{12}}{r_{12}(1 + \beta r_{12})}\right) + \frac{1}{r_{12}}$$ [#eq:analytic-local-energy]
+$$ E_L = 2 \alpha \omega + \frac{1}{2} + \omega^2 (1 - \alpha^2) (r_1^2 + r_2^2) - \frac{a}{(1 + \beta r_{12})^2} \left( -\alpha \omega r_{12} + \frac{a}{(1 + \beta r_{12})^2} + \frac{1 - \beta r_{12}}{r_{12}(1 + \beta r_{12})}\right) + \frac{1}{r_{12}} $$ [#eq:analytic-local-energy]
 
 Eq. [@eq:analytic-local-energy] is our analytic expression for the local energy of the two electron system. 
 
