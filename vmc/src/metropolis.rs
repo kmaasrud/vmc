@@ -15,7 +15,7 @@ pub enum MetropolisResult {
 /// Trait for Metropolis samplers.
 pub trait Metropolis {
     fn new(step_size: f64) -> Self;
-    fn step(&mut self, sys: &mut System, non_interacting: bool) -> MetropolisResult;
+    fn step(&mut self, sys: &mut System) -> MetropolisResult;
     fn hastings_check(acceptance_factor: f64) -> bool {
         if acceptance_factor >= 1. { true }
         else {
@@ -24,12 +24,12 @@ pub trait Metropolis {
             uniform.sample(&mut rng) < acceptance_factor
         }
     }
-    fn sample(sys: &mut System, non_interacting: bool) -> SampledValues {
+    fn sample(sys: &mut System) -> SampledValues {
         let d_wf_deriv = sys.wavefunction.gradient_alpha(&sys.particles); 
         // The 1.0 inputted below is a placeholder for the omega value. We are testing over
         // different omega values. TODO: Consider storing omega in the System struct instead of
         // passing it through the stack.
-        let d_energy = sys.hamiltonian.energy(&sys.wavefunction, &mut sys.particles, 1.0, non_interacting);
+        let d_energy = sys.hamiltonian.energy(&sys.wavefunction, &mut sys.particles, 1.0);
 
         SampledValues {
             energy: d_energy,
@@ -57,22 +57,20 @@ pub struct BruteForceMetropolis {
 
 impl Metropolis for BruteForceMetropolis {
     fn new(step_size: f64) -> Self {
-        Self { step_size: step_size, }
+        Self { step_size, }
     }
 
-    fn step(&mut self, sys: &mut System, non_interacting: bool) -> MetropolisResult {
+    fn step(&mut self, sys: &mut System) -> MetropolisResult {
         // Make a step
         let next_step = sys.random_particle_change(self.step_size);
 
         // Evaluate wavefunction for old and new states
-        let wf_old: f64 = if non_interacting { sys.wavefunction.evaluate_non_interacting(&sys.particles) }
-                                        else { sys.wavefunction.evaluate(&sys.particles) };
-        let wf_new: f64 = if non_interacting { sys.wavefunction.evaluate_non_interacting(&next_step) }
-                                        else { sys.wavefunction.evaluate(&next_step) };
+        let wf_old: f64 = sys.wavefunction.evaluate(&sys.particles);
+        let wf_new: f64 = sys.wavefunction.evaluate(&next_step);
 
         if Self::hastings_check(wf_new.powi(2) / wf_old.powi(2)) {
             sys.particles = next_step;
-            MetropolisResult::Accepted(Self::sample(sys, non_interacting))
+            MetropolisResult::Accepted(Self::sample(sys))
         } else {
             MetropolisResult::Rejected
         }
@@ -85,15 +83,13 @@ pub struct ImportanceMetropolis;
 impl Metropolis for ImportanceMetropolis {
     fn new(_: f64)  -> Self { Self }
 
-    fn step(&mut self, sys: &mut System, non_interacting: bool) -> MetropolisResult {
+    fn step(&mut self, sys: &mut System) -> MetropolisResult {
         // Make a step
-        let (next_step, i) = sys.quantum_force_particle_change(non_interacting);
+        let (next_step, i) = sys.quantum_force_particle_change();
 
         // Evaluate wavefunction for old and new states
-        let wf_old: f64 = if non_interacting { sys.wavefunction.evaluate_non_interacting(&sys.particles) }
-                                        else { sys.wavefunction.evaluate(&sys.particles) };
-        let wf_new: f64 = if non_interacting { sys.wavefunction.evaluate_non_interacting(&next_step) }
-                                        else { sys.wavefunction.evaluate(&next_step) };
+        let wf_old: f64 = sys.wavefunction.evaluate(&sys.particles);
+        let wf_new: f64 = sys.wavefunction.evaluate(&next_step);
 
         // Calculate the acceptance factor
         let greens_factor = Self::greens(&sys.particles[i], &next_step[i]) / Self::greens(&next_step[i], &sys.particles[i]);
@@ -101,7 +97,7 @@ impl Metropolis for ImportanceMetropolis {
 
         if Self::hastings_check(acceptance_factor) {
             sys.particles = next_step;
-            MetropolisResult::Accepted(Self::sample(sys, non_interacting))
+            MetropolisResult::Accepted(Self::sample(sys))
         } else {
             MetropolisResult::Rejected
         }

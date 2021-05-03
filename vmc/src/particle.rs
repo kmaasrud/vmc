@@ -17,7 +17,7 @@ impl Particle {
         }
     }
 
-    pub fn new_from_vec(position: Vec<f64>) -> Self {
+    pub fn from_vec(position: Vec<f64>) -> Self {
         let dim = position.len();
         Particle{
             position: position,
@@ -62,8 +62,8 @@ mod tests {
     fn test_distance_to() {
         let tol: f64 = 0.00001;
         let want: f64 = 6.25744;
-        let got: f64 = Particle::new_from_vec(vec![3., 5.666, 8.])
-            .distance_to(&Particle::new_from_vec(vec![2., 9., 13.2]));
+        let got: f64 = Particle::from_vec(vec![3., 5.666, 8.])
+            .distance_to(&Particle::from_vec(vec![2., 9., 13.2]));
         assert!(want - got < tol);
     }
 }

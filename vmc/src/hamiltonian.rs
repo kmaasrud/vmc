@@ -7,7 +7,7 @@ pub struct Hamiltonian;
 impl Hamiltonian {
     // --- Kinetic energy ---
     fn kinetic(wf: &WaveFunction, particles: &mut Vec<Particle>) -> f64{
-        -0.5 * wf.laplace(particles, false) //??? interacting or not
+        -0.5 * wf.laplace(particles) //??? interacting or not
     }
 
     // --- Potential energy ---
@@ -29,7 +29,7 @@ impl Hamiltonian {
 
     /// Calculates the energy of a system of `particles` described by `wf`.
     /// If `non_interacting` is `true`, will calculate the non-interacting energy (unused for now).
-    pub fn energy(&self, wf: &WaveFunction, particles: &mut Vec<Particle>, omega: f64, _non_interacting: bool) -> f64{
+    pub fn energy(&self, wf: &WaveFunction, particles: &mut Vec<Particle>, omega: f64) -> f64{
         Self::kinetic(wf, particles) + Self::potential(omega, particles) + Self::repulsive(particles)
     }
    
@@ -43,15 +43,10 @@ mod tests {
     /// Test repulsive energy for two particles with a distance of 2 between
     fn test_repulsive() {
         let want: f64 = 0.5;
-        let got: f64 = Hamiltonian::repulsive(&mut vec![Particle{
-            position: vec![0., 0., 0.],
-            qforce: vec![0., 0., 0.],
-            dim: 3,
-        }, Particle{
-            position: vec![2., 0., 0.],
-            qforce: vec![0., 0., 0.],
-            dim: 3,
-        }]);
+        let got: f64 = Hamiltonian::repulsive(&mut vec![
+            Particle::from_vec(vec![0., 0., 0.]),
+            Particle::from_vec(vec![2., 0., 0.]),
+        ]);
 
         assert_eq!(want, got);
     }

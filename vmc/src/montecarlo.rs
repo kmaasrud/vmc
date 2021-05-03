@@ -37,13 +37,13 @@ impl SampledValues {
 
 /// Does Monte Carlo integration over the WaveFunction of a System, using a given Metropolis
 /// algorithm.
-pub fn monte_carlo<T: Metropolis>(n: usize, sys: &mut System, metro: &mut T, non_interacting: bool) -> SampledValues {
+pub fn monte_carlo<T: Metropolis>(n: usize, sys: &mut System, metro: &mut T) -> SampledValues {
     let pre_steps = n / 4;
     let mut result = SampledValues::new();
 
     // Run a couple of steps to get the system into equilibrium
     for _ in 0..pre_steps {
-        match metro.step(sys, non_interacting) {
+        match metro.step(sys) {
             MetropolisResult::Accepted(vals) => result = vals,
             MetropolisResult::Rejected => {},
         }
@@ -53,7 +53,7 @@ pub fn monte_carlo<T: Metropolis>(n: usize, sys: &mut System, metro: &mut T, non
     let mut prev_dvals = result.clone();
 
     for _ in 0..n {
-        match metro.step(sys, non_interacting) {
+        match metro.step(sys) {
             MetropolisResult::Accepted(dvals) => {
                 result.accepted_steps += 1;
                 result.add_to_sum(&dvals);
