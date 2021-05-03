@@ -32,7 +32,6 @@ impl Hamiltonian {
     pub fn energy(&self, wf: &WaveFunction, particles: &mut Vec<Particle>, omega: f64) -> f64{
         Self::kinetic(wf, particles) + Self::potential(omega, particles) + Self::repulsive(particles)
     }
-   
 }
 
 #[cfg(test)]

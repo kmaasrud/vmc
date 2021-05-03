@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use rand::thread_rng;
 use rand::distributions::{Uniform, Distribution};
 use crate::{
@@ -7,15 +8,11 @@ use crate::{
 };
 
 
-pub enum MetropolisResult {
-    Accepted(SampledValues),
-    Rejected,
-}
-
 /// Trait for Metropolis samplers.
 pub trait Metropolis {
     fn new(step_size: f64) -> Self;
-    fn step(&mut self, sys: &mut System) -> MetropolisResult;
+    fn step(&mut self, sys: &mut System) -> Option<SampledValues>;
+
     fn hastings_check(acceptance_factor: f64) -> bool {
         if acceptance_factor >= 1. { true }
         else {
@@ -24,6 +21,7 @@ pub trait Metropolis {
             uniform.sample(&mut rng) < acceptance_factor
         }
     }
+
     fn sample(sys: &mut System) -> SampledValues {
         let d_wf_deriv = sys.wavefunction.gradient_alpha(&sys.particles); 
         // The 1.0 inputted below is a placeholder for the omega value. We are testing over
@@ -31,21 +29,21 @@ pub trait Metropolis {
         // passing it through the stack.
         let d_energy = sys.hamiltonian.energy(&sys.wavefunction, &mut sys.particles, 1.0);
 
-        SampledValues {
-            energy: d_energy,
-            energy_squared: d_energy.powi(2),
-            wf_deriv: d_wf_deriv,
-            wf_deriv_times_energy: d_wf_deriv * d_energy,
-            accepted_steps: 0,
-        }
+        let mut map = HashMap::new();
+        map.insert("energy".to_string(), d_energy);
+        map.insert("energy_sqrd".to_string(), d_energy.powi(2));
+        map.insert("wf_deriv".to_string(), d_wf_deriv);
+        map.insert("wf_deriv_times_energy".to_string(), d_wf_deriv * d_energy);
+        SampledValues { map }
     }
+
     fn greens(x: &Particle, y: &Particle) -> f64 {
         let mut result: f64 = 0.;
         for j in 0..x.dim { // This is a vector sum + scalar product
             // 0.0025 here is the same as 0.5 * 0.005
             result += (x.position[j] - y.position[j] - 0.0025 * y.qforce[j]).powi(2);
         }
-        result = (- result / 0.01).exp(); // Ignoring denominator of Greens since it cancels later
+        result = (-result / 0.01).exp(); // Ignoring denominator of Greens since it cancels later
         result
     }
 }
@@ -60,7 +58,7 @@ impl Metropolis for BruteForceMetropolis {
         Self { step_size, }
     }
 
-    fn step(&mut self, sys: &mut System) -> MetropolisResult {
+    fn step(&mut self, sys: &mut System) -> Option<SampledValues> {
         // Make a step
         let next_step = sys.random_particle_change(self.step_size);
 
@@ -70,9 +68,9 @@ impl Metropolis for BruteForceMetropolis {
 
         if Self::hastings_check(wf_new.powi(2) / wf_old.powi(2)) {
             sys.particles = next_step;
-            MetropolisResult::Accepted(Self::sample(sys))
+            Some(Self::sample(sys))
         } else {
-            MetropolisResult::Rejected
+            None
         }
     }
 }
@@ -83,7 +81,7 @@ pub struct ImportanceMetropolis;
 impl Metropolis for ImportanceMetropolis {
     fn new(_: f64)  -> Self { Self }
 
-    fn step(&mut self, sys: &mut System) -> MetropolisResult {
+    fn step(&mut self, sys: &mut System) -> Option<SampledValues> {
         // Make a step
         let (next_step, i) = sys.quantum_force_particle_change();
 
@@ -97,9 +95,9 @@ impl Metropolis for ImportanceMetropolis {
 
         if Self::hastings_check(acceptance_factor) {
             sys.particles = next_step;
-            MetropolisResult::Accepted(Self::sample(sys))
+            Some(Self::sample(sys))
         } else {
-            MetropolisResult::Rejected
+            None
         }
     }
 }

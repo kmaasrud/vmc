@@ -1,37 +1,27 @@
-use crate::{System, Metropolis, MetropolisResult};
+use std::collections::HashMap;
+use crate::{System, Metropolis};
 
 /// Collection of values that are integrated over
 #[derive(Clone, Debug)]
 pub struct SampledValues {
-    pub energy: f64,
-    pub energy_squared: f64,
-    pub wf_deriv: f64,
-    pub wf_deriv_times_energy: f64,
-    pub accepted_steps: usize,
+    pub map: HashMap<String, f64>
 }
 
-impl SampledValues {
+impl<'a> SampledValues {
     pub fn new() -> Self {
-        SampledValues {
-            energy: 0.,
-            energy_squared: 0.,
-            wf_deriv: 0.,
-            wf_deriv_times_energy: 0.,
-            accepted_steps: 0,
-        }
+        SampledValues { map: HashMap::new()}
     }
+
     pub fn add_to_sum(&mut self, dvals: &SampledValues) {
-        self.energy += dvals.energy;
-        self.energy_squared += dvals.energy_squared;
-        self.wf_deriv += dvals.wf_deriv;
-        self.wf_deriv_times_energy += dvals.wf_deriv_times_energy;
+        for (key, val) in self.map.iter_mut() {
+            *val += dvals.map[key];
+        }
     }
 
     pub fn divide_by(&mut self, factor: f64) {
-        self.energy /= factor;
-        self.energy_squared /= factor;
-        self.wf_deriv /= factor;
-        self.wf_deriv_times_energy /= factor;
+        for val in self.map.values_mut() {
+            *val /= factor;
+        }
     }
 }
 
@@ -44,8 +34,8 @@ pub fn monte_carlo<T: Metropolis>(n: usize, sys: &mut System, metro: &mut T) -> 
     // Run a couple of steps to get the system into equilibrium
     for _ in 0..pre_steps {
         match metro.step(sys) {
-            MetropolisResult::Accepted(vals) => result = vals,
-            MetropolisResult::Rejected => {},
+            Some(vals) => result = vals,
+            None => {},
         }
     }
 
@@ -54,12 +44,11 @@ pub fn monte_carlo<T: Metropolis>(n: usize, sys: &mut System, metro: &mut T) -> 
 
     for _ in 0..n {
         match metro.step(sys) {
-            MetropolisResult::Accepted(dvals) => {
-                result.accepted_steps += 1;
+            Some(dvals) => {
                 result.add_to_sum(&dvals);
                 prev_dvals = dvals;
             },
-            MetropolisResult::Rejected => {
+            None => {
                 result.add_to_sum(&prev_dvals);
             },
         }
