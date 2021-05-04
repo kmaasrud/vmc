@@ -2,6 +2,7 @@ use crate::Particle;
 //use crate::{Hamiltonian, Particle};
 
 
+#[derive(Clone)]
 pub struct WaveFunction {
     pub alpha: f64,
     pub beta: f64,
@@ -27,7 +28,8 @@ impl WaveFunction {
         // TODO: This is a simplification. It should work in the case of two electrons, but we need
         // to implement the Slater determinant for more complex systems.
         let sqrd_pos_sum: f64 = particles.iter().map(|x| x.squared_sum()).sum();
-        c * (-0.5 * (particles.len() as f64) * self.alpha * omega * sqrd_pos_sum + exp_sum).exp()
+        c * (-0.5 * (particles.len() as f64) * self.alpha * omega * sqrd_pos_sum ).exp()
+            *exp_sum.exp()
     }
 
 
@@ -98,5 +100,64 @@ impl WaveFunction {
     /// Calculates the quantum force of a particle not interacting with its surrounding particles
     pub fn quantum_force_non_interacting(&self, particle: &Particle) -> Vec<f64> {
         self.gradient_spf(particle).iter().map(|x| 2. * x).collect()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_laplace() {
+
+    }
+
+    #[test]
+    fn test_evaluate_deterministicity() {
+        use crate::{
+            System,
+            WaveFunction,
+            Hamiltonian,
+        };
+        // Spawn a system with defined wavefunction and energy
+        let ham: Hamiltonian = Hamiltonian;
+        let wf = WaveFunction{ alpha: 0.5, beta: 1. , a: 1.}; // Set beta = gamma
+        let mut system: System = System::distributed(10, 3, wf.clone(), ham.clone(), false, 1.);
+
+        // Is it deterministic?
+        assert_eq!(wf.evaluate(&system.particles), wf.evaluate(&system.particles));
+    }
+
+    #[test]
+    fn test_evaluate_against_analytical() {
+        use crate::{
+            System,
+            WaveFunction,
+            Hamiltonian,
+        };
+        // System parameters
+        let alpha:f64 = 0.5;
+        let beta:f64 = 1.;
+        let a:f64 = 1.;
+        let omega:f64 = 1.;     //Defined separately in evaluate() function
+        let c:f64 = 1.;         //Defined separately in evaluate() function
+
+        // Spawn a system with defined wavefunction and energy
+        let ham: Hamiltonian = Hamiltonian;
+        let wf = WaveFunction{ alpha: alpha, beta: beta , a: a}; // Set beta = gamma
+        let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
+        system.particles[0].position = vec![0. ,0. ]; //Just placing the particles at specific positions
+        system.particles[1].position = vec![1. ,1. ];
+        println!("{:?}", system.particles);
+
+        // Define the analytical answer to this problem
+
+        let analytical = c * (-alpha * omega * (0. + 1.*1. + 1.*1.) / 2.).exp() 
+                            * (a*((1.*1.+1.*1.) as f64).sqrt()/(1.+beta*((1.*1.+1.*1.) as f64).sqrt())).exp();
+        
+        // Assertation
+        let tol:f64 = 1E-13;
+        assert_eq!(wf.evaluate(&system.particles), analytical);
+        assert!((wf.evaluate(&system.particles) - analytical).abs()<tol);
     }
 }
