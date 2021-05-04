@@ -7,7 +7,7 @@ pub struct SampledValues {
     pub map: HashMap<String, f64>
 }
 
-impl<'a> SampledValues {
+impl SampledValues {
     pub fn new() -> Self {
         SampledValues { map: HashMap::new()}
     }
@@ -41,7 +41,6 @@ pub fn monte_carlo<T: Metropolis>(n: usize, sys: &mut System, metro: &mut T) -> 
 
     // Store the previous values to add if Metropolis step is rejected
     let mut prev_dvals = result.clone();
-
     for _ in 0..n {
         match metro.step(sys) {
             Some(dvals) => {
@@ -53,6 +52,7 @@ pub fn monte_carlo<T: Metropolis>(n: usize, sys: &mut System, metro: &mut T) -> 
             },
         }
     }
+
     // Divide all values by n to get the mean
     result.divide_by(n as f64);
     result
