@@ -73,14 +73,6 @@ mod tests {
         let want: f64 = 6.25744;
         let got: f64 = Particle::from_vec(vec![3., 5.666, 8.])
             .distance_to(&Particle::from_vec(vec![2., 9., 13.2]));
-        assert!((want - got).abs() < tol);
-    }
-
-    #[test]
-    fn test_bump_at_dim() {
-        let want = Particle::from_vec(vec![1., 1., 1.6]);
-        let mut got = Particle::from_vec(vec![1., 1., 1.]);
-        got.bump_at_dim(2, 0.6);
-        assert_eq!(want.position, got.position);
+        assert!(want - got < tol);
     }
 }
