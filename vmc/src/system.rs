@@ -11,23 +11,25 @@ pub struct System {
     pub dimensionality: usize,
     pub wavefunction: WaveFunction,
     pub hamiltonian: Hamiltonian,
+    pub interacting: bool,
 }
 
 impl System {
-    pub fn new(n_particles: usize, dim: usize, wavefunction: WaveFunction, hamiltonian: Hamiltonian) -> Self {
+    pub fn new(n_particles: usize, dim: usize, wf: WaveFunction, ham: Hamiltonian, interact: bool) -> Self {
         System {
             particles: vec![Particle::new(dim); n_particles],
             dimensionality: dim,
-            wavefunction: wavefunction,
-            hamiltonian: hamiltonian,
+            wavefunction: wf,
+            hamiltonian: ham,
+            interacting: interact,
         }
     }
 
     /// Creates a new system with particles distributed randomly
-    pub fn distributed(n_particles: usize, dim: usize, wavefunction: WaveFunction, hamiltonian: Hamiltonian, spread: f64) -> Self {
+    pub fn distributed(n_particles: usize, dim: usize, wf: WaveFunction, ham: Hamiltonian, interact: bool, spread: f64) -> Self {
         let mut rng = thread_rng();
         let uniform = Uniform::new(0., 1.);
-        let mut sys: System = System::new(n_particles, dim, wavefunction, hamiltonian);
+        let mut sys: System = System::new(n_particles, dim, wf, ham, interact);
         let mut r: f64;
 
         for i in 0..sys.particles.len() {
@@ -60,7 +62,7 @@ impl System {
     }
 
     /// Takes in a step size and returns the next particle state of the system.
-    pub fn quantum_force_particle_change(&mut self, non_interacting: bool) -> (Vec<Particle>, usize) {
+    pub fn quantum_force_particle_change(&mut self) -> (Vec<Particle>, usize) {
         let mut rng = thread_rng();
         let normal = Normal::new(0., 1.).unwrap();
 
@@ -70,8 +72,8 @@ impl System {
         // Picks one random particle to do the change for
         let i = random::<usize>() % self.particles.len();
 
-        self.particles[i].qforce = if non_interacting { self.wavefunction.quantum_force_non_interacting(&self.particles[i]) }
-                                                 else { self.wavefunction.quantum_force(i, &self.particles) };
+        self.particles[i].qforce = if self.interacting { self.wavefunction.quantum_force(i, &self.particles) }
+                                                  else { self.wavefunction.quantum_force_non_interacting(&self.particles[i]) };
 
         // Clones the last particle state of the system
         let mut new_particles = self.particles.clone();
@@ -82,8 +84,8 @@ impl System {
         }
 
         // Calculate quantum force of new state
-        new_particles[i].qforce = if non_interacting { self.wavefunction.quantum_force_non_interacting(&new_particles[i]) }
-                                                else { self.wavefunction.quantum_force(i, &new_particles) };
+        new_particles[i].qforce = if self.interacting { self.wavefunction.quantum_force(i, &new_particles) }
+                                                 else { self.wavefunction.quantum_force_non_interacting(&new_particles[i]) };
 
         (new_particles, i)
     }

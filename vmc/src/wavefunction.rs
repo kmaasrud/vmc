@@ -12,33 +12,22 @@ impl WaveFunction {
     //-- Trial wavefunction --
     /// Trial wavefunction for the ground state of the two electron/fermion system. 
     /// Returns an f64 representing the wavefunction value
-    pub fn trial_wave(&self, particles: &Vec<Particle>) -> f64{
+    pub fn evaluate(&self, particles: &Vec<Particle>) -> f64 {
         let omega: f64  = 1.0;
         let c: f64      = 1.0 ; //normalization constant - dont know value
 
-        let sqrd_pos_sum_1: f64 = particles.iter().map(|x| x.squared_sum()).sum();
-        let sqrd_pos_sum_2: f64 = particles.iter().map(|x| x.squared_sum()).sum();
-
+        let mut exp_sum = 0.;
         for (i, particle) in particles.iter().enumerate(){
-            for other in particles[i + 1..].iter(){
-                let mut fermion_distance :f64 = particle.distance_to(other);
-    
-                c * (- self.alpha * omega * 0.5 * sqrd_pos_sum_1.powf(2.0) + sqrd_pos_sum_2.powf(2.0)).exp() * (self.a * fermion_distance / (1.0 + self.beta * fermion_distance))
+            for other in particles[i+1..].iter(){
+                let fermion_distance :f64 = particle.distance_to(other);
+                exp_sum += self.a * fermion_distance / (1. + self.beta * fermion_distance);
             } 
         }
-            /*  
-            // Jastrow interaction
-            for i in 0..particles.len() {
-                for j in i+1..particles.len() {
-                    r = particles[i].distance_to(&particles[j]);
-                    // Check against hard-core diameter
-                    if r <= a {
-                        jastrow *= 0.;
-                    } else {
-                        jastrow *= 1. - a / r;
-                    }
-                }
-            } */
+
+        // TODO: This is a simplification. It should work in the case of two electrons, but we need
+        // to implement the Slater determinant for more complex systems.
+        let sqrd_pos_sum: f64 = particles.iter().map(|x| x.squared_sum()).sum();
+        c * (-0.5 * (particles.len() as f64) * self.alpha * omega * sqrd_pos_sum + exp_sum).exp()
     }
 
 
@@ -50,15 +39,15 @@ impl WaveFunction {
 
         let mut laplace = 0.;
 
-        let wf = self.trial_wave(&particles);
+        let wf = self.evaluate(&particles);
 
         for i in 0..particles.len() {
             for dim in 0..particles[i].dim {
                 particles[i].bump_at_dim(dim, h); // Initial position +h
-                let wf_plus = self.trial_wave(particles: &Vec<Particle>);
+                let wf_plus = self.evaluate(particles);
 
                 particles[i].bump_at_dim(dim, -2. * h); // Initial position -h
-                let wf_minus = self.trial_wave(particles: &Vec<Particle>);
+                let wf_minus = self.evaluate(particles);
 
                 particles[i].bump_at_dim(dim, h); // Reset back to initial position
 
