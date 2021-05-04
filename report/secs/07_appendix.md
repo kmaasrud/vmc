@@ -3,7 +3,7 @@
 
 # Appendix
 
-## Hermite polynomials
+## Hermite polynomials {#sec:hermite}
 
 The Hermite polynomials are given by the following sequence
 
