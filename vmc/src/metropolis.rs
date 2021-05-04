@@ -106,10 +106,40 @@ impl Metropolis for ImportanceMetropolis {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+
     #[test]
     fn test_hastings_check() {
         assert!(BruteForceMetropolis::hastings_check(1. as f64));    //Panics if it returns false
         assert!(BruteForceMetropolis::hastings_check(2.));
         assert!(!BruteForceMetropolis::hastings_check(0.))    //Panics if it returns true
     }
+
+    #[test]
+    fn test_sample() {
+        use crate::{
+            System,
+            WaveFunction,
+            Hamiltonian,
+        };
+        // Spawn a system with defined wavefunction and energy
+        let ham: Hamiltonian = Hamiltonian;
+        let wf = WaveFunction{ alpha: 0.5, beta: 1. , a: 1.}; // Set beta = gamma
+        let mut system: System = System::distributed(10, 3, wf, ham.clone(), false, 1.);
+
+        // Get SampledValues object containing the map from sample func
+        let smpldvls = BruteForceMetropolis::sample(&mut system);
+
+        //Generate own energies and wf deriv
+        let d_energy = system.hamiltonian.energy(&system.wavefunction, &mut system.particles, 1.0);
+        let d_wf_deriv = system.wavefunction.gradient_alpha(&system.particles);
+        assert_eq!( system.hamiltonian.energy(&system.wavefunction, &mut system.particles, 1.0),
+                    system.hamiltonian.energy(&system.wavefunction, &mut system.particles, 1.0));
+        //Assertation
+        //assert_eq!(smpldvls.map["energy"], d_energy);
+        //assert_eq!(smpldvls.map["energy_sqrd"], d_energy.powi(2));
+        assert_eq!(smpldvls.map["wf_deriv"], d_wf_deriv);
+        //assert_eq!(smpldvls.map["wf_deriv_times_energy"], d_wf_deriv * d_energy);
+    }
+
 }
