@@ -27,9 +27,10 @@ impl WaveFunction {
 
         // TODO: This is a simplification. It should work in the case of two electrons, but we need
         // to implement the Slater determinant for more complex systems.
-        let sqrd_pos_sum: f64 = particles.iter().map(|x| x.squared_sum()).sum();
-        c * (-0.5 * (particles.len() as f64) * self.alpha * omega * sqrd_pos_sum ).exp()
-            *exp_sum.exp()
+        let sqrd_pos_sum_1: f64 = particles.iter().map(|x| x.squared_sum()).sum();
+        let sqrd_pos_sum_2: f64 = particles.iter().map(|x| x.squared_sum()).sum();
+
+        c * (-0.5  * self.alpha * omega * (sqrd_pos_sum_1 + sqrd_pos_sum_2) + exp_sum).exp()
     }
 
 
@@ -122,7 +123,7 @@ mod tests {
         // Spawn a system with defined wavefunction and energy
         let ham: Hamiltonian = Hamiltonian;
         let wf = WaveFunction{ alpha: 0.5, beta: 1. , a: 1.}; // Set beta = gamma
-        let mut system: System = System::distributed(10, 3, wf.clone(), ham.clone(), false, 1.);
+        let system: System = System::distributed(10, 3, wf.clone(), ham.clone(), false, 1.);
 
         // Is it deterministic?
         assert_eq!(wf.evaluate(&system.particles), wf.evaluate(&system.particles));
@@ -154,7 +155,7 @@ mod tests {
 
         let analytical = c * (-alpha * omega * (0. + 1.*1. + 1.*1.) / 2.).exp() 
                             * (a*((1.*1.+1.*1.) as f64).sqrt()/(1.+beta*((1.*1.+1.*1.) as f64).sqrt())).exp();
-        
+        println!("{}", analytical);
         // Assertation
         let tol:f64 = 1E-13;
         assert_eq!(wf.evaluate(&system.particles), analytical);
