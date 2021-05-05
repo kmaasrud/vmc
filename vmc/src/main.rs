@@ -4,6 +4,7 @@ mod system;
 mod wavefunction;
 mod hamiltonian;
 mod montecarlo;
+mod utils;
 mod threadpool;
 
 pub use particle::Particle;
@@ -12,6 +13,7 @@ pub use metropolis::{Metropolis, BruteForceMetropolis, ImportanceMetropolis};
 pub use wavefunction::WaveFunction;
 pub use hamiltonian::Hamiltonian;
 pub use montecarlo::monte_carlo;
+pub use utils::determinant;
 pub use threadpool::ThreadPool;
 
 
