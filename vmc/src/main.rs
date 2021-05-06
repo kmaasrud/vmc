@@ -13,10 +13,10 @@ pub use metropolis::{Metropolis, BruteForceMetropolis, ImportanceMetropolis};
 pub use wavefunction::WaveFunction;
 pub use hamiltonian::Hamiltonian;
 pub use montecarlo::monte_carlo;
-pub use utils::determinant;
+pub use utils::det;
 pub use threadpool::ThreadPool;
 
 
 fn main() {
-    println!("Hello from VMC!")
+    println!("Hello from VMC!");
 }
