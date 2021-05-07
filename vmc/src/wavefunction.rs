@@ -118,7 +118,37 @@ mod tests {
 
     #[test]
     fn test_laplace() {
+        use crate::{
+            System,
+            WaveFunction,
+            Hamiltonian,
+        };
+        // System parameters
+        let alpha:f64 = 0.5;
+        let beta:f64 = 1.;
+        let a:f64 = 1.;
+        let omega:f64 = 1.;     //Defined separately in evaluate() function
+        let c:f64 = 1.;         //Defined separately in evaluate() function
+        let h: f64 = 0.0001;    //Defined separately in laplace() function
+        let h2: f64 = h.powi(2);//Defined separately in laplace() function
 
+        // Spawn a system with defined wavefunction and energy
+        let ham: Hamiltonian = Hamiltonian;
+        let wf = WaveFunction{ alpha: alpha, beta: beta , a: a}; // Set beta = gamma
+        let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
+        system.particles[0].position = vec![0. ,0. ]; //Just placing the particles at specific positions
+        system.particles[1].position = vec![1. ,1. ];
+        //println!("{:?}", system.particles);
+
+        // Define the analytical answer to this problem
+        let analytical = 1.;//FILL
+
+        //println!("{}", analytical);
+        
+        // Assertation
+        let tol:f64 = 1E-13;
+        //assert_eq!(wf.laplace(&system.particles), analytical); // Here, not even truncation errors are allowed.. too strict imo
+        assert!((wf.laplace(&mut system.particles) - analytical).abs()<tol);
     }
 
     #[test]
@@ -157,16 +187,16 @@ mod tests {
         let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
         system.particles[0].position = vec![0. ,0. ]; //Just placing the particles at specific positions
         system.particles[1].position = vec![1. ,1. ];
-        println!("{:?}", system.particles);
+        //println!("{:?}", system.particles);
 
         // Define the analytical answer to this problem
 
         let analytical = c * (-alpha * omega * (0. + 1.*1. + 1.*1.) / 2.).exp() 
                             * (a*((1.*1.+1.*1.) as f64).sqrt()/(1.+beta*((1.*1.+1.*1.) as f64).sqrt())).exp();
-        println!("{}", analytical);
+        //println!("{}", analytical);
         // Assertation
         let tol:f64 = 1E-13;
-        assert_eq!(wf.evaluate(&system.particles), analytical);
+        //assert_eq!(wf.evaluate(&system.particles), analytical); // Here, not even truncation errors are allowed.. too strict imo
         assert!((wf.evaluate(&system.particles) - analytical).abs()<tol);
     }
 }
