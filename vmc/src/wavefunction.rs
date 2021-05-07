@@ -24,17 +24,24 @@ impl WaveFunction {
                 exp_sum += self.a * fermion_distance / (1. + self.beta * fermion_distance);
             } 
         }
-
         // TODO: This is a simplification. It should work in the case of two electrons, but we need
         // to implement the Slater determinant for more complex systems.
-        let sqrd_pos_sum_1: f64 = particles.iter().map(|x| x.squared_sum()).sum();
-        let sqrd_pos_sum_2: f64 = particles.iter().map(|x| x.squared_sum()).sum();
+        let r1: f64 = particles[1].squared_sum();
+        let r2: f64 = particles[2].squared_sum();
 
-     
-        println!("1: {}, 2: {}", sqrd_pos_sum_1,sqrd_pos_sum_1 );
+        println!("r1: {:?}, r2: {:?}", r1,r2);
 
-        c * (-0.5  * self.alpha * omega * (sqrd_pos_sum_1 + sqrd_pos_sum_2) + exp_sum).exp()
+        let result: f64 = c * (-0.5  * self.alpha * omega * (r1 + r2) + exp_sum).exp();
+        
+        result
+
+        
     }
+
+    pub fn evaluate_hermitian(&self, particles: &Vec<Particle>) -> f64 {
+        1.0
+    }
+
 
 
      // --- Laplacian ---
