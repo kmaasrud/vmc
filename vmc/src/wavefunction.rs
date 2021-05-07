@@ -30,6 +30,9 @@ impl WaveFunction {
         let sqrd_pos_sum_1: f64 = particles.iter().map(|x| x.squared_sum()).sum();
         let sqrd_pos_sum_2: f64 = particles.iter().map(|x| x.squared_sum()).sum();
 
+     
+        println!("1: {}, 2: {}", sqrd_pos_sum_1,sqrd_pos_sum_1 );
+
         c * (-0.5  * self.alpha * omega * (sqrd_pos_sum_1 + sqrd_pos_sum_2) + exp_sum).exp()
     }
 

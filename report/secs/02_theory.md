@@ -2,7 +2,8 @@
 
 Electrons in a confined, two dimensional harmonic oscillator potnetial with the given (idealized) Hamiltionian below is in quantum mechanics called quantum dots. 
 
-$$ H = \sum_{i=1}^{N}{\left( -\frac{1}{2}\nabla^2_i + \frac{1}{2}\omega^2 |\mathbf r_i|^2 \right) } + \sum_{i<j}\frac{1}{r_{ij}}$${#eq:hamiltonian}
+$$ H = \sum_{i=1}^{N}{\left( -\frac{1}{2}\nabla^2_i + \frac{1}{2}\omega^2 |\mathbf r_i|^2 \right) } + \sum_{i<j}\frac{1}{r_{ij}} $$ 
+{#eq:hamiltonian}
 
 where $r_{ij} = |r_i - r_j|$ is the distance between two electrons. We use the natural units $\hbar = c = e = m_e = 1$ and all energies are in atomic units (a.u).
 
@@ -14,7 +15,16 @@ The two-dimensional solution for a single particle in a harmonic oscillator pote
 
 $$\phi_{n_x, n_y} (x,y) = A H_{n_x} (\sqrt{\omega} x) H_{n_y}(\sqrt{\omega}y) \exp{\left[-\frac{\omega}{2}(x^2 + y^2)\right]}.$$
 
-where $H_{i}$ are Hermite polynomials (see [@sec:hermite]), and $A$ is the normalization constant. For the lowest lying state, we have $n_x = n_y = 0$ and hence the energy $\epsilon_{n_x, n_y} = \omega(n_x + n_y + 1) = \omega$. 
+where $H_{i}$ are Hermite polynomials (see [@sec:hermite]), and $A$ is the normalization constant. For the lowest lying state, we have $n_x = n_y = 0$ and hence the energy $\epsilon_{n_x, n_y} = \omega(n_x + n_y + 1) = \omega$. For the closed shell configurations, N = 2, 6, 12 and 20 the exact ground state energy is given in Table 1.
+
+| N  	| E (a.u)       |
+|----	|-----------	|
+| $2$  	| $2 \omega$  	|
+| $6$	| $10 \omega$ 	|
+| $12$ 	| $28 \omega$ 	|
+| $20$ 	| $60 \omega$ 	| 
+Table 1: Given exact ground state energy (a.u) (without perturbation) for closed-shell number of electrons. $\omega$ is the oscillator frequency. 
+
 
 The total wave function for a non-interacting two-electron system is therefore given as:
 
@@ -38,10 +48,11 @@ Where $a = 1$ when the two electrons in question have anti- parallell spins and 
 
 Hence, the local energy is shown to be ( see appendix) 
 
-$$\begin{aligned}
+$$ \begin{aligned}
 E_L &= 2 \alpha \omega + \frac{1}{2} + \omega^2 (1 - \alpha^2) (r_1^2 + r_2^2) \\
 &- \frac{a}{(1 + \beta r_{12})^2} \left( -\alpha \omega r_{12} + \frac{a}{(1 + \beta r_{12})^2} + \frac{1 - \beta r_{12}}{r_{12}(1 + \beta r_{12})}\right) + \frac{1}{r_{12}}.
-\end{aligned}$$ {#eq:analytic-local-energy}
+\end{aligned} $$ 
+{#eq:analytic-local-energy} <!-- Is this correct?. -->
 
 Equation ([@eq:analytic-local-energy]) is our analytic expression for the local energy of the two electron system. 
 
@@ -53,4 +64,4 @@ Second derivative by three point approximation
 
 $$ \frac{d g(x)}{dx} \approx \frac{g(x + \Delta x) - 2 g(x)  + g ( x - \Delta x) }{ \Delta x^2}  $$
 
-$\Delta x$ is the stepsize which we let run towards zero. The error is proportional to $(\Delta x ^2 )$.
+$\Delta x$ is the stepsize which we let run towards zero. The error is proportional to $(\Delta
