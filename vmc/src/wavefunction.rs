@@ -17,25 +17,28 @@ impl WaveFunction {
         let omega: f64  = 1.0;
         let c: f64      = 1.0 ; //normalization constant - dont know value
 
-        let mut exp_sum = 0.;
-        for (i, particle) in particles.iter().enumerate(){
-            for other in particles[i+1..].iter(){
-                let fermion_distance :f64 = particle.distance_to(other);
-                exp_sum += self.a * fermion_distance / (1. + self.beta * fermion_distance);
-            } 
+        match particles.len() {
+            2 => {
+                let mut exp_sum = 0.;
+                for (i, particle) in particles.iter().enumerate(){
+                    for other in particles[i+1..].iter(){
+                        let fermion_distance :f64 = particle.distance_to(other);
+                        exp_sum += self.a * fermion_distance / (1. + self.beta * fermion_distance);
+                    } 
+                }
+                
+                let r1: f64 = particles[0].squared_sum();
+                let r2: f64 = particles[1].squared_sum();
+
+                let result: f64 = c * (-0.5  * self.alpha * omega * (r1 + r2) + exp_sum).exp();
+                
+                result
+            },
+            _ => {
+                1.
+            }
         }
-
-        // TODO: This is a simplification. It should work in the case of two electrons, but we need
-        // to implement the Slater determinant for more complex systems.
-        let sqrd_pos_sum_1: f64 = particles.iter().map(|x| x.squared_sum()).sum();
-        let sqrd_pos_sum_2: f64 = particles.iter().map(|x| x.squared_sum()).sum();
-
-     
-        println!("1: {}, 2: {}", sqrd_pos_sum_1,sqrd_pos_sum_1 );
-
-        c * (-0.5  * self.alpha * omega * (sqrd_pos_sum_1 + sqrd_pos_sum_2) + exp_sum).exp()
     }
-
 
      // --- Laplacian ---
     /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
