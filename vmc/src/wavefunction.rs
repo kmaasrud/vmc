@@ -17,34 +17,28 @@ impl WaveFunction {
         let omega: f64  = 1.0;
         let c: f64      = 1.0 ; //normalization constant - dont know value
 
-        let mut exp_sum = 0.;
-        for (i, particle) in particles.iter().enumerate(){
-            for other in particles[i+1..].iter(){
-                let fermion_distance :f64 = particle.distance_to(other);
-                exp_sum += self.a * fermion_distance / (1. + self.beta * fermion_distance);
-            } 
+        match particles.len() {
+            2 => {
+                let mut exp_sum = 0.;
+                for (i, particle) in particles.iter().enumerate(){
+                    for other in particles[i+1..].iter(){
+                        let fermion_distance :f64 = particle.distance_to(other);
+                        exp_sum += self.a * fermion_distance / (1. + self.beta * fermion_distance);
+                    } 
+                }
+                
+                let r1: f64 = particles[0].squared_sum();
+                let r2: f64 = particles[1].squared_sum();
+
+                let result: f64 = c * (-0.5  * self.alpha * omega * (r1 + r2) + exp_sum).exp();
+                
+                result
+            },
+            _ => {
+                1.
+            }
         }
-        // TODO: This is a simplification. It should work in the case of two electrons, but we need
-        // to implement the Slater determinant for more complex systems.
-
-        
-        let r1: f64 = particles[0].squared_sum();
-        let r2: f64 = particles[1].squared_sum();
-
-        println!("r1: {:?}, r2: {:?}", r1,r2);
-
-        let result: f64 = c * (-0.5  * self.alpha * omega * (r1 + r2) + exp_sum).exp();
-        
-        result
-
-        
     }
-
-    pub fn evaluate_hermitian(&self, particles: &Vec<Particle>) -> f64 {
-        1.0
-    }
-
-
 
      // --- Laplacian ---
     /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
