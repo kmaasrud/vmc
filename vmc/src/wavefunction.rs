@@ -26,8 +26,10 @@ impl WaveFunction {
         }
         // TODO: This is a simplification. It should work in the case of two electrons, but we need
         // to implement the Slater determinant for more complex systems.
-        let r1: f64 = particles[1].squared_sum();
-        let r2: f64 = particles[2].squared_sum();
+
+        
+        let r1: f64 = particles[0].squared_sum();
+        let r2: f64 = particles[1].squared_sum();
 
         println!("r1: {:?}, r2: {:?}", r1,r2);
 
