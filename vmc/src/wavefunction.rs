@@ -18,6 +18,7 @@ impl WaveFunction {
         let c: f64      = 1.0 ; //normalization constant - dont know value
 
         match particles.len() {
+            // In the case of two particles, evaluating the wavefunction is a bit simpler.
             2 => {
                 let mut exp_sum = 0.;
                 for (i, particle) in particles.iter().enumerate(){
@@ -34,6 +35,7 @@ impl WaveFunction {
                 
                 result
             },
+            // This is the general evaluation, using Slater determinants
             _ => {
                 1.
             }
