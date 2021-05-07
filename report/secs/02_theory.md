@@ -34,7 +34,7 @@ with an energy of $2\omega$. The total spin in the ground state is simply zero a
 
 The ground state energy is given by the unperturbed system. Adding a pertubation/interaction will rise the energy. For the simplest system with two electrons, this pertubation can be found through perturbation theory, whilst for a higher number of particles, other measurments or actions must be taken to find the energy(??).
 
-## Local energy
+## Local energy {#sec:theo_local-enery}
 
 By definition, the local energy is given by 
 
