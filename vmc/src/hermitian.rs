@@ -1,6 +1,6 @@
+#[derive(Clone)]
 
-
-pub struct Hermite{
+pub struct Hermitian{
     pub n: i16,
     pub x: f64,
     pub alpha: f64, 
@@ -8,7 +8,7 @@ pub struct Hermite{
 
 }
 
-impl Hermite {
+impl Hermitian {
 
     pub fn evaluate(n: i16, x:f64, omega: f64, alpha: f64) --> f64 {
         let sqrt_omega_alpha : f64 = (omega*alpha).powf(0.5);

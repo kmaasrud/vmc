@@ -6,6 +6,8 @@ mod hamiltonian;
 mod montecarlo;
 mod utils;
 mod threadpool;
+mod hermitian;
+
 
 pub use particle::Particle;
 pub use system::System;
@@ -15,6 +17,7 @@ pub use hamiltonian::Hamiltonian;
 pub use montecarlo::monte_carlo;
 pub use utils::det;
 pub use threadpool::ThreadPool;
+pub use hermitian::Hermitian;
 
 
 fn main() {

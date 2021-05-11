@@ -1,4 +1,4 @@
-use crate::Particle;
+use crate::{Particle,  Hermitian};
 //use crate::{Hamiltonian, Particle};
 
 
@@ -96,8 +96,18 @@ impl WaveFunction {
     }
     /// Returns the gradient of the wavefunction with regards to alpha
     pub fn gradient_alpha(&self, particles: &Vec<Particle>) -> f64 {
-        let squared_position_sum_sum: f64 = particles.iter().map(|x| x.squared_sum_scaled_z(self.beta)).sum();
-        - squared_position_sum_sum
+        let r1: f64 = particles[0].squared_sum();
+        let r2: f64 = particles[1].squared_sum(); 
+        
+        //Hermitian polynomials 
+        let Hnx = Hermite::evaluate();  
+        let Hny = 1.0;
+        let d_alpha_Hnx = 1.0;
+        let d_alpha_Hny = 1.0;
+
+        1.0
+        /* let squared_position_sum_sum: f64 = particles.iter().map(|x| x.squared_sum_scaled_z(self.beta)).sum();
+        - squared_position_sum_sum */
     }
 
     // --- Quantum forces ---
@@ -113,13 +123,14 @@ impl WaveFunction {
         self.gradient_spf(particle).iter().map(|x| 2. * x).collect()
     }
     /// Returns the gradient of the wavefunction with regards to x
-    pub fn gradient_dx(&self, particles: &Vec<Particle>) -> f64{
+    pub fn gradient_x(&self, particles: &Vec<Particle>) -> f64{
 
         let omega = 1.0;    
 
         let r1: f64 = particles[0].squared_sum();
         let r2: f64 = particles[1].squared_sum();
         
+        //Hermitian polynomials 
         let Hnx = 1.0; 
         let Hny = 1.0;
         let d_Hnx = 1.0;
@@ -130,9 +141,10 @@ impl WaveFunction {
         gradient
     }
     /// Returns the gradient of the wavefunction with regards to y
-    pub fn gradient_dy(&self, particles:  &Vec<Particle>) -> f64{
+    pub fn gradient_y(&self, particles:  &Vec<Particle>) -> f64{
         let omega = 1.0;
 
+        //Hermitian polynomials 
         let Hnx = 1.0; 
         let Hny = 1.0;
         let d_Hnx = 1.0; //need to put right func/import here!
