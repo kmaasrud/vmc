@@ -132,7 +132,7 @@ mod tests {
 
         //Generate own energies and wf deriv
         let d_energy = system.hamiltonian.energy(&system.wavefunction, &mut system.particles, 1.0);
-        let d_wf_deriv = system.wavefunction.gradient_alpha(&system.particles, 0,0);
+        let d_wf_deriv = system.wavefunction.gradient_alpha(&system.particles, 0,0);  //Set n in hermite polynomials to 0 this sould be changed
         assert_eq!( system.hamiltonian.energy(&system.wavefunction, &mut system.particles, 1.0),
                     system.hamiltonian.energy(&system.wavefunction, &mut system.particles, 1.0));
         //Assertation
