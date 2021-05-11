@@ -7,7 +7,6 @@ pub struct WaveFunction {
     pub alpha: f64,
     pub beta: f64,
     pub a: f64,
-    pub omega: f64;
 }
 
 impl WaveFunction {
@@ -113,32 +112,42 @@ impl WaveFunction {
     pub fn quantum_force_non_interacting(&self, particle: &Particle) -> Vec<f64> {
         self.gradient_spf(particle).iter().map(|x| 2. * x).collect()
     }
+    /// Returns the gradient of the wavefunction with regards to x
+    pub fn gradient_dx(&self, particles: &Vec<Particle>) -> f64{
 
-    pub fn gradient_dx()--> f64{
-        let x = paritcle[0];
-        let y = particle[1];
+        let omega = 1.0;    
+
+        let r1: f64 = particles[0].squared_sum();
+        let r2: f64 = particles[1].squared_sum();
         
-        let Hnx = 1.; 
-        let Hny = 1.:
-        let dHnx = 1.;
-        let dHny = 1.;
+        let Hnx = 1.0; 
+        let Hny = 1.0;
+        let d_Hnx = 1.0;
+        let d_Hny = 1.0;
 
-        (-0.5 * omega * alpha * (x*x + y*y)).exp() * Hny * (dHnx - Hnx * omega * alpha * x) 
+        let gradient: f64 = (-0.5 * omega * self.alpha * (r1 + r2)).exp() * Hny * (d_Hnx - Hnx * omega * self.alpha * r1.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
+        
+        gradient
+    }
+    /// Returns the gradient of the wavefunction with regards to y
+    pub fn gradient_dy(&self, particles:  &Vec<Particle>) -> f64{
+        let omega = 1.0;
+
+        let Hnx = 1.0; 
+        let Hny = 1.0;
+        let d_Hnx = 1.0; //need to put right func/import here!
+        let d_Hny = 1.0;
+        
+        let r1: f64 = particles[0].squared_sum();
+        let r2: f64 = particles[1].squared_sum();
+
+        let gradient: f64 =  (-0.5 * omega * self.alpha * (r1 + r2)).exp() * Hnx * (d_Hny - Hny * omega * self.alpha * r2.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
+
+        gradient
     }
 
-    pub fn gradient_dy()--> f64{
-        let x = paritcle[0];
-        let y = particle[1];
-        
-        let Hnx = 1.; 
-        let Hny = 1.:
-        let dHnx = 1.;
-        let dHny = 1.;
+}
 
-        (-0.5 * omega * alpha * (x*x + y*y)).exp() * Hnx * (dHny - Hny * omega * alpha * y) 
-    }
-}
-}
 
 #[cfg(test)]
 mod tests {
