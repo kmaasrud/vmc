@@ -95,31 +95,17 @@ impl WaveFunction {
         gradient
     }
     /// Returns the gradient of the wavefunction with regards to alpha
-    pub fn gradient_alpha(&self, particles: &Vec<Particle>, nx: usize, ny: usize) -> f64 {
+    pub fn gradient_alpha(&self, particles: &Vec<Particle>) -> f64 {
         let r1: f64 = particles[0].squared_sum();
         let r2: f64 = particles[1].squared_sum(); 
-        let omega = 1.0;
         
         //Hermitian polynomials 
+        let Hnx = Hermite::evaluate();  
+        let Hny = 1.0;
+        let d_alpha_Hnx = 1.0;
+        let d_alpha_Hny = 1.0;
 
-        let hnx = Hermitian::evaluate(nx, r1.powf(0.5), omega, self.alpha);  
-        let hny = Hermitian::evaluate(ny, r2.powf(0.5), omega, self.alpha);  
-
-        let _d_hnx = Hermitian::derivative(nx, r1.powf(0.5), omega, self.alpha);  
-        let _d_hny = Hermitian::derivative(ny, r2.powf(0.5), omega, self.alpha);  
-
-        let _dd_hnx = Hermitian::double_derivative(nx, r1.powf(0.5), omega, self.alpha);  
-        let _dd_hny = Hermitian::double_derivative(ny, r2.powf(0.5), omega, self.alpha);  
-
-        let _d_alpha_hnx = Hermitian::derivative_alpha(nx, r1.powf(0.5), omega, self.alpha);
-        let _d_alpha_hny = Hermitian::derivative_alpha(ny, r1.powf(0.5), omega, self.alpha);
-        
-        let r = r1 + r2; 
-
-
-        let alpha_gradient = (-0.5 * omega  *self.alpha* r).exp() *(_d_alpha_hnx*hny + hnx*_d_alpha_hny - 0.5  *omega * r * hnx * hny);
-        alpha_gradient
-        
+        1.0
         /* let squared_position_sum_sum: f64 = particles.iter().map(|x| x.squared_sum_scaled_z(self.beta)).sum();
         - squared_position_sum_sum */
     }
@@ -137,7 +123,7 @@ impl WaveFunction {
         self.gradient_spf(particle).iter().map(|x| 2. * x).collect()
     }
     /// Returns the gradient of the wavefunction with regards to x
-    pub fn gradient_x(&self, particles: &Vec<Particle>, nx:usize, ny:usize ) -> f64{
+    pub fn gradient_x(&self, particles: &Vec<Particle>) -> f64{
 
         let omega = 1.0;    
 
@@ -145,34 +131,29 @@ impl WaveFunction {
         let r2: f64 = particles[1].squared_sum();
         
         //Hermitian polynomials 
-        let hnx = Hermitian::evaluate(nx, r1.powf(0.5), omega, self.alpha);  
-        let hny = Hermitian::evaluate(ny, r2.powf(0.5), omega, self.alpha);  
+        let Hnx = 1.0; 
+        let Hny = 1.0;
+        let d_Hnx = 1.0;
+        let d_Hny = 1.0;
 
-        let _d_hnx = Hermitian::derivative(nx, r1.powf(0.5), omega, self.alpha);  
-        let _d_hny = Hermitian::derivative(ny, r2.powf(0.5), omega, self.alpha);  
-        
-
-        let gradient: f64 = (-0.5 * omega * self.alpha * (r1 + r2)).exp() * hny * (_d_hnx - hnx * omega * self.alpha * r1.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
+        let gradient: f64 = (-0.5 * omega * self.alpha * (r1 + r2)).exp() * Hny * (d_Hnx - Hnx * omega * self.alpha * r1.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
         
         gradient
     }
     /// Returns the gradient of the wavefunction with regards to y
-    pub fn gradient_y(&self, particles:  &Vec<Particle>, nx:usize, ny:usize) -> f64{
-        
-
-        let r1: f64 = particles[0].squared_sum();
-        let r2: f64 = particles[1].squared_sum();
+    pub fn gradient_y(&self, particles:  &Vec<Particle>) -> f64{
         let omega = 1.0;
 
         //Hermitian polynomials 
-        let hnx = Hermitian::evaluate(nx, r1.powf(0.5), omega, self.alpha);  
-        let hny = Hermitian::evaluate(ny, r2.powf(0.5), omega, self.alpha);  
-
-        let _d_hnx = Hermitian::derivative(nx, r1.powf(0.5), omega, self.alpha);  
-        let _d_hny = Hermitian::derivative(ny, r2.powf(0.5), omega, self.alpha);  
+        let Hnx = 1.0; 
+        let Hny = 1.0;
+        let d_Hnx = 1.0; //need to put right func/import here!
+        let d_Hny = 1.0;
         
-       
-        let gradient: f64 =  (-0.5 * omega * self.alpha * (r1 + r2)).exp() * hnx * (_d_hny - hny * omega * self.alpha * r2.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
+        let r1: f64 = particles[0].squared_sum();
+        let r2: f64 = particles[1].squared_sum();
+
+        let gradient: f64 =  (-0.5 * omega * self.alpha * (r1 + r2)).exp() * Hnx * (d_Hny - Hny * omega * self.alpha * r2.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
 
         gradient
     }
