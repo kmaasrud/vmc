@@ -7,6 +7,7 @@ pub struct WaveFunction {
     pub alpha: f64,
     pub beta: f64,
     pub a: f64,
+    pub omega: f64;
 }
 
 impl WaveFunction {
@@ -33,7 +34,9 @@ impl WaveFunction {
 
                 let result: f64 = c * (-0.5  * self.alpha * omega * (r1 + r2) + exp_sum).exp();
                 
+                println!("{}" ,result);
                 result
+                
             },
             // This is the general evaluation, using Slater determinants
             _ => {
@@ -110,6 +113,31 @@ impl WaveFunction {
     pub fn quantum_force_non_interacting(&self, particle: &Particle) -> Vec<f64> {
         self.gradient_spf(particle).iter().map(|x| 2. * x).collect()
     }
+
+    pub fn gradient_dx()--> f64{
+        let x = paritcle[0];
+        let y = particle[1];
+        
+        let Hnx = 1.; 
+        let Hny = 1.:
+        let dHnx = 1.;
+        let dHny = 1.;
+
+        (-0.5 * omega * alpha * (x*x + y*y)).exp() * Hny * (dHnx - Hnx * omega * alpha * x) 
+    }
+
+    pub fn gradient_dy()--> f64{
+        let x = paritcle[0];
+        let y = particle[1];
+        
+        let Hnx = 1.; 
+        let Hny = 1.:
+        let dHnx = 1.;
+        let dHny = 1.;
+
+        (-0.5 * omega * alpha * (x*x + y*y)).exp() * Hnx * (dHny - Hny * omega * alpha * y) 
+    }
+}
 }
 
 #[cfg(test)]
