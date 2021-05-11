@@ -46,8 +46,37 @@ impl WaveFunction {
 
      // --- Laplacian ---
     /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
-    pub fn laplace(&self, particles: &mut Vec<Particle>) -> f64 {
-        let h: f64 = 0.0001; //stepsize
+    /// Returns laplacian for the wavefunction with hermitian polynomials
+    pub fn laplace(&self, particles: &mut Vec<Particle>,  nx: usize, ny: usize:) -> f64 {
+        let r1: f64 = particles[0].squared_sum();
+        let r2: f64 = particles[1].squared_sum(); 
+        let omega = 1.0;
+        
+        //Hermitian polynomials 
+
+        let hnx = Hermitian::evaluate(nx, r1.powf(0.5), omega, self.alpha);  
+        let hny = Hermitian::evaluate(ny, r2.powf(0.5), omega, self.alpha); 
+
+        let d_hnx = Hermitian::derivative(nx, r1.powf(0.5), omega, self.alpha);
+        let d_hny = Hermitian::derivative(ny, r1.powf(0.5), omega, self.alpha);
+
+        let dd_hnx = Hermitian::double_derivative(nx, r1.powf(0.5), omega, self.alpha);
+        let dd_hny = Hermitian::double_derivative(ny, r1.powf(0.5), omega, self.alpha);
+
+        
+        let r = r1 + r2; 
+        let omega_alpha = omega*self.alpha;
+
+        let laplace = (-0.5 * omega_alpha * r).exp() * 
+                      (-2.0 * omega_alpha * r1.powf(0.5)* hny * d_hnx
+                       -2.0 * omega_alpha * r2.powf(0.5)* hnx *d_hny
+                       + omega_alpha * hnx * hny * (omega_alpha * r  - 2.0)
+                       + hny * dd_hnx
+                       + hnx * dd_hny );
+        laplace 
+
+        
+        /* let h: f64 = 0.0001; //stepsize
         let h2 = h.powi(2);
 
         let mut laplace = 0.;
@@ -67,7 +96,7 @@ impl WaveFunction {
                 laplace += (wf_plus - 2. * wf + wf_minus) / h2; 
             }
         }
-        laplace / wf
+        laplace / wf */
     }
    
 
