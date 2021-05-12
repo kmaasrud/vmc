@@ -1,11 +1,4 @@
-#[derive(Clone)]
-
-pub struct Hermitian {
-    pub n: usize,
-    pub x: f64,
-    pub alpha: f64,
-    pub omega: f64,
-}
+pub struct Hermitian;
 
 impl Hermitian {
     pub fn evaluate(n: usize, x: f64, omega: f64, alpha: f64) -> f64 {
