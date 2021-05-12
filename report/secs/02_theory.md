@@ -1,32 +1,37 @@
 # Theory
 
-Electrons in a confined, two dimensional harmonic oscillator potnetial with the given (idealized) Hamiltionian below is in quantum mechanics called quantum dots. 
+We consider a system of electrons situated in an isotropic harmonic oscillator potential. We will use Hartree's atomic units[^hartree] in order to get the idealized Hamiltonian presented below:
 
-$$ H = \sum_{i=1}^{N}{\left( -\frac{1}{2}\nabla^2_i + \frac{1}{2}\omega^2 |\mathbf r_i|^2 \right) } + \sum_{i<j}\frac{1}{r_{ij}} $$ 
-{#eq:hamiltonian}
+$$ H = \sum_{i=1}^{N}{\left( -\frac{1}{2}\nabla^2_i + \frac{1}{2}\omega^2 |\mathbf r_i|^2 \right) } + \sum_{i<j}\frac{1}{r_{ij}}. $$ {#eq:hamiltonian}
 
-where $r_{ij} = |r_i - r_j|$ is the distance between two electrons. We use the natural units $\hbar = c = e = m_e = 1$ and all energies are in atomic units (a.u).
+Here $r_{ij} = |r_i - r_j|$ is the distance between two electrons. The first sum is the single particle harmonic oscillator potential. Because electrons repel each other, we also get the latter repulsive sum as part of the Hamiltonian - the so-called perturbation of the system.
 
-The first term of the hamiltonian is a simple harmonic oscillator potential. Because electrons repel each other, we also get a repulsive term as part of the Hamiltonian - the so-called perturbation of the system. 
+[^hartree]: $\hbar = c = e = m_e = 1$, see @Hartree1928.
 
 ## Wavefunction
 
-The two-dimensional solution for a single particle in a harmonic oscillator potential (consider equation ([@eq:hamiltonian]) for a single particle) is the following wave function:
+Disregarding interactions, there is a closed-form solution for the Hamiltonian shown in equation ([@eq:hamiltonian]). The solutions follows [@Project2]:
 
 $$\phi_{n_x, n_y} (x,y) = A H_{n_x} (\sqrt{\omega} x) H_{n_y}(\sqrt{\omega}y) \exp{\left[-\frac{\omega}{2}(x^2 + y^2)\right]}.$$
 
-where $H_{i}$ are Hermite polynomials (see [@sec:hermite]), and $A$ is the normalization constant. For the lowest lying state, we have $n_x = n_y = 0$ and hence the energy $\epsilon_{n_x, n_y} = \omega(n_x + n_y + 1) = \omega$. For the closed shell configurations, N = 2, 6, 12 and 20 the exact ground state energy is given in Table 1.
+Here, $H_i$ are Hermite polynomials (see [@sec:hermite]), and $A$ is the normalization constant. For the lowest lying state, we have $n_x = n_y = 0$ and hence the energy:
 
-| N  	| E (a.u)       |
-|----	|-----------	|
-| $2$  	| $2 \omega$  	|
-| $6$	| $10 \omega$ 	|
-| $12$ 	| $28 \omega$ 	|
-| $20$ 	| $60 \omega$ 	| 
-Table 1: Given exact ground state energy (a.u) (without perturbation) for closed-shell number of electrons. $\omega$ is the oscillator frequency. 
+$$ \epsilon_{n_x, n_y} = \omega(n_x + n_y + 1) = \omega. $$ {#eq:non-interacting-energy}
 
+Using the simple fact that each state $(n_x, n_y)$ can be occupied by at most two electrons, the ground state energies of the closed shell configurations of $N = 2, 6, 12$ and $20$ can easily be calculated using equation ([@eq:non-interacting-energy]). The energies are given in table [@tbl:energies].
 
-The total wave function for a non-interacting two-electron system is therefore given as:
+<!-- Don't worry about the erroneous table numbering. This is a fault of a Doctor filter I made, but a quick-fix is on the to do list <3. -->
+
+| **Number of particles $N$** | **$\epsilon$ (a.u)** |
+| ----:                       | ---                  |
+| $2$                         | $2 \omega$           |
+| $6$                         | $10 \omega$          |
+| $12$                        | $28 \omega$          |
+| $20$                        | $60 \omega$          | 
+
+Table: The ground state energy of $N$ non-interacting particles in an isotropic harmonic potential well. $\omega$ is the oscillator frequency. Energies are given in Hartree's atomic units. {#tbl:energies}
+
+The total wave function for a non-interacting two-electron system is given as:
 
 $$ \Phi (\mathbf r_1, \mathbf r_2 ) = C \exp \left[- \frac{\omega}{2}\left(|\mathbf r_1|^2 + |\mathbf r_2|^2\right)\right], $$
 
@@ -51,14 +56,13 @@ Hence, the local energy is shown to be ( see appendix)
 $$ \begin{aligned}
 E_L &= 2 \alpha \omega + \frac{1}{2} + \omega^2 (1 - \alpha^2) (r_1^2 + r_2^2) \\
 &- \frac{a}{(1 + \beta r_{12})^2} \left( -\alpha \omega r_{12} + \frac{a}{(1 + \beta r_{12})^2} + \frac{1 - \beta r_{12}}{r_{12}(1 + \beta r_{12})}\right) + \frac{1}{r_{12}}.
-\end{aligned} $$ 
-{#eq:analytic-local-energy} <!-- Is this correct?. -->
+\end{aligned} $$ {#eq:analytic-local-energy} <!-- Is this correct?. -->
 
 Equation ([@eq:analytic-local-energy]) is our analytic expression for the local energy of the two electron system. 
 
 The numerical local (kinetic) energy is calculated using the derivitive of the velocity utilizing the two point approximation of the first derivative
 
-$$ \frac{d g(x)}{dx} \approx \frac{g(x + \Delta x) - g ( x - \Delta x)}{2 \Delta x}  $$
+$$ \frac{d g(x)}{dx} \approx \frac{g(x + \Delta x) - g ( x - \Delta x)}{2 \Delta x} $$
 
 Second derivative by three point approximation
 
