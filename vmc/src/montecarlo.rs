@@ -1,15 +1,17 @@
+use crate::{Metropolis, System};
 use std::collections::HashMap;
-use crate::{System, Metropolis};
 
 /// Collection of values that are integrated over
 #[derive(Clone, Debug)]
 pub struct SampledValues {
-    pub map: HashMap<String, f64>
+    pub map: HashMap<String, f64>,
 }
 
 impl SampledValues {
     pub fn new() -> Self {
-        SampledValues { map: HashMap::new()}
+        SampledValues {
+            map: HashMap::new(),
+        }
     }
 
     pub fn add_to_sum(&mut self, dvals: &SampledValues) {
@@ -35,7 +37,7 @@ pub fn monte_carlo<T: Metropolis>(n: usize, sys: &mut System, metro: &mut T) -> 
     for _ in 0..pre_steps {
         match metro.step(sys) {
             Some(vals) => result = vals,
-            None => {},
+            None => {}
         }
     }
 
@@ -46,10 +48,10 @@ pub fn monte_carlo<T: Metropolis>(n: usize, sys: &mut System, metro: &mut T) -> 
             Some(dvals) => {
                 result.add_to_sum(&dvals);
                 prev_dvals = dvals;
-            },
+            }
             None => {
                 result.add_to_sum(&prev_dvals);
-            },
+            }
         }
     }
 

@@ -1,6 +1,6 @@
+use crate::Hamiltonian;
 use crate::Particle;
 use crate::WaveFunction;
-use crate::Hamiltonian;
 
 use rand::distributions::{Distribution, Uniform};
 use rand::{prelude::random, thread_rng};
@@ -15,7 +15,13 @@ pub struct System {
 }
 
 impl System {
-    pub fn new(n_particles: usize, dim: usize, wf: WaveFunction, ham: Hamiltonian, interact: bool) -> Self {
+    pub fn new(
+        n_particles: usize,
+        dim: usize,
+        wf: WaveFunction,
+        ham: Hamiltonian,
+        interact: bool,
+    ) -> Self {
         System {
             particles: vec![Particle::new(dim); n_particles],
             dimensionality: dim,
@@ -26,7 +32,14 @@ impl System {
     }
 
     /// Creates a new system with particles distributed randomly
-    pub fn distributed(n_particles: usize, dim: usize, wf: WaveFunction, ham: Hamiltonian, interact: bool, spread: f64) -> Self {
+    pub fn distributed(
+        n_particles: usize,
+        dim: usize,
+        wf: WaveFunction,
+        ham: Hamiltonian,
+        interact: bool,
+        spread: f64,
+    ) -> Self {
         let mut rng = thread_rng();
         let uniform = Uniform::new(0., 1.);
         let mut sys: System = System::new(n_particles, dim, wf, ham, interact);
@@ -35,14 +48,18 @@ impl System {
         for i in 0..sys.particles.len() {
             // Make a new randomly placed particle
             let mut new_particle: Particle = Particle::new(sys.dimensionality);
-            new_particle.position = (0..dim).map(|_| spread * (uniform.sample(&mut rng) - 0.5)).collect();
+            new_particle.position = (0..dim)
+                .map(|_| spread * (uniform.sample(&mut rng) - 0.5))
+                .collect();
 
             // Ensure it is not overlapping with other particles (this is an extra check in
             // addition to the pre monte carlo steps, not sure if we really need it)
             for other in sys.particles[..i].iter() {
                 r = other.distance_to(&new_particle);
                 while r < 0.0043 {
-                    new_particle.position = (0..dim).map(|_| spread * (uniform.sample(&mut rng) - 0.5)).collect();
+                    new_particle.position = (0..dim)
+                        .map(|_| spread * (uniform.sample(&mut rng) - 0.5))
+                        .collect();
                     r = other.distance_to(&new_particle);
                 }
             }
@@ -72,8 +89,12 @@ impl System {
         // Picks one random particle to do the change for
         let i = random::<usize>() % self.particles.len();
 
-        self.particles[i].qforce = if self.interacting { self.wavefunction.quantum_force(i, &self.particles) }
-                                                  else { self.wavefunction.quantum_force_non_interacting(&self.particles[i]) };
+        self.particles[i].qforce = if self.interacting {
+            self.wavefunction.quantum_force(i, &self.particles)
+        } else {
+            self.wavefunction
+                .quantum_force_non_interacting(&self.particles[i])
+        };
 
         // Clones the last particle state of the system
         let mut new_particles = self.particles.clone();
@@ -84,8 +105,12 @@ impl System {
         }
 
         // Calculate quantum force of new state
-        new_particles[i].qforce = if self.interacting { self.wavefunction.quantum_force(i, &new_particles) }
-                                                 else { self.wavefunction.quantum_force_non_interacting(&new_particles[i]) };
+        new_particles[i].qforce = if self.interacting {
+            self.wavefunction.quantum_force(i, &new_particles)
+        } else {
+            self.wavefunction
+                .quantum_force_non_interacting(&new_particles[i])
+        };
 
         (new_particles, i)
     }
