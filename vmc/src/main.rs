@@ -1,5 +1,5 @@
 mod hamiltonian;
-mod hermitian;
+mod hermite;
 mod metropolis;
 mod montecarlo;
 mod particle;
@@ -9,7 +9,7 @@ mod utils;
 mod wavefunction;
 
 pub use hamiltonian::Hamiltonian;
-pub use hermitian::Hermite;
+pub use hermite::Hermite;
 pub use metropolis::{BruteForceMetropolis, ImportanceMetropolis, Metropolis};
 pub use montecarlo::monte_carlo;
 pub use particle::Particle;
