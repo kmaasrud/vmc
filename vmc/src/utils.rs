@@ -1,5 +1,4 @@
 pub fn det(mat: &Vec<Vec<f64>>) -> Option<f64> {
-    println!("{:?}", mat);
     // Check for non-square matrix
     if mat.len() != mat[0].len() {
         return None;
@@ -30,9 +29,4 @@ fn sub(mat: &Vec<Vec<f64>>, col: usize) -> Vec<Vec<f64>> {
     }
 
     sub
-}
-
-fn main() {
-    let mat = vec![vec![3., 2., 8.], vec![10., 1., 7.], vec![1., 2., 5.]];
-    println!("{}", det(&mat).unwrap());
 }
