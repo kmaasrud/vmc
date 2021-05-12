@@ -64,4 +64,4 @@ Second derivative by three point approximation
 
 $$ \frac{d g(x)}{dx} \approx \frac{g(x + \Delta x) - 2 g(x)  + g ( x - \Delta x) }{ \Delta x^2}  $$
 
-$\Delta x$ is the stepsize which we let run towards zero. The error is proportional to $(\Delta
+$\Delta x$ is the stepsize which we let run towards zero. The error is proportional to $(\Delta x ^2 )$.
