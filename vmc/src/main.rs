@@ -9,7 +9,7 @@ mod utils;
 mod wavefunction;
 
 pub use hamiltonian::Hamiltonian;
-pub use hermitian::Hermitian;
+pub use hermitian::Hermite;
 pub use metropolis::{BruteForceMetropolis, ImportanceMetropolis, Metropolis};
 pub use montecarlo::monte_carlo;
 pub use particle::Particle;
