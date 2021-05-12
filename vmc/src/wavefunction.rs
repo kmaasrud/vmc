@@ -1,5 +1,4 @@
-use crate::{Hermitian, Particle};
-//use crate::{Hamiltonian, Particle};
+use crate::{Hermite, Particle};
 
 #[derive(Clone)]
 pub struct WaveFunction {
@@ -72,16 +71,18 @@ impl WaveFunction {
         let r2: f64 = particles[1].squared_sum();
         let omega = 1.0;
 
-        //Hermitian polynomials
+        // Hermitian polynomials
+        // TODO: The unwraps below should not be left untouched. We should not panic at an error,
+        // but rather propagate them up the stack. Will fix ASAP.
+        let omega_alpha_sqrt = (omega * self.alpha).sqrt();
+        let hnx = Hermite::evaluate(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
+        let hny = Hermite::evaluate(omega_alpha_sqrt * r2.powf(0.5), ny).unwrap();
 
-        let hnx = Hermitian::evaluate(nx, r1.powf(0.5), omega, self.alpha);
-        let hny = Hermitian::evaluate(ny, r2.powf(0.5), omega, self.alpha);
+        let d_hnx = Hermite::derivative(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
+        let d_hny = Hermite::derivative(omega_alpha_sqrt * r1.powf(0.5), ny).unwrap();
 
-        let d_hnx = Hermitian::derivative(nx, r1.powf(0.5), omega, self.alpha);
-        let d_hny = Hermitian::derivative(ny, r1.powf(0.5), omega, self.alpha);
-
-        let dd_hnx = Hermitian::double_derivative(nx, r1.powf(0.5), omega, self.alpha);
-        let dd_hny = Hermitian::double_derivative(ny, r1.powf(0.5), omega, self.alpha);
+        let dd_hnx = Hermite::double_derivative(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
+        let dd_hny = Hermite::double_derivative(omega_alpha_sqrt * r1.powf(0.5), ny).unwrap();
 
         let r = r1 + r2;
         let omega_alpha = omega * self.alpha;
@@ -105,6 +106,7 @@ impl WaveFunction {
         }
         gradient.iter().map(|x| -2. * self.alpha * x).collect()
     }
+
     /// Returns the gradient for a particle with regards to the interaction-part of the
     /// wavefunction
     fn gradient_interaction(&self, i: usize, particles: &Vec<Particle>) -> Vec<f64> {
@@ -123,19 +125,21 @@ impl WaveFunction {
         }
         gradient
     }
+
     /// Returns the gradient of the wavefunction with regards to alpha
     pub fn gradient_alpha(&self, particles: &Vec<Particle>, nx: usize, ny: usize) -> f64 {
         let r1: f64 = particles[0].squared_sum();
         let r2: f64 = particles[1].squared_sum();
         let omega = 1.0;
 
-        //Hermitian polynomials
+        // Hermitian polynomials
+        // TODO: Find alternative solution to avoid repeated code.
+        let omega_alpha_sqrt = (omega * self.alpha).sqrt();
+        let hnx = Hermite::evaluate(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
+        let hny = Hermite::evaluate(omega_alpha_sqrt * r2.powf(0.5), ny).unwrap();
 
-        let hnx = Hermitian::evaluate(nx, r1.powf(0.5), omega, self.alpha);
-        let hny = Hermitian::evaluate(ny, r2.powf(0.5), omega, self.alpha);
-
-        let _d_alpha_hnx = Hermitian::derivative_alpha(nx, r1.powf(0.5), omega, self.alpha);
-        let _d_alpha_hny = Hermitian::derivative_alpha(ny, r1.powf(0.5), omega, self.alpha);
+        let _d_alpha_hnx = Hermite::derivative_alpha(nx, r1.powf(0.5), omega, self.alpha);
+        let _d_alpha_hny = Hermite::derivative_alpha(ny, r1.powf(0.5), omega, self.alpha);
 
         let r = r1 + r2;
 
@@ -157,10 +161,12 @@ impl WaveFunction {
             .collect();
         quantum_force
     }
+
     /// Calculates the quantum force of a particle not interacting with its surrounding particles
     pub fn quantum_force_non_interacting(&self, particle: &Particle) -> Vec<f64> {
         self.gradient_spf(particle).iter().map(|x| 2. * x).collect()
     }
+
     /// Returns the gradient of the wavefunction with regards to x
     pub fn gradient_x(&self, particles: &Vec<Particle>, nx: usize, ny: usize) -> f64 {
         let omega = 1.0;
@@ -169,18 +175,20 @@ impl WaveFunction {
         let r2: f64 = particles[1].squared_sum();
 
         //Hermitian polynomials
-        let hnx = Hermitian::evaluate(nx, r1.powf(0.5), omega, self.alpha);
-        let hny = Hermitian::evaluate(ny, r2.powf(0.5), omega, self.alpha);
+        // TODO: Find alternative solution to avoid repeated code.
+        let omega_alpha_sqrt = (omega * self.alpha).sqrt();
+        let hnx = Hermite::evaluate(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
+        let hny = Hermite::evaluate(omega_alpha_sqrt * r2.powf(0.5), ny).unwrap();
 
-        let _d_hnx = Hermitian::derivative(nx, r1.powf(0.5), omega, self.alpha);
-        let _d_hny = Hermitian::derivative(ny, r2.powf(0.5), omega, self.alpha);
+        let d_hnx = Hermite::derivative(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
 
         let gradient: f64 = (-0.5 * omega * self.alpha * (r1 + r2)).exp()
             * hny
-            * (_d_hnx - hnx * omega * self.alpha * r1.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
+            * (d_hnx - hnx * omega * self.alpha * r1.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
 
         gradient
     }
+
     /// Returns the gradient of the wavefunction with regards to y
     pub fn gradient_y(&self, particles: &Vec<Particle>, nx: usize, ny: usize) -> f64 {
         let r1: f64 = particles[0].squared_sum();
@@ -188,15 +196,16 @@ impl WaveFunction {
         let omega = 1.0;
 
         //Hermitian polynomials
-        let hnx = Hermitian::evaluate(nx, r1.powf(0.5), omega, self.alpha);
-        let hny = Hermitian::evaluate(ny, r2.powf(0.5), omega, self.alpha);
+        // TODO: Find alternative solution to avoid repeated code.
+        let omega_alpha_sqrt = (omega * self.alpha).sqrt();
+        let hnx = Hermite::evaluate(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
+        let hny = Hermite::evaluate(omega_alpha_sqrt * r2.powf(0.5), ny).unwrap();
 
-        let _d_hnx = Hermitian::derivative(nx, r1.powf(0.5), omega, self.alpha);
-        let _d_hny = Hermitian::derivative(ny, r2.powf(0.5), omega, self.alpha);
+        let d_hny = Hermite::derivative(omega_alpha_sqrt * r1.powf(0.5), ny).unwrap();
 
         let gradient: f64 = (-0.5 * omega * self.alpha * (r1 + r2)).exp()
             * hnx
-            * (_d_hny - hny * omega * self.alpha * r2.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
+            * (d_hny - hny * omega * self.alpha * r2.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
 
         gradient
     }
@@ -205,45 +214,39 @@ impl WaveFunction {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::{Hamiltonian, System};
 
     #[test]
     fn test_laplace() {
-        use crate::{Hamiltonian, System, WaveFunction};
         // System parameters
         let alpha: f64 = 0.5;
         let beta: f64 = 1.;
         let a: f64 = 1.;
-        let omega: f64 = 1.; //Defined separately in evaluate() function
-        let c: f64 = 1.; //Defined separately in evaluate() function
+
+        // The below is defined separately in evaluate() function
+        /* let omega: f64 = 1.;         let c: f64 = 1.; //Defined separately in evaluate() function
         let h: f64 = 0.0001; //Defined separately in laplace() function
-        let h2: f64 = h.powi(2); //Defined separately in laplace() function
+        let h2: f64 = h.powi(2); //Defined separately in laplace() function */
 
         // Spawn a system with defined wavefunction and energy
         let ham: Hamiltonian = Hamiltonian;
         let wf = WaveFunction {
-            alpha: alpha,
-            beta: beta,
-            a: a,
+            alpha, beta, a,
         }; // Set beta = gamma
         let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
         system.particles[0].position = vec![0., 0.]; //Just placing the particles at specific positions
         system.particles[1].position = vec![1., 1.];
-        //println!("{:?}", system.particles);
 
         // Define the analytical answer to this problem
         let analytical = 1.; //FILL
 
-        //println!("{}", analytical);
-
-        // Assertation
+        // Assertion
         let tol: f64 = 1E-13;
-        //assert_eq!(wf.laplace(&system.particles), analytical); // Here, not even truncation errors are allowed.. too strict imo
         assert!((wf.laplace(&mut system.particles) - analytical).abs() < tol);
     }
 
     #[test]
     fn test_evaluate_deterministicity() {
-        use crate::{Hamiltonian, System, WaveFunction};
         // Spawn a system with defined wavefunction and energy
         let ham: Hamiltonian = Hamiltonian;
         let wf = WaveFunction {
@@ -262,7 +265,6 @@ mod tests {
 
     #[test]
     fn test_evaluate_against_analytical() {
-        use crate::{Hamiltonian, System, WaveFunction};
         // System parameters
         let alpha: f64 = 0.5;
         let beta: f64 = 1.;
@@ -273,26 +275,21 @@ mod tests {
         // Spawn a system with defined wavefunction and energy
         let ham: Hamiltonian = Hamiltonian;
         let wf = WaveFunction {
-            alpha: alpha,
-            beta: beta,
-            a: a,
+            alpha, beta, a,
         }; // Set beta = gamma
         let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
         system.particles[0].position = vec![0., 0.]; //Just placing the particles at specific positions
         system.particles[1].position = vec![1., 1.];
-        //println!("{:?}", system.particles);
 
         // Define the analytical answer to this problem
-
         let analytical = c
             * (-alpha * omega * (0. + 1. * 1. + 1. * 1.) / 2.).exp()
             * (a * ((1. * 1. + 1. * 1.) as f64).sqrt()
                 / (1. + beta * ((1. * 1. + 1. * 1.) as f64).sqrt()))
             .exp();
-        //println!("{}", analytical);
-        // Assertation
+
+        // Assertion
         let tol: f64 = 1E-13;
-        //assert_eq!(wf.evaluate(&system.particles), analytical); // Here, not even truncation errors are allowed.. too strict imo
         assert!((wf.evaluate(&system.particles) - analytical).abs() < tol);
     }
 }

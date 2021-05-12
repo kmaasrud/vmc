@@ -55,6 +55,7 @@ impl Hermite {
                 (Self::evaluate(x + h, n)? - 2. * Self::evaluate(x, n)? + Self::evaluate(x - h, n)?) / h.powi(2)
             },
         };
+
         Ok(result)
     }
 
