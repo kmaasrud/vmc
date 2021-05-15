@@ -246,7 +246,7 @@ mod tests {
     }
 
     #[test]
-    fn test_evaluate_deterministicity() {
+    fn test_determinism() {
         // Spawn a system with defined wavefunction and energy
         let ham: Hamiltonian = Hamiltonian;
         let wf = WaveFunction {

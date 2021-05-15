@@ -105,17 +105,18 @@ impl Metropolis for ImportanceMetropolis {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::{Hamiltonian, System, WaveFunction};
 
     #[test]
     fn test_hastings_check() {
-        assert!(BruteForceMetropolis::hastings_check(1. as f64)); //Panics if it returns false
+        assert!(BruteForceMetropolis::hastings_check(1.)); //Panics if it returns false
         assert!(BruteForceMetropolis::hastings_check(2.));
         assert!(!BruteForceMetropolis::hastings_check(0.)) //Panics if it returns true
     }
 
     #[test]
     fn test_sample() {
-        use crate::{Hamiltonian, System, WaveFunction};
+        let tol = 0.000000000000001;
         // Spawn a system with defined wavefunction and energy
         let ham: Hamiltonian = Hamiltonian;
         let wf = WaveFunction {
@@ -133,18 +134,16 @@ mod tests {
             .hamiltonian
             .energy(&system.wavefunction, &mut system.particles, 1.0);
         let d_wf_deriv = system.wavefunction.gradient_alpha(&system.particles, 0, 0); //Set n in hermite polynomials to 0 this sould be changed
-        assert_eq!(
-            system
-                .hamiltonian
-                .energy(&system.wavefunction, &mut system.particles, 1.0),
-            system
-                .hamiltonian
+        assert!((
+            system.hamiltonian
                 .energy(&system.wavefunction, &mut system.particles, 1.0)
-        );
-        //Assertation
+            - system.hamiltonian
+                .energy(&system.wavefunction, &mut system.particles, 1.0)
+        ).abs() < tol);
+        // Assertion
         //assert_eq!(smpldvls.map["energy"], d_energy);
         //assert_eq!(smpldvls.map["energy_sqrd"], d_energy.powi(2));
-        assert_eq!(smpldvls.map["wf_deriv"], d_wf_deriv);
+        assert!((smpldvls.map["wf_deriv"] - d_wf_deriv).abs() < tol);
         //assert_eq!(smpldvls.map["wf_deriv_times_energy"], d_wf_deriv * d_energy);
     }
 }
