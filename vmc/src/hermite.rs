@@ -1,11 +1,16 @@
 pub struct Hermite;
 
+const C: [f64; 36] = [
+    1., 0., 2., -2., 0., 4., 0., -12., 0., 8., 12., 0., -48., 0., 16., 0., 120., 0., -160., 0., 32.,
+    -120., 0., 720., 0., -480., 0., 64., 0., -1680., 0., 3360., 0., -1344., 0., 128.,
+];
+
 impl Hermite {
     /// Evaluates the Hermite polynomial of order n.
-    /// Supports only orders 0-5, the first four are hard-coded for efficiency.
+    /// Supports only orders 0-7, the first four are hard-coded for efficiency.
     pub fn evaluate(x: f64, n: usize) -> Result<f64, String> {
-        if n > 5 {
-            return Err("This function does not support orders higher than 5.".to_owned());
+        if n > 7 {
+            return Err("This function does not support orders higher than 7.".to_owned());
         }
 
         let result = match n {
@@ -15,8 +20,7 @@ impl Hermite {
             3 => 8. * x.powi(3) - 12. * x,
             _ => {
                 let m = (1..=n).sum::<usize>();
-                let c = [1., 0., 2., -2., 0., 4., 0., -12., 0., 8., 12., 0., -48., 0., 16., 0., 120., 0., -160., 0., 32.];
-                (0..=n).map(|i| c[i + m] * x.powi(i as i32)).sum()
+                (0..=n).map(|i| C[i + m] * x.powi(i as i32)).sum()
             },
         };
 
@@ -24,7 +28,7 @@ impl Hermite {
     }
 
     /// Evaluates the derivative of the Hermite polynomial of order n.
-    /// Supports only orders 0-5, the first four are hard-coded for efficiency.
+    /// Supports only orders 0-7, the first four are hard-coded for efficiency.
     pub fn derivative(x: f64, n: usize) -> Result<f64, String> {
         let result = match n {
             0 => 0.,
@@ -42,7 +46,7 @@ impl Hermite {
     }
 
     /// Evaluates the second derivative of the Hermite polynomial of order n.
-    /// Supports only orders 0-5, the first four are hard-coded for efficiency.
+    /// Supports only orders 0-7, the first four are hard-coded for efficiency.
     pub fn double_derivative(x: f64, n: usize) -> Result<f64, String> {
         let result = match n {
             0 => 0.,
@@ -91,7 +95,7 @@ mod tests {
 
     #[test]
     fn test_returns_error() {
-        match Hermite::evaluate(1., 6) {
+        match Hermite::evaluate(1., 8) {
             Ok(_) => panic!("Hermite::evalute did not error correctly when the order was too high."),
             Err(_) => {},
         }
