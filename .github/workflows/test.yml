@@ -11,4 +11,4 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - run: cd vmc; cargo test --manifest-path vmc/Cargo.toml
+      - run: cargo test --manifest-path vmc/Cargo.toml
