@@ -1,7 +1,7 @@
 \clearpage
 \appendix
 
-# Appendix
+# Definitions and notation
 
 ## Hermite polynomials {#sec:hermite}
 
@@ -17,13 +17,19 @@ where the coefficients $c_n$ are given by the triangle sequence shown in ([@eq:j
 
 $$c_i = 1, 0, 2, -2, 0, 4, 0, -12, 0, 8, 12, 0, -48, ...$$ {#eq:jovovic}
 
-This is just a a selection of the sequence, the rest is fetched from the work by @Jovovic2001.
+This is just a a selection of the sequence, more can be found from the work by @Jovovic2001.
 
 ## Index notation for sums and products {#sec:index-notation}
 
 For products and sums, the following convention is used:
 
 $$\sum_{i <j}^N = \sum_{i=1}^N \sum_{j=i+1}^N,\quad \text{or}\quad \prod_{i <j}^N = \prod_{i=1}^N \prod_{j=i+1}^N$$
+
+# Derivations
+
+## Local energy of two-fermion system {#sec:local-energy-derivation}
+
+*Do the stuff*, as Amund would say <3
 
 ## Analytical Laplace of the Trial wavefunction
 
@@ -46,3 +52,4 @@ Calculate all the shit
 $$
 
 boop
+
