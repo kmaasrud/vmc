@@ -1,4 +1,4 @@
-use crate::{Hermite, Particle};
+use crate::{Hermite, Particle, Vector};
 
 #[derive(Clone)]
 pub struct WaveFunction {
@@ -99,30 +99,41 @@ impl WaveFunction {
     // --- Gradients ---
     /// Returns the gradient for a particle with regards to the non-interacting part of the
     /// wavefunction
-    fn gradient_spf(&self, particle: &Particle) -> Vec<f64> {
+    fn gradient_spf(&self, particle: &Particle) -> Vector {
         let mut gradient = particle.position.clone();
-        if gradient.len() > 2 {
-            gradient[2] *= self.beta;
-        }
-        gradient.iter().map(|x| -2. * self.alpha * x).collect()
+        match gradient {
+            Vector::D1(_) | Vector::D2(_,_) => gradient.scale(-2. * self.alpha),
+            Vector::D3(x, y, z) => gradient = Vector::D3(-2. * self.alpha * x,
+                                                         -2. * self.alpha * y,
+                                                         -2. * self.alpha * self.beta * z),
+        };
+        gradient
     }
 
     /// Returns the gradient for a particle with regards to the interaction-part of the
     /// wavefunction
-    fn gradient_interaction(&self, i: usize, particles: &Vec<Particle>) -> Vec<f64> {
-        let mut gradient = vec![0.; particles[i].dim];
+    fn gradient_interaction(&self, i: usize, particles: &Vec<Particle>) -> Vector {
+        // Can safely unwrap this. particles[0] has a valid dimensionality, so this will always work
+        let mut gradient = Particle::new(particles[0].dim).unwrap().position;
         let a: f64 = 0.0043;
 
         for j in 0..particles.len() {
             if i == j {
                 continue;
             }
-            let distance: f64 = particles[i].distance_to(&particles[j]);
-            for dim in 0..particles[i].dim {
-                gradient[dim] += a * (particles[i].position[dim] - particles[j].position[dim])
-                    / (distance.powi(2) * (distance - a));
-            }
+
+            // Can safely unwrap distance_to. The dimensions are guaranteed to be equal
+            let distance: f64 = particles[i].distance_to(&particles[j]).unwrap();
+            let factor = a / (distance.powi(2) * (distance - a));
+
+            // I'm sorry for this, it's hideous...
+            gradient.add(match (particles[i].position, particles[j].position) {
+                (Vector::D1(x1), Vector::D1(x2))                 => Vector::D1(factor * (x1 - x2)),
+                (Vector::D2(x1, y1), Vector::D2(x2, y2))         => Vector::D2(factor * (x1 - x2), factor * (y1 - y2)),
+                (Vector::D3(x1, y1, z1), Vector::D3(x2, y2, z2)) => Vector::D3(factor * (x1 - x2), factor * (y1 - y2), factor * (z1 - z2))
+            });
         }
+
         gradient
     }
 

@@ -1,8 +1,29 @@
 #[derive(Debug, Clone)]
-enum Vector {
+pub enum Vector {
     D1(f64),
     D2(f64, f64),
     D3(f64, f64, f64)
+}
+
+impl Vector {
+    /// Adds a vector to the Particle's positions.
+    /// If the dimensions do not match, the function will not do anything
+    pub fn add(&mut self, other: Vector) {
+        *self = match (*self, other) {
+            (D1(x1), D1(x2)) => D1(x1 + x2),
+            (D2(x1, y1), D2(x2, y2)) => D2(x1 + x2, y1 + y2),
+            (D3(x1, y1, z1), D3(x2, y2, z2)) => D3(x1 + x2, y1 + y2, z1 + z2),
+            _ => *self
+        };
+    }
+
+    pub fn scale(&mut self, factor: f64) {
+        *self = match *self {
+            D1(x) => D1(factor * x),
+            D2(x, y) => D2(factor * x, factor * y),
+            D3(x, y, z) => D3(factor * x, factor * y, factor * z),
+        }
+    }
 }
 
 use Vector::*;
@@ -55,7 +76,7 @@ impl Particle {
         }
     }
 
-    /// Returns the distance of this particle to other
+    /// Returns the distance from this particle to other
     pub fn distance_to(&self, other: &Particle) -> Result<f64, String> {
         match (self.position, other.position) {
             (D1(x1), D1(x2)) => Ok((x1 - x2).powi(2).sqrt()),
@@ -65,10 +86,29 @@ impl Particle {
         }
     }
 
-    /// Adds bump_size to the specified position coordinate
+    // Ugh... This is pretty darn ugly, but I can't think of a better way to do it with enums...
+    // At least this should be loads faster than our previous approach, and it is error-safe.
+    /// Adds 'bump_size' to the component specified by 'dim'
     pub fn bump_at_dim(&mut self, dim: usize, bump_size: f64) {
-        self.position[dim] += bump_size;
+        self.position = match dim {
+            0 => match self.position {
+                D1(x) => D1(x + bump_size),
+                D2(x, y) => D2(x + bump_size, y),
+                D3(x, y, z) => D3(x + bump_size, y, z),
+            }
+            1 => match self.position {
+                D1(_) => self.position,
+                D2(x, y) => D2(x, y + bump_size),
+                D3(x, y, z) => D3(x, y + bump_size, z),
+            }
+            2 => match self.position {
+                D1(_) | D2(_, _) => self.position,
+                D3(x, y, z) => D3(x, y, z + bump_size),
+            }
+            _ => self.position
+        };
     }
+
 }
 
 #[cfg(test)]
@@ -95,9 +135,9 @@ mod tests {
 
     #[test]
     fn test_bump_at_dim() {
-        let want = Particle::from_vector(D3(1., 1., 1.6));
+        let want = D3(1., 1., 1.6);
         let mut got = Particle::from_vector(D3(1., 1., 1.));
         got.bump_at_dim(2, 0.6);
-        assert_eq!(want.position, got.position);
+        assert!(matches!(got.position, want));
     }
 }
