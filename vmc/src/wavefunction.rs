@@ -11,7 +11,7 @@ impl WaveFunction {
     //-- Trial wavefunction --
     /// Trial wavefunction for the ground state of the two electron/fermion system.
     /// Returns an f64 representing the wavefunction value
-    pub fn evaluate(&self, particles: &Vec<Particle>) -> f64 {
+    pub fn evaluate(&self, particles: &Vec<Particle>) -> Result<f64, String> {
         let omega: f64 = 1.0;
         let c: f64 = 1.0; //normalization constant - dont know value
 
@@ -21,7 +21,7 @@ impl WaveFunction {
                 let mut exp_sum = 0.;
                 for (i, particle) in particles.iter().enumerate() {
                     for other in particles[i + 1..].iter() {
-                        let fermion_distance: f64 = particle.distance_to(other);
+                        let fermion_distance: f64 = particle.distance_to(other)?;
                         exp_sum += self.a * fermion_distance / (1. + self.beta * fermion_distance);
                     }
                 }
@@ -32,38 +32,38 @@ impl WaveFunction {
                 let result: f64 = c * (-0.5 * self.alpha * omega * (r1 + r2) + exp_sum).exp();
 
                 println!("{}", result);
-                result
+                Ok(result)
             }
             // This is the general evaluation, using Slater determinants
-            _ => 1.,
+            _ => Ok(1.),
         }
     }
 
     // --- Laplacian ---
     /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
     /// Returns laplacian for the wavefunction with hermitian polynomials
-    pub fn laplace(&self, particles: &mut Vec<Particle>) -> f64 {
+    pub fn laplace(&self, particles: &mut Vec<Particle>) -> Result<f64, String> {
         let h: f64 = 0.0001; //stepsize
         let h2 = h.powi(2);
 
         let mut laplace = 0.;
 
-        let wf = self.evaluate(&particles);
+        let wf = self.evaluate(&particles)?;
 
         for i in 0..particles.len() {
             for dim in 0..particles[i].dim {
                 particles[i].bump_at_dim(dim, h); // Initial position +h
-                let wf_plus = self.evaluate(particles);
+                let wf_plus = self.evaluate(particles)?;
 
                 particles[i].bump_at_dim(dim, -2. * h); // Initial position -h
-                let wf_minus = self.evaluate(particles);
+                let wf_minus = self.evaluate(particles)?;
 
                 particles[i].bump_at_dim(dim, h); // Reset back to initial position
 
                 laplace += (wf_plus - 2. * wf + wf_minus) / h2;
             }
         }
-        laplace / wf
+        Ok(laplace / wf)
     }
 
     pub fn laplace_hermitian(&self, particles: &mut Vec<Particle>, nx: usize, ny: usize) -> f64 {
