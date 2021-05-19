@@ -224,7 +224,7 @@ mod tests {
         let a: f64 = 1.;
 
         // The below is defined separately in evaluate() function
-        let omega: f64 = 1.;        //Defined separately in ? function
+        let omega: f64 = 1.;        //Defined separately in evaluate() function
         let c: f64 = 1.;            //Defined separately in evaluate() function
         let h: f64 = 0.0001;        //Defined separately in laplace() function
         let h2: f64 = h.powi(2);    //Defined separately in laplace() function

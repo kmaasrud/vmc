@@ -115,6 +115,11 @@ mod tests {
     }
 
     #[test]
+    fn test_greens() {
+        assert!(false); //This surely is false! Set up a proper test you dickwad
+    }
+
+    #[test]
     fn test_sample() {
         let tol = 0.000000000000001;
         // Spawn a system with defined wavefunction and energy
