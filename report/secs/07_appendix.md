@@ -13,6 +13,7 @@ where the coefficients $c_n$ are given by the triangle sequence shown below [@Jo
 
 $$c_i = 1, 0, 2, -2, 0, 4, 0, -12, 0, 8, 12, 0, -48, ...$$
 
+
 ## Analytical Laplace of the Trial wavefunction
 
 The trial wavefunction of a two-particle system is
@@ -28,9 +29,13 @@ $$
 $$
 
 The calculations:
+First we change the laplacian to work with a cartesian 2D system:
 
 $$
-Calculate all the shit
+\Delta f=\frac{\partial^{2} f}{\partial x_1^{2}}+\frac{\partial^{2} f}{\partial x_2^{2}}+\frac{\partial^{2} f}{\partial y_1^{2}}+\frac{\partial^{2} f}{\partial y_2{2}}
 $$
 
-boop
+$$
+C\mathrm{e}^{\frac{s\sqrt{\left(C-x_1\right)^2+\left(u-y_1\right)^2}}{b\left|x_1-C\right|+1}-\frac{aw\left(x_1^2+y_1^2+u^2+C^2\right)}{2}}\left(-\dfrac{s\left(C-x_1\right)}{\sqrt{\left(C-x_1\right)^2+\left(u-y_1\right)^2}\left(b\left|x_1-C\right|+1\right)}-\dfrac{bs\sqrt{\left(C-x_1\right)^2+\left(u-y_1\right)^2}\left(x_1-C\right)}{\left|x_1-C\right|\left(b\left|x_1-C\right|+1\right)^2}-awx_1\right)^2+C\mathrm{e}^{\frac{s\sqrt{\left(C-x_1\right)^2+\left(u-y_1\right)^2}}{b\left|x_1-C\right|+1}-\frac{aw\left(x_1^2+y_1^2+u^2+C^2\right)}{2}}\left(-\dfrac{s\left(C-x_1\right)^2}{\left(\left(C-x_1\right)^2+\left(u-y_1\right)^2\right)^\frac{3}{2}\left(b\left|x_1-C\right|+1\right)}+\dfrac{s}{\sqrt{\left(C-x_1\right)^2+\left(u-y_1\right)^2}\left(b\left|x_1-C\right|+1\right)}+\dfrac{2bs\left(C-x_1\right)\left(x_1-C\right)}{\sqrt{\left(C-x_1\right)^2+\left(u-y_1\right)^2}\left|x_1-C\right|\left(b\left|x_1-C\right|+1\right)^2}+\dfrac{2b^2s\sqrt{\left(C-x_1\right)^2+\left(u-y_1\right)^2}}{\left(b\left|x_1-C\right|+1\right)^3}-aw\right)
+$$
+
