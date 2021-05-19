@@ -224,9 +224,10 @@ mod tests {
         let a: f64 = 1.;
 
         // The below is defined separately in evaluate() function
-        /* let omega: f64 = 1.;         let c: f64 = 1.; //Defined separately in evaluate() function
-        let h: f64 = 0.0001; //Defined separately in laplace() function
-        let h2: f64 = h.powi(2); //Defined separately in laplace() function */
+        let omega: f64 = 1.;        //Defined separately in ? function
+        let c: f64 = 1.;            //Defined separately in evaluate() function
+        let h: f64 = 0.0001;        //Defined separately in laplace() function
+        let h2: f64 = h.powi(2);    //Defined separately in laplace() function
 
         // Spawn a system with defined wavefunction and energy
         let ham: Hamiltonian = Hamiltonian;
@@ -238,7 +239,14 @@ mod tests {
         system.particles[1].position = vec![1., 1.];
 
         // Define the analytical answer to this problem
-        let analytical = 1.; //FILL
+        let r1: f64 = 0.;
+        let r2: f64 = (2. as f64).sqrt();
+        let r12: f64 = r2;
+        let frac: f64 =  a /((1. + beta * r12).powi(2));
+        let analytical = 2. * alpha.powi(2) * omega.powi(2)* (r1.powi(2) + r2.powi(2))
+                            - 4. * alpha * omega 
+                            - frac * 2. * alpha * omega * r12
+                            + 2. * frac * ( frac + 1./r12 - 2. * beta /(1. + beta * r12) );
 
         // Assertion
         let tol: f64 = 1E-13;
