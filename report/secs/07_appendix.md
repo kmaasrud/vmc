@@ -27,12 +27,7 @@ $$\sum_{i <j}^N = \sum_{i=1}^N \sum_{j=i+1}^N,\quad \text{or}\quad \prod_{i <j}^
 
 # Derivations
 
-## Local energy of two-fermion system {#sec:local-energy-derivation}
-
-*Do the stuff*, as Amund would say <3
-
-
-## Analytical Laplace of the Trial wavefunction
+## Analytical derivation of the Quantum Force, Laplacian and Local energy of two-fermion systems {#sec:two-fermion-derivation}
 
 The trial wavefunction of a two-particle system is
 
@@ -61,15 +56,17 @@ $$
 
 We see that the trial wavefunction is composed of two exponential terms, and to do the derivative, we can use the derivative product rule twice.
 
-$$
-(f  g)^{\prime \prime}= (f^{\prime}  g+f  g^{\prime})^\prime = f^{\prime \prime} g + 2 f^\prime g^\prime + f g^{\prime \prime}
-$${#eq:productruletwice}
+
+$$(f  g)^{\prime \prime}= (f^{\prime}  g+f  g^{\prime})^\prime = f^{\prime \prime} g + 2 f^\prime g^\prime + f g^{\prime \prime}$$ {#eq:productruletwice}
 
 where 
 
+
 $$ 
-f = C \exp{(-\alpha \omega (r_1^2 + r_2^2)/2)}\\
-g = \exp{\left( \frac{ar_{12}}{1 + \beta r_{12}}\right)}
+\begin{aligned}
+f =& C \exp{(-\alpha \omega (r_1^2 + r_2^2)/2)}\\
+g =& \exp{\left( \frac{ar_{12}}{1 + \beta r_{12}}\right)}
+\end{aligned}
 $$
 
 The two following equalities are then used to find the first derivative of $f$ and $g$
@@ -78,17 +75,15 @@ $$
 \frac{\partial r_{1}}{\partial x_{1}}=x_{1} / r_{1},  \quad \frac{\partial r_{12}}{\partial x_{1}}=\left(x_{1}-x_{2}\right) / r_{1}
 $$
 
-$$
-\frac{\partial f}{\partial x_{1}}=-\alpha \omega x_{1} f, \quad \nabla_{i} f=-\alpha \omega f \mathrm{r}_{i}
-$${#eq:fd}
+
+$$\frac{\partial f}{\partial x_{1}}=-\alpha \omega x_{1} f, \quad \nabla_{i} f=-\alpha \omega f \mathrm{r}_{i}$${#eq:fd}
 
 Where $i$ denotes the specific particle, and the particle position $r_i$ equals $(x_i, y_i)$. For the second term $g$ we have
 
-$$
-\frac{\partial g}{\partial x_{1}}=g \frac{a\left(x_{1}-x_{2}\right)}{r_{12}\left(1+\beta r_{12}\right)^{2}}, \quad \nabla_{i} g=g \frac{a}{r_{12}\left(1+\beta r_{12}\right)^{2}} \mathrm{r}_{ij}
-$${#eq:gd}
+$$\frac{\partial g}{\partial x_{1}}=g \frac{a\left(x_{1}-x_{2}\right)}{r_{12}\left(1+\beta r_{12}\right)^{2}}, \quad \nabla_{i} g=g \frac{a}{r_{12}\left(1+\beta r_{12}\right)^{2}} \mathrm{r}_{ij}$${#eq:gd}
 
 Where $j$ is the opposite particle of $i$ and the distance from $j$ to $i$, $\mathrm{r}_{ij} = (x_i-x_j, y_i - y_j)$.
+
 
 From this we can actually find an analytical solution to the *quantum force* used in importance sampling, defined as
 $$
@@ -101,11 +96,10 @@ $$
 
 Next, we calculate the Laplacian, or double derivative, of the first term, $f$.
 
-$$
-\frac{\partial^{2} f}{\partial x_{1}^{2}}=f\left(\alpha^{2} \omega^{2} x_{1}^{2}-\alpha \omega\right), \quad \nabla^{2} f=f\left(\alpha^{2} \omega^{2}\left(r_{1}^{2}+r_{2}^{2}\right)-4 \alpha \omega\right)
-$$
+$$\frac{\partial^{2} f}{\partial x_{1}^{2}}=f\left(\alpha^{2} \omega^{2} x_{1}^{2}-\alpha \omega\right), \quad \nabla^{2} f=f\left(\alpha^{2} \omega^{2}\left(r_{1}^{2}+r_{2}^{2}\right)-4 \alpha \omega\right)$${#eq:fdd}
 
 And the second term, $g$.
+
 $$
 \begin{aligned}
 \frac{\partial^{2} g}{\partial x_{1}^{2}}=g[& \frac{a^{2}\left(x_{1}-x_{2}\right)^{2}}{r_{12}^{2}\left(1+\beta r_{12}\right)^{4}}+\frac{a r_{12}\left(1+\beta r_{12}\right)^{2}}{r_{12}^{2}\left(1+\beta r_{12}\right)^{4}} \\
@@ -119,15 +113,14 @@ $$
 
 With this, we get
 
+
 $$
 \nabla^{2} g=g\left[\frac{2 a^{2}}{\left(1+\beta r_{12}\right)^{4}}+\frac{4 a}{r_{12}\left(1+\beta r_{12}\right)^{2}}-\frac{2 a}{r_{12}\left(1+\beta r_{12}\right)^{2}}-\frac{2 a \beta}{\left(1+\beta r_{12}\right)^{3}}\right]
 $$
 
 Which can be further shortened by pulling $\frac{2a}{(1+\beta r_{12})^2}$ outside the brackets to:
 
-$$
-\nabla^2g =g \frac{2 a}{\left(1+\beta r_{12}\right)^{2}}\left[\frac{a}{\left(1+\beta r_{12}\right)^{2}}+\frac{1}{r_{12}}-\frac{2 \beta}{1+\beta r_{12}}\right]
-$${#eq:gdd}
+$$\nabla^2g =g \frac{2 a}{\left(1+\beta r_{12}\right)^{2}}\left[\frac{a}{\left(1+\beta r_{12}\right)^{2}}+\frac{1}{r_{12}}-\frac{2 \beta}{1+\beta r_{12}}\right]$${#eq:gdd}
 
 Now, by inserting $f^{\prime \prime}$, $g^{\prime \prime}$, $f^\prime$ and $g^\prime$ from equations @eq:fdd, @eq:gdd, @eq:fd and @eq:gd into equation @eq:productruletwice, we actually obtain the *Laplacian* of the trial wavefunction $\nabla^2 \Psi_T$. First we simplify the middle term:
 
