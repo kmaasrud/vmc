@@ -10,7 +10,7 @@ impl Particle {
     /// Creates a new particle with a given dimensionality.
     /// The particle's initial position is set to 0.
     pub fn new(dim: usize) -> Self {
-        Particle{
+        Particle {
             position: vec![0.; dim],
             qforce: vec![0.; dim],
             dim,
@@ -19,7 +19,7 @@ impl Particle {
 
     pub fn from_vec(position: Vec<f64>) -> Self {
         let dim = position.len();
-        Particle{
+        Particle {
             position,
             qforce: vec![0.; dim],
             dim,
@@ -35,13 +35,19 @@ impl Particle {
     pub fn squared_sum_scaled_z(&self, factor: f64) -> f64 {
         match self.dim {
             1 | 2 => self.squared_sum(),
-            _ => self.position[0].powi(2) + self.position[1].powi(2) + factor * self.position[2].powi(2),
+            _ => {
+                self.position[0].powi(2)
+                    + self.position[1].powi(2)
+                    + factor * self.position[2].powi(2)
+            }
         }
     }
-    
+
     /// Returns the distance of this particle to other
     pub fn distance_to(&self, other: &Particle) -> f64 {
-        let result: f64 = other.position.iter()
+        let result: f64 = other
+            .position
+            .iter()
             .zip(self.position.iter())
             .map(|(x, y)| (x - y).powi(2))
             .sum();
@@ -61,7 +67,7 @@ mod tests {
     #[test]
     fn test_squared_sum_scaled_z() {
         let tol: f64 = 1e-12;
-        let want: f64 = 1402.624001; 
+        let want: f64 = 1402.624001;
         let particle = Particle::from_vec(vec![2.5, 1.001, 68.2]);
         let got: f64 = particle.squared_sum_scaled_z(0.3);
         assert!((want - got).abs() < tol);

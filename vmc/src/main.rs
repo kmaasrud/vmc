@@ -1,24 +1,23 @@
-mod particle;
-mod metropolis;
-mod system;
-mod wavefunction;
 mod hamiltonian;
+mod hermite;
+mod metropolis;
 mod montecarlo;
-mod utils;
+mod particle;
+mod system;
 mod threadpool;
+mod utils;
+mod wavefunction;
 
+pub use hamiltonian::Hamiltonian;
+pub use hermite::Hermite;
+pub use metropolis::{BruteForceMetropolis, ImportanceMetropolis, Metropolis};
+pub use montecarlo::monte_carlo;
 pub use particle::Particle;
 pub use system::System;
-pub use metropolis::{Metropolis, BruteForceMetropolis, ImportanceMetropolis};
-pub use wavefunction::WaveFunction;
-pub use hamiltonian::Hamiltonian;
-pub use montecarlo::monte_carlo;
-pub use utils::det;
 pub use threadpool::ThreadPool;
-
+pub use utils::det;
+pub use wavefunction::WaveFunction;
 
 fn main() {
     println!("Hello from VMC!");
-   
-
 }

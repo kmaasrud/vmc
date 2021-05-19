@@ -1,0 +1,14 @@
+on: [push]
+
+name: VMC unit tests
+
+jobs:
+  test:
+    name: Running Cargo test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - run: cargo test --manifest-path vmc/Cargo.toml

@@ -1,67 +1,84 @@
 # Theory
 
-Electrons in a confined, two dimensional harmonic oscillator potnetial with the given (idealized) Hamiltionian below is in quantum mechanics called quantum dots. 
+We consider a system of electrons situated in an isotropic harmonic oscillator potential. We will use Hartree's atomic units[^hartree] in order to get the idealized Hamiltonian presented below:
 
-$$ H = \sum_{i=1}^{N}{\left( -\frac{1}{2}\nabla^2_i + \frac{1}{2}\omega^2 |\mathbf r_i|^2 \right) } + \sum_{i<j}\frac{1}{r_{ij}} $$ 
-{#eq:hamiltonian}
+$$ H = \sum_{i=1}^{N}{\left( -\frac{1}{2}\nabla^2_i + \frac{1}{2}\omega^2 |\mathbf r_i|^2 \right) } + \sum_{i<j}\frac{1}{r_{ij}}. $$ {#eq:hamiltonian}
 
-where $r_{ij} = |r_i - r_j|$ is the distance between two electrons. We use the natural units $\hbar = c = e = m_e = 1$ and all energies are in atomic units (a.u).
+Here $r_{ij} = |r_i - r_j|$ is the distance between two electrons. The first sum is the single particle harmonic oscillator potential. Because electrons repel each other, we also get the latter repulsive sum as part of the Hamiltonian - the perturbation of the system.
 
-The first term of the hamiltonian is a simple harmonic oscillator potential. Because electrons repel each other, we also get a repulsive term as part of the Hamiltonian - the so-called perturbation of the system. 
+[^hartree]: $\hbar = c = e = m_e = 1$, see [@Hartree1928].
 
-## Wavefunction
+## The unperturbed wave function {#sec:unperturbed}
 
-The two-dimensional solution for a single particle in a harmonic oscillator potential (consider equation ([@eq:hamiltonian]) for a single particle) is the following wave function:
+Disregarding interactions, there is a closed-form solution for the Hamiltonian shown in equation ([@eq:hamiltonian]) for a single particle. The solutions follows [@Project2]:
 
 $$\phi_{n_x, n_y} (x,y) = A H_{n_x} (\sqrt{\omega} x) H_{n_y}(\sqrt{\omega}y) \exp{\left[-\frac{\omega}{2}(x^2 + y^2)\right]}.$$
 
-where $H_{i}$ are Hermite polynomials (see [@sec:hermite]), and $A$ is the normalization constant. For the lowest lying state, we have $n_x = n_y = 0$ and hence the energy $\epsilon_{n_x, n_y} = \omega(n_x + n_y + 1) = \omega$. For the closed shell configurations, N = 2, 6, 12 and 20 the exact ground state energy is given in Table 1.
+Here, $H_i$ are Hermite polynomials (see [@sec:hermite]), and $A$ is the normalization constant. For the lowest lying state, we have $n_x = n_y = 0$ and hence the energy of a non-interacting fermion $\epsilon$ is:
 
-| N  	| E (a.u)       |
-|----	|-----------	|
-| $2$  	| $2 \omega$  	|
-| $6$	| $10 \omega$ 	|
-| $12$ 	| $28 \omega$ 	|
-| $20$ 	| $60 \omega$ 	| 
-Table 1: Given exact ground state energy (a.u) (without perturbation) for closed-shell number of electrons. $\omega$ is the oscillator frequency. 
+$$ \epsilon_{n_x, n_y} = \omega(n_x + n_y + 1) = \omega. $$ {#eq:non-interacting-energy}
 
+The Pauli exclusion principle states that two fermions can not occupy the same quantum state simultaneously. For each state $(n_x, n_y)$ a fermion may have spin up or down, which means it can be occupied by at most two fermions. Using this principle, the ground state energies of the closed-shell configurations $N = 2, 6, 12$ and $20$ can easily be calculated using equation ([@eq:non-interacting-energy]). The energies are given in table [@tbl:energies].
 
-The total wave function for a non-interacting two-electron system is therefore given as:
+<!-- Don't worry about the erroneous table numbering. This is a fault of a Doctor filter I made, but a quick-fix is on the to do list <3. -->
 
-$$ \Phi (\mathbf r_1, \mathbf r_2 ) = C \exp \left[- \frac{\omega}{2}\left(|\mathbf r_1|^2 + |\mathbf r_2|^2\right)\right], $$
+| **Number of particles $N$** | **$E$ (a.u)** |
+| ----:                       | ---                  |
+| $2$                         | $2 \omega$           |
+| $6$                         | $10 \omega$          |
+| $12$                        | $28 \omega$          |
+| $20$                        | $60 \omega$          | 
 
-with an energy of $2\omega$. The total spin in the ground state is simply zero as the two electrons living in the state is pared with opposite spins (eg. $\pm 1/2$). <!-- Is this correct?. -->
+Table: The ground state energy of $N$ non-interacting particles in an isotropic harmonic potential well. $\omega$ is the oscillator frequency. Energies are given in Hartree's atomic units. {#tbl:energies}
 
-The ground state energy is given by the unperturbed system. Adding a pertubation/interaction will rise the energy. For the simplest system with two electrons, this pertubation can be found through perturbation theory, whilst for a higher number of particles, other measurments or actions must be taken to find the energy(??).
+These energies serve as great values to benchmark our program against.
 
-## Local energy {#sec:theo_local-enery}
+## The complete wave function
+<!-- Should we really call it the "complete" wave function? I don't know, it sounds right to me atm, but perhaps it's a bit redundant... -->
 
-By definition, the local energy is given by 
+Single harmonic oscillators are solvable analytically, but introducing the repulsive perturbation forces us to tackle the problem differently. We choose a variational Monte Carlo approach, and use the Slater-Jastrow type of trial wave function, namely
 
-$$ E_l = \frac{1}{\Psi_T} \hat{H} \Psi_T $$
+<!-- TODO: Not yet completely sure whether exp(J(R)) is correct. -->
+$$ \Psi_T(\mathbf R, \alpha, \beta) = \Psi_D \Psi_J = \det(D(\mathbf R, \alpha))\exp(J(\mathbf R, \beta)), $$
 
-$\Psi_T$ is the trial wavefunction of the system. The Hamiltionian is given by equation ([@eq:hamiltonian]) and the trial wavefunction is 
+where $D(\mathbf R)$ is a Slater matrix and $J(\mathbf R)$ is a Padé-Jastrow correlation function. $\mathbf R$ here represents the set of all the individual particle's positions, and $\alpha$ and $\beta$ are the variational parameters. Following @Project2, our ansatz for the factors of this trial wave function is:
 
-$$ \Psi_T (\mathbf{r_1}, \mathbf{r_2}) = \Psi_1  * \Psi_2 = C \exp{(-\alpha \omega (r_1^2 + r_2^2)/2)} \exp{\left( \frac{ar_{12}}{1 + \beta r_{12}}\right)} $$
+$$\begin{aligned}
+\Psi_D &= \det(D(\mathbf R)),\qquad D_{ij} = \phi_j(\mathbf r_i), \\
+\Psi_J &= \prod_{i<j}^N \exp\left(\frac{ar_{ij}}{1 + \beta r_{ij}}\right).
+\end{aligned}$$ {#eq:trial-ansatz}
 
-Where $a = 1$ when the two electrons in question have anti- parallell spins and $a = 1/3$ when the spins are parallell. $\alpha, \beta$ are the variational parameters. 
+$\phi_j(\mathbf r_i)$ is the single particle wave function for the $i$-th fermion, as described in [@sec:unperturbed], with $j$ being an index describing each unique quantum state[^quantum]. The coefficient $a = 1$ when the electrons $i$ and $j$ have anti-parallel spins, and $a = \frac{1}{3}$ when their spins are parallel. The index notation on the product is as explained in [@sec:index-notation].
 
-Hence, the local energy is shown to be ( see appendix) 
+[^quantum]: E.g. $(0,0,\uparrow)$, $(2,1,\downarrow)$, etc.
+
+### A system of $N=2$ fermions
+
+Expanding the ansatz ([@eq:trial-ansatz]) for a system of two fermions, the trial wave function is reduced to:
+
+$$ \Psi_T (\mathbf r_1, \mathbf r_2 ) = C \exp \left(- \frac{\alpha\omega \left(|\mathbf r_1|^2 + |\mathbf r_2|^2\right)}{2}\right) \exp\left(\frac{ar_{12}}{1 + \beta r_{12}}\right). $$
+
+The total spin in the ground state of this system is simply zero as the two fermions are paired with opposite spins.
+
+## Local energy {#sec:theory-local-energy}
+
+We define the *local energy* of a wave function as:
+
+$$ E_L \equiv \frac{1}{\Psi}H\Psi. $$
+
+As shown in [@sec:local-energy-derivation], the local energy for a two-fermion system is:
 
 $$ \begin{aligned}
 E_L &= 2 \alpha \omega + \frac{1}{2} + \omega^2 (1 - \alpha^2) (r_1^2 + r_2^2) \\
 &- \frac{a}{(1 + \beta r_{12})^2} \left( -\alpha \omega r_{12} + \frac{a}{(1 + \beta r_{12})^2} + \frac{1 - \beta r_{12}}{r_{12}(1 + \beta r_{12})}\right) + \frac{1}{r_{12}}.
-\end{aligned} $$ 
-{#eq:analytic-local-energy} <!-- Is this correct?. -->
-
-Equation ([@eq:analytic-local-energy]) is our analytic expression for the local energy of the two electron system. 
+\end{aligned} $$ <!-- Is this correct?. -->
 
 The numerical local (kinetic) energy is calculated using the derivitive of the velocity utilizing the two point approximation of the first derivative
 
-$$ \frac{d g(x)}{dx} \approx \frac{g(x + \Delta x) - g ( x - \Delta x)}{2 \Delta x}  $$
+$$ \frac{d g(x)}{dx} \approx \frac{g(x + \Delta x) - g ( x - \Delta x)}{2 \Delta x} $$
 
 Second derivative by three point approximation
 
 $$ \frac{d g(x)}{dx} \approx \frac{g(x + \Delta x) - 2 g(x)  + g ( x - \Delta x) }{ \Delta x^2}  $$
 
-$\Delta x$ is the stepsize which we let run towards zero. The error is proportional to $(\Delta
+$\Delta x$ is the stepsize which we let run towards zero. The error is proportional to $(\Delta x ^2 )$.

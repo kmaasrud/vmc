@@ -5,10 +5,11 @@ date = "today"
 
 [style]
 number-sections = true
+document-class = "report"
 
 [bib]
 bibliography-title = "References"
-csl = "ieee"
+csl = "apa"
 
 [build]
 engine = "pdflatex"
