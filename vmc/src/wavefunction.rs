@@ -103,11 +103,10 @@ impl WaveFunction {
         let mut gradient = particle.position.clone();
         match gradient {
             Vector::D1(_) | Vector::D2(_,_) => gradient.scale(-2. * self.alpha),
-            Vector::D3(x, y, z) => gradient = Vector::D3(-2. * self.alpha * x,
+            Vector::D3(x, y, z) => Vector::D3(-2. * self.alpha * x,
                                                          -2. * self.alpha * y,
                                                          -2. * self.alpha * self.beta * z),
-        };
-        gradient
+        }
     }
 
     /// Returns the gradient for a particle with regards to the interaction-part of the
@@ -163,19 +162,15 @@ impl WaveFunction {
     }
 
     // --- Quantum forces ---
-    pub fn quantum_force(&self, i: usize, particles: &Vec<Particle>) -> Vec<f64> {
-        let quantum_force = self
-            .gradient_spf(&particles[i])
-            .iter()
-            .zip(self.gradient_interaction(i, particles).iter())
-            .map(|(x, y)| 2. * (x + y))
-            .collect();
-        quantum_force
+    pub fn quantum_force(&self, i: usize, particles: &Vec<Particle>) -> Vector {
+        self.gradient_spf(&particles[i])
+            .add(self.gradient_interaction(i, particles))
+            .scale(2.)
     }
 
     /// Calculates the quantum force of a particle not interacting with its surrounding particles
-    pub fn quantum_force_non_interacting(&self, particle: &Particle) -> Vec<f64> {
-        self.gradient_spf(particle).iter().map(|x| 2. * x).collect()
+    pub fn quantum_force_non_interacting(&self, particle: &Particle) -> Vector {
+        self.gradient_spf(particle).scale(2.)
     }
 
     /// Returns the gradient of the wavefunction with regards to x
@@ -245,15 +240,16 @@ mod tests {
             alpha, beta, a,
         }; // Set beta = gamma
         let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
-        system.particles[0].position = vec![0., 0.]; //Just placing the particles at specific positions
-        system.particles[1].position = vec![1., 1.];
+        system.particles[0].position = Vector::D2(0., 0.); //Just placing the particles at specific positions
+        system.particles[1].position = Vector::D2(1., 1.);
 
         // Define the analytical answer to this problem
         let analytical = 1.; //FILL
 
         // Assertion
         let tol: f64 = 1E-13;
-        assert!((wf.laplace(&mut system.particles) - analytical).abs() < tol);
+        // Unwrap is okay here, because a panic means the test fails
+        assert!((wf.laplace(&mut system.particles).unwrap() - analytical).abs() < tol);
     }
 
     #[test]
@@ -289,8 +285,8 @@ mod tests {
             alpha, beta, a,
         }; // Set beta = gamma
         let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
-        system.particles[0].position = vec![0., 0.]; //Just placing the particles at specific positions
-        system.particles[1].position = vec![1., 1.];
+        system.particles[0].position = Vector::D2(0., 0.); //Just placing the particles at specific positions
+        system.particles[1].position = Vector::D2(1., 1.);
 
         // Define the analytical answer to this problem
         let analytical = c
@@ -301,6 +297,7 @@ mod tests {
 
         // Assertion
         let tol: f64 = 1E-13;
-        assert!((wf.evaluate(&system.particles) - analytical).abs() < tol);
+        // Unwrap is okay here, because a panic means the test fails
+        assert!((wf.evaluate(&system.particles).unwrap() - analytical).abs() < tol);
     }
 }
