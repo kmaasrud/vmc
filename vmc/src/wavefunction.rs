@@ -125,12 +125,7 @@ impl WaveFunction {
             let distance: f64 = particles[i].distance_to(&particles[j]).unwrap();
             let factor = a / (distance.powi(2) * (distance - a));
 
-            // I'm sorry for this, it's hideous...
-            gradient.add(match (particles[i].position, particles[j].position) {
-                (Vector::D1(x1), Vector::D1(x2))                 => Vector::D1(factor * (x1 - x2)),
-                (Vector::D2(x1, y1), Vector::D2(x2, y2))         => Vector::D2(factor * (x1 - x2), factor * (y1 - y2)),
-                (Vector::D3(x1, y1, z1), Vector::D3(x2, y2, z2)) => Vector::D3(factor * (x1 - x2), factor * (y1 - y2), factor * (z1 - z2))
-            });
+            gradient += (particles[i].position - particles[j].position).scale(factor);
         }
 
         gradient
@@ -163,9 +158,7 @@ impl WaveFunction {
 
     // --- Quantum forces ---
     pub fn quantum_force(&self, i: usize, particles: &Vec<Particle>) -> Vector {
-        self.gradient_spf(&particles[i])
-            .add(self.gradient_interaction(i, particles))
-            .scale(2.)
+        (self.gradient_spf(&particles[i]) + self.gradient_interaction(i, particles)).scale(2.)
     }
 
     /// Calculates the quantum force of a particle not interacting with its surrounding particles

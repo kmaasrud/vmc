@@ -1,38 +1,10 @@
-#[derive(Debug, Clone)]
-pub enum Vector {
-    D1(f64),
-    D2(f64, f64),
-    D3(f64, f64, f64)
-}
-
-impl Vector {
-    /// Adds a vector to the Particle's positions.
-    /// If the dimensions do not match, the function will not do anything
-    pub fn add(&mut self, other: Vector) -> Vector {
-        match (*self, other) {
-            (D1(x1), D1(x2)) => D1(x1 + x2),
-            (D2(x1, y1), D2(x2, y2)) => D2(x1 + x2, y1 + y2),
-            (D3(x1, y1, z1), D3(x2, y2, z2)) => D3(x1 + x2, y1 + y2, z1 + z2),
-            _ => *self
-        }
-    }
-
-    pub fn scale(&mut self, factor: f64) -> Vector {
-        match *self {
-            D1(x) => D1(factor * x),
-            D2(x, y) => D2(factor * x, factor * y),
-            D3(x, y, z) => D3(factor * x, factor * y, factor * z),
-        }
-    }
-}
-
-use Vector::*;
+use crate::Vector::{self, *};
 
 /// Struct that represents a single particle.
 #[derive(Debug, Clone)]
 pub struct Particle {
     pub position: Vector,
-    pub qforce: Vec<f64>,
+    pub qforce: Vector,
     pub dim: usize,
 }
 
@@ -47,16 +19,16 @@ impl Particle {
             _ => return Err("Unsupported dimensionality.".to_owned()),
         };
 
-        Ok(Particle{ position, qforce: vec![0.; dim], dim })
+        Ok(Particle{ position, qforce: position, dim })
     }
 
     pub fn from_vector(position: Vector) -> Self {
-        let dim = match position {
-            D1(_) => 1,
-            D2(_,_) => 2,
-            D3(_,_,_) => 3,
+        let (dim, qforce) = match position {
+            D1(_) => (1, D1(0.)),
+            D2(_,_) => (2, D2(0., 0.)),
+            D3(_,_,_) => (3, D3(0., 0., 0.)),
         };
-        Particle { position, qforce: vec![0.; dim], dim, }
+        Particle { position, qforce, dim, }
     }
 
     /// Computes the squared sum of each coordinate.
