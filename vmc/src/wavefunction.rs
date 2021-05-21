@@ -254,7 +254,7 @@ mod tests {
     }
 
     #[test]
-    fn test_determinism() {
+    fn test_evaluate_determinism() {
         // Spawn a system with defined wavefunction and energy
         let ham: Hamiltonian = Hamiltonian;
         let wf = WaveFunction {
@@ -299,5 +299,50 @@ mod tests {
         // Assertion
         let tol: f64 = 1E-13;
         assert!((wf.evaluate(&system.particles) - analytical).abs() < tol);
+    }
+
+    #[test]
+    fn test_quantum_force() {
+        // System parameters
+        let alpha: f64 = 0.5;
+        let beta: f64 = 1.;
+        let a: f64 = 1.;
+
+        // The below is defined separately in evaluate() function
+        let omega: f64 = 1.;        //Defined separately in evaluate() function
+        let c: f64 = 1.;            //Defined separately in evaluate() function
+        let h: f64 = 0.0001;        //Defined separately in laplace() function
+        let h2: f64 = h.powi(2);    //Defined separately in laplace() function
+
+        // Spawn a system with defined wavefunction and energy
+        let ham: Hamiltonian = Hamiltonian;
+        let wf = WaveFunction {
+            alpha, beta, a,
+        }; // Set beta = gamma
+        let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
+        system.particles[0].position = vec![0., 0.]; //Just placing the particles at specific positions
+        system.particles[1].position = vec![1., 1.];
+
+        // Define the analytical answer to this problem
+        let r1: f64 = 0.;
+        let r2: f64 = (2. as f64).sqrt();
+        let r12: f64 = r2;
+        let r21: f64 = -r2;
+        let frac: f64 =  a /((1. + beta * r12).powi(2));
+        let analyticalx =     2. * alpha * omega * 0.
+                            + 2./r12 * frac * 1.
+                            - 2. * alpha * omega * 1.
+                            + 2./r12 * frac * (-1.);
+
+        let analyticaly =     2. * alpha * omega * 0.
+                            + 2./r12 * frac * 1.
+                            - 2. * alpha * omega * 1.
+                            + 2./r12 * frac * (-1.);
+        let analytical = vec!(analyticalx, analyticaly);
+        
+        // Assertion
+        let tol: f64 = 1E-13;
+        assert!((wf.quantum_force(1, &mut system.particles) - analytical).abs() < tol); // Magnus is fixing fancy vectors with subtraction, wait for that
+
     }
 }
