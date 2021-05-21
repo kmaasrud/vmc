@@ -76,13 +76,13 @@ $$
 $$
 
 
-$$\frac{\partial f}{\partial x_{1}}=-\alpha \omega x_{1} f, \quad \nabla_{i} f=-\alpha \omega f \mathrm{r}_{i}$${#eq:fd}
+$$\frac{\partial f}{\partial x_{1}}=-\alpha \omega x_{1} f, \quad \nabla_{i} f=-\alpha \omega f \textbf{r}_{i}$${#eq:fd}
 
 Where $i$ denotes the specific particle, and the particle position $r_i$ equals $(x_i, y_i)$. For the second term $g$ we have
 
-$$\frac{\partial g}{\partial x_{1}}=g \frac{a\left(x_{1}-x_{2}\right)}{r_{12}\left(1+\beta r_{12}\right)^{2}}, \quad \nabla_{i} g=g \frac{a}{r_{12}\left(1+\beta r_{12}\right)^{2}} \mathrm{r}_{ij}$${#eq:gd}
+$$\frac{\partial g}{\partial x_{1}}=g \frac{a\left(x_{1}-x_{2}\right)}{r_{12}\left(1+\beta r_{12}\right)^{2}}, \quad \nabla_{i} g=g \frac{a}{r_{12}\left(1+\beta r_{12}\right)^{2}} \textbf{r}_{ij}$${#eq:gd}
 
-Where $j$ is the opposite particle of $i$ and the distance from $j$ to $i$, $\mathrm{r}_{ij} = (x_i-x_j, y_i - y_j)$.
+Where $j$ is the opposite particle of $i$ and the distance from $j$ to $i$, $\textbf{r}_{ij} = (x_i-x_j, y_i - y_j)$.
 
 
 From this we can actually find an analytical solution to the *quantum force* used in importance sampling, defined as
@@ -91,7 +91,7 @@ F = 2\frac{\nabla \Psi_T}{\Psi_T} = 2 \frac{f^\prime g + f g^\prime}{fg}
 $$
 
 $$
-F = -2 \alpha \omega \mathrm{r}_{1}+\frac{2 a}{r_{12}\left(1+\beta r_{12}\right)^{2}} \mathrm{r}_{12}-2 \alpha \omega \mathrm{r}_{2}+\frac{2 a}{r_{12}\left(1+\beta r_{12}\right)^{2}} \mathrm{r}_{21}
+F = -2 \alpha \omega \textbf{r}_{1}+\frac{2 a}{r_{12}\left(1+\beta r_{12}\right)^{2}} \textbf{r}_{12}-2 \alpha \omega \textbf{r}_{2}+\frac{2 a}{r_{12}\left(1+\beta r_{12}\right)^{2}} \textbf{r}_{21}
 $$
 
 Next, we calculate the Laplacian, or double derivative, of the first term, $f$.
