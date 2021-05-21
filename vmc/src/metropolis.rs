@@ -116,7 +116,43 @@ mod tests {
 
     #[test]
     fn test_greens() {
-        assert!(false); //This surely is false! Set up a proper test you dickwad
+        // System parameters
+        let alpha: f64 = 0.5;
+        let beta: f64 = 1.;
+        let a: f64 = 1.;
+
+        // The below is defined separately in evaluate() function
+        let omega: f64 = 1.;        //Defined separately in evaluate() function
+        let c: f64 = 1.;            //Defined separately in evaluate() function
+        let h: f64 = 0.0001;        //Defined separately in laplace() function
+        let h2: f64 = h.powi(2);    //Defined separately in laplace() function
+
+        // Spawn a system with defined wavefunction and energy
+        let ham: Hamiltonian = Hamiltonian;
+        let wf = WaveFunction {
+            alpha, beta, a,
+        }; // Set beta = gamma
+        let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
+        system.particles[0].position = vec![0., 0.]; //Just placing the particles at specific positions
+        system.particles[1].position = vec![1., 1.];
+        // Make next step used in greens
+        let (next_step, i) = system.quantum_force_particle_change();
+        // Name the old and new particle for eazy comparison
+        let oldpos = system.particles[i];
+        let newpos = next_step[i];
+
+        // Special greens variables
+        let diffusion_coeff: f64 = 0.5;
+        let dt: f64 = 0.005;
+
+        
+        let xdim:f64 = (newpos.position[0] - oldpos.position[0] * diffusion_coeff * dt * oldpos.qforce[0]).powi(2);
+        let ydim:f64 = (newpos.position[1] - oldpos.position[1] * diffusion_coeff * dt * oldpos.qforce[1]).powi(2);
+        let analytical: f64 = (-(xdim+ydim)/(4. * diffusion_coeff * dt)).exp();
+
+        //Assertation
+        let tol: f64 = 1E-13;
+        assert!((BruteForceMetropolis::greens(&next_step[i], &system.particles[i]) - analytical) < tol);
     }
 
     #[test]
