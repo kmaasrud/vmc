@@ -93,6 +93,8 @@ $$
 
 ## Slater determinant
 
-The slater determinant is a crucial, time consuming part of the trail wavefunction and hence the metropolis algorithm, in evaluating the quantum force, and when computing the local energy and other observebales.  Standard Gaussian elimination determinant calculation for a $N \times N$ matrix is in the ordrer of $N^3$.  Our gradient and Laplacien requiers $N \cdot dim$ determinant calculations. 
+The slater determinant is a crucial, time consuming part of the trail wavefunction and hence the metropolis algorithm, in evaluating the quantum force, and when computing the local energy and other observebales.  Standard Gaussian elimination determinant calculation for a $N \times N$ matrix is in the ordrer of $N^3$.  Our gradient and Laplacien requiers $N \cdot dim$ determinant calculations. Hence, it is important to optimize. 
+
+Calcutating the trasition probability of the trial wavefunction $\Psi_{old}(\mathbf{R}) / \Psi_{new}(\mathbf{R})$ requieres a computation of the ratio of the determinants $det(D_{old}(\mathbf{R})) / det(D_{new}(\mathbf{R}))$. Insted of recalculate the whole determinant for each step, the algorithm can be optimized using Sherman-Morrison formula, reducing the computational cost of evaluating the ratio of the determinants with a factor of $N$ of the move is accepted.  
 
 
