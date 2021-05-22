@@ -100,7 +100,7 @@ impl WaveFunction {
     /// Returns the gradient for a particle with regards to the non-interacting part of the
     /// wavefunction
     fn gradient_spf(&self, particle: &Particle) -> Vector {
-        let mut gradient = particle.position.clone();
+        let gradient = particle.position.clone();
         match gradient {
             Vector::D1(_) | Vector::D2(_,_) => gradient.scale(-2. * self.alpha),
             Vector::D3(x, y, z) => Vector::D3(-2. * self.alpha * x,

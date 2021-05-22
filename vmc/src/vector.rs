@@ -1,7 +1,8 @@
 use std::ops::{Add, Sub, AddAssign};
 use self::Vector::*;
 
-#[derive(Debug, Clone)]
+/// Vector in 1, 2 or 3 dimensions containing `f64`'s.
+#[derive(Debug, Clone, Copy)]
 pub enum Vector {
     D1(f64),
     D2(f64, f64),
@@ -17,11 +18,12 @@ impl Vector {
         }
     }
 
-    pub fn inner(&self, other: Self) -> f64 {
-        match (self, other) {
-            (D1(x1), D1(x2)) => x1 * x2,
-            (D2(x1, y1), D2(x2, y2)) => x1 * x2 + y1 * y2,
-            (D3(x1, y1, z1), D3(x2, y2, z2)) => x1 * x2 + y1 * y2 + z1 * z2
+    pub fn inner(&self, other: Self) -> Result<f64, String> {
+        match (*self, other) {
+            (D1(x1), D1(x2)) => Ok(x1 * x2),
+            (D2(x1, y1), D2(x2, y2)) => Ok(x1 * x2 + y1 * y2),
+            (D3(x1, y1, z1), D3(x2, y2, z2)) => Ok(x1 * x2 + y1 * y2 + z1 * z2),
+            _ => Err("Incompatible dimensions.".to_owned())
         }  
     }
 }
@@ -58,6 +60,6 @@ impl Sub for Vector {
 
 impl AddAssign for Vector {
     fn add_assign(&mut self, other: Self) {
-        *self = *self + other;
+        *self = self.clone() + other;
     }
 }

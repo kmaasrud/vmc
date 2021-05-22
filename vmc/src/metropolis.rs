@@ -33,10 +33,10 @@ pub trait Metropolis {
         Ok(SampledValues { map })
     }
 
-    fn greens(x: &Particle, y: &Particle) -> f64 {
+    fn greens(x: &Particle, y: &Particle) -> Result<f64, String> {
         let vec_sum = x.position - y.position - y.qforce.scale(0.0025);
         // Ignoring denominator of Greens since it cancels later
-        (-vec_sum.inner(vec_sum) / 0.01).exp() 
+        Ok((-vec_sum.inner(vec_sum)? / 0.01).exp())
     }
 }
 
@@ -82,8 +82,8 @@ impl Metropolis for ImportanceMetropolis {
         let wf_new: f64 = sys.wf.evaluate(&next_step)?;
 
         // Calculate the acceptance factor
-        let greens_factor = Self::greens(&sys.particles[i], &next_step[i])
-            / Self::greens(&next_step[i], &sys.particles[i]);
+        let greens_factor = Self::greens(&sys.particles[i], &next_step[i])?
+            / Self::greens(&next_step[i], &sys.particles[i])?;
         let acceptance_factor = greens_factor * wf_new.powi(2) / wf_old.powi(2);
 
         if Self::hastings_check(acceptance_factor) {

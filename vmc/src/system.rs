@@ -37,11 +37,10 @@ impl System {
         let mut rng = thread_rng();
         let uniform = Uniform::new(0., 1.);
         let mut sys: System = System::new(n_particles, dim, wf, ham, interact)?;
-        let mut r: f64;
 
         for i in 0..sys.particles.len() {
             // Make a new randomly placed particle
-            let mut new_particle: Particle = Particle::from_vector(match sys.dim {
+            let new_particle = Particle::from_vector(match sys.dim {
                 1 => Vector::D1(uniform.sample(&mut rng) - 0.5),
                 2 => Vector::D2(uniform.sample(&mut rng) - 0.5,
                                 uniform.sample(&mut rng) - 0.5),
@@ -93,11 +92,15 @@ impl System {
 
         // Clones the last particle state of the system
         let mut new_particles = self.particles.clone();
-        // Loop over its dimensions and do Langevin equation
-        for d in 0..new_particles[i].dim {
-            new_particles[i].position[d] += 0.5 * self.particles[i].qforce[d] * qf_step_size
-                + normal.sample(&mut rng) * qf_step_size.sqrt(); // 0.5 is the D constant.
-        }
+
+        // Do Langevin equation (NOTE: Consider making a function for random vectors to avoid this mess)
+        new_particles[i].position = new_particles[i].position
+            + self.particles[i].qforce.scale(0.5 * qf_step_size)
+            + (match new_particles[i].position {
+                Vector::D1(_)     => Vector::D1(normal.sample(&mut rng)),
+                Vector::D2(_,_)   => Vector::D2(normal.sample(&mut rng), normal.sample(&mut rng)),
+                Vector::D3(_,_,_) => Vector::D3(normal.sample(&mut rng), normal.sample(&mut rng), normal.sample(&mut rng))
+            }).scale(qf_step_size.sqrt());
 
         // Calculate quantum force of new state
         new_particles[i].qforce = if self.interacting {

@@ -1,6 +1,5 @@
 use crate::{Metropolis, System};
 use std::collections::HashMap;
-use std::ops::AddAssign;
 
 /// Collection of values that are integrated over
 #[derive(Clone, Debug)]
@@ -15,18 +14,16 @@ impl SampledValues {
         }
     }
 
+    pub fn add_to_sum(&mut self, dvals: &SampledValues) {
+        for (key, val) in self.map.iter_mut() {
+            *val += dvals.map[key];
+        }
+    }
+
     pub fn divide_f64(&mut self, factor: f64) {
         for val in self.map.values_mut() {
             *val /= factor;
         }
-    }
-}
-
-impl AddAssign for SampledValues {
-    fn add_assign(&mut self, other: Self) {
-        for (key, val) in self.map.iter_mut() {
-            *val += other.map[key];
-        };
     }
 }
 
@@ -49,11 +46,11 @@ pub fn monte_carlo<T: Metropolis>(n: usize, sys: &mut System, metro: &mut T) -> 
     for _ in 0..n {
         match metro.step(sys)? {
             Some(dvals) => {
-                result += dvals;
+                result.add_to_sum(&dvals);
                 prev_dvals = dvals;
             }
             None => {
-                result += prev_dvals;
+                result.add_to_sum(&prev_dvals);
             }
         }
     }
