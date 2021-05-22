@@ -4,7 +4,7 @@ We consider a system of electrons situated in an isotropic harmonic oscillator p
 
 $$ H = \sum_{i=1}^{N}{\left( -\frac{1}{2}\nabla^2_i + \frac{1}{2}\omega^2 |\mathbf r_i|^2 \right) } + \sum_{i<j}\frac{1}{r_{ij}}. $$ {#eq:hamiltonian}
 
-Here $r_{ij} = |r_i - r_j|$ is the distance between two electrons. The first sum is the single particle harmonic oscillator potential. Because electrons repel each other, we also get the latter repulsive sum as part of the Hamiltonian - the perturbation of the system.
+Here $r_{ij} = |r_i - r_j|$ is the distance between two electrons and $r_{i} = \sqrt{r_{i_x}^2 + r_{i_y}^2}$ is electron i's position. The first sum is the single particle harmonic oscillator potential. Because electrons repel each other, we also get the latter repulsive sum as part of the Hamiltonian - the perturbation of the system.
 
 [^hartree]: $\hbar = c = e = m_e = 1$, see [@Hartree1928].
 
@@ -14,7 +14,7 @@ Disregarding interactions, there is a closed-form solution for the Hamiltonian s
 
 $$\phi_{n_x, n_y} (x,y) = A H_{n_x} (\sqrt{\omega} x) H_{n_y}(\sqrt{\omega}y) \exp{\left[-\frac{\omega}{2}(x^2 + y^2)\right]}.$$
 
-Here, $H_i$ are Hermite polynomials (see [@sec:hermite]), and $A$ is the normalization constant. For the lowest lying state, we have $n_x = n_y = 0$ and hence the energy of a non-interacting fermion $\epsilon$ is:
+Here, $H_{n_i}$ are Hermite polynomials (see [@sec:hermite]), and $A$ is the normalization constant. For the lowest lying state, we have $n_x = n_y = 0$ and hence the energy of a non-interacting fermion $\epsilon$ is:
 
 $$ \epsilon_{n_x, n_y} = \omega(n_x + n_y + 1) = \omega. $$ {#eq:non-interacting-energy}
 
@@ -60,7 +60,7 @@ $$ \Psi_T (\mathbf r_1, \mathbf r_2 ) = C \exp \left(- \frac{\alpha\omega \left(
 
 The total spin in the ground state of this system is simply zero as the two fermions are paired with opposite spins.
 
-## Local energy {#sec:theory-local-energy}
+#### Local energy {#sec:theory-local-energy}
 
 We define the *local energy* of a wave function as:
 
@@ -82,3 +82,19 @@ Second derivative by three point approximation
 $$ \frac{d g(x)}{dx} \approx \frac{g(x + \Delta x) - 2 g(x)  + g ( x - \Delta x) }{ \Delta x^2}  $$
 
 $\Delta x$ is the stepsize which we let run towards zero. The error is proportional to $(\Delta x ^2 )$.
+
+#### Quantum Force 
+
+Importance sampling requires the quantum force, which for the two electron case is given by(derived in Appendix [@sec:two-fermion-derivation])
+
+$$
+F = -2 \alpha \omega \mathrm{r}_{1}+\frac{2 a}{r_{12}\left(1+\beta r_{12}\right)^{2}} \mathrm{r}_{12}-2 \alpha \omega \mathrm{r}_{2}+\frac{2 a}{r_{12}\left(1+\beta r_{12}\right)^{2}} \mathrm{r}_{21}
+$$
+
+## Slater determinant
+
+The slater determinant is a crucial, time consuming part of the trail wavefunction and hence the metropolis algorithm, in evaluating the quantum force, and when computing the local energy and other observebales.  Standard Gaussian elimination determinant calculation for a $N \times N$ matrix is in the ordrer of $N^3$.  Our gradient and Laplacien requiers $N \cdot dim$ determinant calculations. Hence, it is important to optimize. 
+
+Calcutating the trasition probability of the trial wavefunction $\Psi_{old}(\mathbf{R}) / \Psi_{new}(\mathbf{R})$ requieres a computation of the ratio of the determinants $det(D_{old}(\mathbf{R})) / det(D_{new}(\mathbf{R}))$. Insted of recalculate the whole determinant for each step, the algorithm can be optimized using Sherman-Morrison formula, reducing the computational cost of evaluating the ratio of the determinants with a factor of $N$ of the move is accepted.  
+
+
