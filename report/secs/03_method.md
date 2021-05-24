@@ -4,7 +4,37 @@
 
 Our variational Monte Carlo approach is as explained by our previous work [@Vmc-bosonic2021]. Roughly, it proceeds by proposing a change to the system $\mathbf R \mapsto \mathbf R'$ by changing the position of a single particle $\mathbf r_i$. The choice of this particle and how it moves is done both randomly and by way of the *quantum force*, both explained in @Vmc-bosonic2021. From the states $\mathbf R$ and $\mathbf R'$, and the trial wave function $\Psi_T$, we evaluate an acceptance factor, that determines whether or not we accept the proposed changed system.
 
-Regardless of whether the new step is accepted or not, the desired quantities - in our case the energy, it's gradient and their composites - are sampled in Monte Carlo integration. The integrated values are then used in steepest gradient descent to find the optimal variational parameters.
+Regardless of whether the new step is accepted or not, the desired quantities - in our case the energy, it's gradient and their composites - are sampled in Monte Carlo integration. The integrated values are then used in steepest gradient descent [@Vmc-bosonic2021] to find the optimal variational parameters.
+
+## Optimization of wave function ratio
+
+In our approach, the most time-consuming calculation is the evaluation of the wave function. For each proposed step in the Metropolis algorithm, we need to evaluate it to determine the acceptance factor, and if the step is accepted, yet another evaluation is needed (although this might be stored for reuse). This is expensive, so we need to optimize this process to scale well with the size of the system.
+
+As previously stated, we find the acceptance factor in our Metropolis algorithm by introducing the proposed system change $\mathbf R \mapsto \mathbf R'$ in our Metropolis algorithm, with a single particle change $\mathbf r_p \mapsto \mathbf r_p'$. The acceptance factor depends on the wave function ratio $\mathcal R$, which we can split up like this:
+
+$$ \mathcal R = \frac{\Psi_T(\mathbf R')}{\Psi_T(\mathbf R)} = \frac{\Psi_D(\mathbf R')}{\Psi_D(\mathbf R)}\cdot \frac{\Psi_J(\mathbf R')}{\Psi_J(\mathbf R)} = \mathcal R_D \mathcal R_J. $$
+
+We will optimize each of these ratios separately.
+
+### Optimizing $\mathcal R_D$
+
+Each new ratio $\mathcal R_D = \frac{\det(D(\mathbf R'))}{\det(D(\mathbf R))}$ would require $\mathcal O(N^3)$ operations if done with Gaussian elimination. However, as found by @NukalaKent2009, this is decreased to $\mathcal O(N)$ by utilizing the inverse matrix $D^{-1}$ as such:
+
+$$ \mathcal R_D = 1 + \mathbf v_p^T D^{-1}\mathbf e_p,\quad \text{where } \mathbf v_p = \begin{bmatrix}\phi_1(\mathbf r'_p) - \phi_1(\mathbf r_p) \\ \vdots \\ \phi_N(\mathbf r'_p) - \phi_N(\mathbf r_p)\end{bmatrix}. $$
+
+$\mathbf e_p$ is simply the unit vector with $1$ on the $p$-th entry and zero everywhere else. It serves the purpose of extracting the $p$-th column from $D^{-1}$.
+
+Now, how do we calculate $D^{-1}$ effectively? Once again, Gaussian elimination gives us an $\mathcal O(N^3)$ cost, which is no-go. However, if we do the matrix inversion with Gaussian elimination initially, to aquire $D_0^{-1}$, we can iteratively find the succeeding inversions by using a special case of the *Sherman-Morrison-Woodbury formula*[^smw] [@GolubLoan2013], which states:
+
+$$ \left(D + D^{-1}\mathbf e_p \mathbf v_p^T\right)^{-1} = D^{-1} - \frac{D^{-1}\mathbf e_p \mathbf v_p^T D^{-1}}{1 + \mathbf v_p^T D^{-1}(\mathbf R)\mathbf e_p}. $$
+
+We introduce the index $k$, referring to an arbitrary Monte Carlo step. Recognizing $D_k + D_k^{-1}\mathbf e_p \mathbf v_p^T$ as $D_{k+1}$ [@NukalaKent2009], we can simplify this to the iterative statement
+
+$$ D_{k+1} = \left(\mathbf I - \frac{D_k^{-1}\mathbf e_p \mathbf v_p^T}{\mathcal R_{D, k}}\right)D_k^{-1}. $$
+
+This has an operation complexity of $\mathcal O(N)$.
+
+[^smw]: Which, confusingly, is just called the *Sherman-Morrison formula*.
 
 ## Testing
 
