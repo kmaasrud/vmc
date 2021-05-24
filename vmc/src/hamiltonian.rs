@@ -6,10 +6,7 @@ pub struct Hamiltonian;
 impl Hamiltonian {
     // --- Kinetic energy ---
     fn kinetic(wf: &WaveFunction, particles: &mut Vec<Particle>) -> Result<f64, String> {
-        match wf.laplace(particles) {
-            Ok(laplace) => Ok(-0.5 * laplace),
-            Err(e) => Err(e),
-        }
+        Ok(-0.5 * wf.laplace(particles)?)
     }
 
     // --- Potential energy ---
