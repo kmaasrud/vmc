@@ -41,23 +41,24 @@ impl WaveFunction {
 
     /// Evaluates the single particle wave function  
     fn spf(&self, particle: &Particle, omega: f64) -> Result<f64, String> {
+        let parameter_factor = (self.alpha * omega).sqrt();
         let result = match (particle.position, particle.energy_state) {
-            (Vector::D1(x), Vector::D1(nx)) => Hermite::evaluate(x, nx as usize)?,
+            (Vector::D1(x), Vector::D1(nx)) => Hermite::evaluate(parameter_factor * x, nx as usize)?,
+
             (Vector::D2(x, y), Vector::D2(nx, ny)) => {
-                Hermite::evaluate(x, nx as usize)? * Hermite::evaluate(y, ny as usize)?
+                Hermite::evaluate(parameter_factor * x, nx as usize)?
+                    * Hermite::evaluate(parameter_factor * y, ny as usize)?
             }
+
             (Vector::D3(x, y, z), Vector::D3(nx, ny, nz)) => {
-                Hermite::evaluate(x, nx as usize)?
-                    * Hermite::evaluate(y, ny as usize)?
-                    * Hermite::evaluate(z, nz as usize)?
+                Hermite::evaluate(parameter_factor * x, nx as usize)?
+                    * Hermite::evaluate(parameter_factor * y, ny as usize)?
+                    * Hermite::evaluate(parameter_factor * z, nz as usize)?
             }
             _ => panic!("Something wrong happened!"),
         };
 
-        Ok(
-            result
-                * (-0.5 * self.alpha * omega * particle.position.inner(particle.position)?).exp(),
-        )
+        Ok(result * (-0.5 * self.alpha * omega * particle.position.inner(particle.position)?).exp())
     }
 
     // --- Laplacian ---
