@@ -4,31 +4,32 @@ use crate::Vector::{self, *};
 #[derive(Debug, Clone)]
 pub struct Particle {
     pub position: Vector,
-    pub qforce: Vector,
     pub dim: usize,
+    pub qforce: Vector,
+    pub energy_state: Vector,
 }
 
 impl Particle {
     /// Creates a new particle with a given dimensionality.
     /// The particle's initial position is set to 0.
     pub fn new(dim: usize) -> Result<Self, String> {
-        let position = match dim {
-            1 => D1(0.),
-            2 => D2(0., 0.),   
-            3 => D3(0., 0., 0.),
+        let (position, energy_state) = match dim {
+            1 => (D1(0.), D1(0.)),
+            2 => (D2(0., 0.), D2(0., 0.)),
+            3 => (D3(0., 0., 0.), D3(0., 0., 0.)),
             _ => return Err("Unsupported dimensionality.".to_owned()),
         };
 
-        Ok(Particle{ position, qforce: position, dim })
+        Ok(Particle{ position, qforce: position, dim, energy_state })
     }
 
     pub fn from_vector(position: Vector) -> Self {
-        let (dim, qforce) = match position {
-            D1(_) => (1, D1(0.)),
-            D2(_,_) => (2, D2(0., 0.)),
-            D3(_,_,_) => (3, D3(0., 0., 0.)),
+        let (dim, qforce, energy_state) = match position {
+            D1(_) => (1, D1(0.), D1(0.)),
+            D2(_,_) => (2, D2(0., 0.), D2(0., 0.)),
+            D3(_,_,_) => (3, D3(0., 0., 0.), D3(0., 0., 0.)),
         };
-        Particle { position, qforce, dim, }
+        Particle { position, qforce, dim, energy_state }
     }
 
     /// Computes the squared sum of each coordinate.
