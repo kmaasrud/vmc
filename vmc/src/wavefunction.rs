@@ -39,6 +39,27 @@ impl WaveFunction {
         }
     }
 
+    /// Evaluates the single particle wave function  
+    fn spf(&self, particle: &Particle, omega: f64) -> Result<f64, String> {
+        let result = match (particle.position, particle.energy_state) {
+            (Vector::D1(x), Vector::D1(nx)) => Hermite::evaluate(x, nx as usize)?,
+            (Vector::D2(x, y), Vector::D2(nx, ny)) => {
+                Hermite::evaluate(x, nx as usize)? * Hermite::evaluate(y, ny as usize)?
+            }
+            (Vector::D3(x, y, z), Vector::D3(nx, ny, nz)) => {
+                Hermite::evaluate(x, nx as usize)?
+                    * Hermite::evaluate(y, ny as usize)?
+                    * Hermite::evaluate(z, nz as usize)?
+            }
+            _ => panic!("Something wrong happened!"),
+        };
+
+        Ok(
+            result
+                * (-0.5 * self.alpha * omega * particle.position.inner(particle.position)?).exp(),
+        )
+    }
+
     // --- Laplacian ---
     /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
     /// Returns laplacian for the wavefunction with hermitian polynomials
@@ -102,10 +123,12 @@ impl WaveFunction {
     fn gradient_spf(&self, particle: &Particle) -> Vector {
         let gradient = particle.position.clone();
         match gradient {
-            Vector::D1(_) | Vector::D2(_,_) => gradient.scale(-2. * self.alpha),
-            Vector::D3(x, y, z) => Vector::D3(-2. * self.alpha * x,
-                                                         -2. * self.alpha * y,
-                                                         -2. * self.alpha * self.beta * z),
+            Vector::D1(_) | Vector::D2(_, _) => gradient.scale(-2. * self.alpha),
+            Vector::D3(x, y, z) => Vector::D3(
+                -2. * self.alpha * x,
+                -2. * self.alpha * y,
+                -2. * self.alpha * self.beta * z,
+            ),
         }
     }
 
@@ -223,16 +246,14 @@ mod tests {
         let a: f64 = 1.;
 
         // The below is defined separately in evaluate() function
-        let omega: f64 = 1.;        //Defined separately in evaluate() function
-        let c: f64 = 1.;            //Defined separately in evaluate() function
-        let h: f64 = 0.0001;        //Defined separately in laplace() function
-        let h2: f64 = h.powi(2);    //Defined separately in laplace() function
+        let omega: f64 = 1.; //Defined separately in evaluate() function
+        let c: f64 = 1.; //Defined separately in evaluate() function
+        let h: f64 = 0.0001; //Defined separately in laplace() function
+        let h2: f64 = h.powi(2); //Defined separately in laplace() function
 
         // Spawn a system with defined wavefunction and energy
         let ham: Hamiltonian = Hamiltonian;
-        let wf = WaveFunction {
-            alpha, beta, a,
-        }; // Set beta = gamma
+        let wf = WaveFunction { alpha, beta, a }; // Set beta = gamma
         let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
         system.particles[0].position = Vector::D2(0., 0.); //Just placing the particles at specific positions
         system.particles[1].position = Vector::D2(1., 1.);
@@ -241,11 +262,11 @@ mod tests {
         let r1: f64 = 0.;
         let r2: f64 = (2. as f64).sqrt();
         let r12: f64 = r2;
-        let frac: f64 =  a /((1. + beta * r12).powi(2));
-        let analytical = 2. * alpha.powi(2) * omega.powi(2)* (r1.powi(2) + r2.powi(2))
-                            - 4. * alpha * omega 
-                            - frac * 2. * alpha * omega * r12
-                            + 2. * frac * ( frac + 1./r12 - 2. * beta /(1. + beta * r12) );
+        let frac: f64 = a / ((1. + beta * r12).powi(2));
+        let analytical = 2. * alpha.powi(2) * omega.powi(2) * (r1.powi(2) + r2.powi(2))
+            - 4. * alpha * omega
+            - frac * 2. * alpha * omega * r12
+            + 2. * frac * (frac + 1. / r12 - 2. * beta / (1. + beta * r12));
 
         // Assertion
         let tol: f64 = 1E-13;
@@ -282,9 +303,7 @@ mod tests {
 
         // Spawn a system with defined wavefunction and energy
         let ham: Hamiltonian = Hamiltonian;
-        let wf = WaveFunction {
-            alpha, beta, a,
-        }; // Set beta = gamma
+        let wf = WaveFunction { alpha, beta, a }; // Set beta = gamma
         let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
         system.particles[0].position = Vector::D2(0., 0.); //Just placing the particles at specific positions
         system.particles[1].position = Vector::D2(1., 1.);
@@ -310,16 +329,14 @@ mod tests {
         let a: f64 = 1.;
 
         // The below is defined separately in evaluate() function
-        let omega: f64 = 1.;        //Defined separately in evaluate() function
-        let c: f64 = 1.;            //Defined separately in evaluate() function
-        let h: f64 = 0.0001;        //Defined separately in laplace() function
-        let h2: f64 = h.powi(2);    //Defined separately in laplace() function
+        let omega: f64 = 1.; //Defined separately in evaluate() function
+        let c: f64 = 1.; //Defined separately in evaluate() function
+        let h: f64 = 0.0001; //Defined separately in laplace() function
+        let h2: f64 = h.powi(2); //Defined separately in laplace() function
 
         // Spawn a system with defined wavefunction and energy
         let ham: Hamiltonian = Hamiltonian;
-        let wf = WaveFunction {
-            alpha, beta, a,
-        }; // Set beta = gamma
+        let wf = WaveFunction { alpha, beta, a }; // Set beta = gamma
         let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
         system.particles[0].position = vec![0., 0.]; //Just placing the particles at specific positions
         system.particles[1].position = vec![1., 1.];
@@ -329,21 +346,17 @@ mod tests {
         let r2: f64 = (2. as f64).sqrt();
         let r12: f64 = r2;
         let r21: f64 = -r2;
-        let frac: f64 =  a /((1. + beta * r12).powi(2));
-        let analyticalx =     2. * alpha * omega * 0.
-                            + 2./r12 * frac * 1.
-                            - 2. * alpha * omega * 1.
-                            + 2./r12 * frac * (-1.);
+        let frac: f64 = a / ((1. + beta * r12).powi(2));
+        let analyticalx = 2. * alpha * omega * 0. + 2. / r12 * frac * 1. - 2. * alpha * omega * 1.
+            + 2. / r12 * frac * (-1.);
 
-        let analyticaly =     2. * alpha * omega * 0.
-                            + 2./r12 * frac * 1.
-                            - 2. * alpha * omega * 1.
-                            + 2./r12 * frac * (-1.);
+        let analyticaly = 2. * alpha * omega * 0. + 2. / r12 * frac * 1. - 2. * alpha * omega * 1.
+            + 2. / r12 * frac * (-1.);
         let analytical = Vector::D2(analyticalx, analyticaly);
-        
+
         // Assertion
         let tol: f64 = 1E-13;
-        assert!((wf.quantum_force(1, &mut system.particles) - analytical).abs() < tol); // Magnus is fixing fancy vectors with subtraction, wait for that
-
+        assert!((wf.quantum_force(1, &mut system.particles) - analytical).abs() < tol);
+        // Magnus is fixing fancy vectors with subtraction, wait for that
     }
 }
