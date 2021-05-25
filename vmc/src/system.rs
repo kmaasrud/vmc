@@ -1,7 +1,7 @@
 use crate::Hamiltonian;
 use crate::Particle;
-use crate::WaveFunction;
 use crate::Vector;
+use crate::WaveFunction;
 
 use rand::distributions::{Distribution, Uniform};
 use rand::{prelude::random, thread_rng};
@@ -33,7 +33,14 @@ impl System {
     }
 
     /// Creates a new system with particles distributed randomly
-    pub fn distributed(n_particles: usize, dim: usize, wf: WaveFunction, ham: Hamiltonian, interact: bool, spread: f64) -> Result<Self, String> {
+    pub fn distributed(
+        n_particles: usize,
+        dim: usize,
+        wf: WaveFunction,
+        ham: Hamiltonian,
+        interact: bool,
+        spread: f64,
+    ) -> Result<Self, String> {
         let mut rng = thread_rng();
         let uniform = Uniform::new(0., 1.);
         let mut sys: System = System::new(n_particles, dim, wf, ham, interact)?;
@@ -42,11 +49,15 @@ impl System {
             // Make a new randomly placed particle
             let new_particle = Particle::from_vector(match sys.dim {
                 1 => Vector::D1(uniform.sample(&mut rng) - 0.5),
-                2 => Vector::D2(uniform.sample(&mut rng) - 0.5,
-                                uniform.sample(&mut rng) - 0.5),
-                _ => Vector::D3(uniform.sample(&mut rng) - 0.5,
-                                uniform.sample(&mut rng) - 0.5,
-                                uniform.sample(&mut rng) - 0.5),
+                2 => Vector::D2(
+                    uniform.sample(&mut rng) - 0.5,
+                    uniform.sample(&mut rng) - 0.5,
+                ),
+                _ => Vector::D3(
+                    uniform.sample(&mut rng) - 0.5,
+                    uniform.sample(&mut rng) - 0.5,
+                    uniform.sample(&mut rng) - 0.5,
+                ),
             });
 
             sys.particles[i].position = new_particle.position.scale(spread);
@@ -59,15 +70,13 @@ impl System {
         let mut new_particles = self.particles.clone();
         let i = random::<usize>() % self.particles.len();
         let add = match new_particles[i].position {
-            Vector::D1(_) => {
-                Vector::D1(random::<f64>() - 0.5)
-            },
-            Vector::D2(_,_) => {
-                Vector::D2(random::<f64>() - 0.5, random::<f64>() - 0.5)
-            }
-            Vector::D3(_,_,_) => {
-                Vector::D3(random::<f64>() - 0.5, random::<f64>() - 0.5, random::<f64>() - 0.5)
-            }
+            Vector::D1(_) => Vector::D1(random::<f64>() - 0.5),
+            Vector::D2(_, _) => Vector::D2(random::<f64>() - 0.5, random::<f64>() - 0.5),
+            Vector::D3(_, _, _) => Vector::D3(
+                random::<f64>() - 0.5,
+                random::<f64>() - 0.5,
+                random::<f64>() - 0.5,
+            ),
         };
         new_particles[i].position += add.scale(step_size);
         new_particles
@@ -97,10 +106,15 @@ impl System {
         new_particles[i].position = new_particles[i].position
             + self.particles[i].qforce.scale(0.5 * qf_step_size)
             + (match new_particles[i].position {
-                Vector::D1(_)     => Vector::D1(normal.sample(&mut rng)),
-                Vector::D2(_,_)   => Vector::D2(normal.sample(&mut rng), normal.sample(&mut rng)),
-                Vector::D3(_,_,_) => Vector::D3(normal.sample(&mut rng), normal.sample(&mut rng), normal.sample(&mut rng))
-            }).scale(qf_step_size.sqrt());
+                Vector::D1(_) => Vector::D1(normal.sample(&mut rng)),
+                Vector::D2(_, _) => Vector::D2(normal.sample(&mut rng), normal.sample(&mut rng)),
+                Vector::D3(_, _, _) => Vector::D3(
+                    normal.sample(&mut rng),
+                    normal.sample(&mut rng),
+                    normal.sample(&mut rng),
+                ),
+            })
+            .scale(qf_step_size.sqrt());
 
         // Calculate quantum force of new state
         new_particles[i].qforce = if self.interacting {

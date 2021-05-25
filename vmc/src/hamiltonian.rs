@@ -29,7 +29,12 @@ impl Hamiltonian {
 
     /// Calculates the energy of a system of `particles` described by `wf`.
     /// If `non_interacting` is `true`, will calculate the non-interacting energy (unused for now).
-    pub fn energy(&self, wf: &WaveFunction, particles: &mut Vec<Particle>, omega: f64) -> Result<f64, String> {
+    pub fn energy(
+        &self,
+        wf: &WaveFunction,
+        particles: &mut Vec<Particle>,
+        omega: f64,
+    ) -> Result<f64, String> {
         Ok(Self::kinetic(wf, particles)?
             + Self::potential(omega, particles)
             + Self::repulsive(particles))

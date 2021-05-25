@@ -1,8 +1,8 @@
 pub struct Hermite;
 
 const C: [f64; 36] = [
-    1., 0., 2., -2., 0., 4., 0., -12., 0., 8., 12., 0., -48., 0., 16., 0., 120., 0., -160., 0., 32.,
-    -120., 0., 720., 0., -480., 0., 64., 0., -1680., 0., 3360., 0., -1344., 0., 128.,
+    1., 0., 2., -2., 0., 4., 0., -12., 0., 8., 12., 0., -48., 0., 16., 0., 120., 0., -160., 0.,
+    32., -120., 0., 720., 0., -480., 0., 64., 0., -1680., 0., 3360., 0., -1344., 0., 128.,
 ];
 
 impl Hermite {
@@ -21,7 +21,7 @@ impl Hermite {
             _ => {
                 let m = (1..=n).sum::<usize>();
                 (0..=n).map(|i| C[i + m] * x.powi(i as i32)).sum()
-            },
+            }
         };
 
         Ok(result)
@@ -39,7 +39,7 @@ impl Hermite {
                 // Use a two point approximation of the derivative for efficiency
                 let h = 0.00000001;
                 (Self::evaluate(x + h, n)? - Self::evaluate(x - h, n)?) / (2. * h)
-            },
+            }
         };
 
         Ok(result)
@@ -56,8 +56,9 @@ impl Hermite {
             _ => {
                 // Use a three point approximation of the double derivative for efficiency
                 let h = 0.00000001;
-                (Self::evaluate(x + h, n)? - 2. * Self::evaluate(x, n)? + Self::evaluate(x - h, n)?) / h.powi(2)
-            },
+                (Self::evaluate(x + h, n)? - 2. * Self::evaluate(x, n)? + Self::evaluate(x - h, n)?)
+                    / h.powi(2)
+            }
         };
 
         Ok(result)
@@ -96,8 +97,10 @@ mod tests {
     #[test]
     fn test_returns_error() {
         match Hermite::evaluate(1., 8) {
-            Ok(_) => panic!("Hermite::evalute did not error correctly when the order was too high."),
-            Err(_) => {},
+            Ok(_) => {
+                panic!("Hermite::evalute did not error correctly when the order was too high.")
+            }
+            Err(_) => {}
         }
     }
 }

@@ -14,10 +14,10 @@ pub use hermite::Hermite;
 pub use metropolis::{BruteForceMetropolis, ImportanceMetropolis, Metropolis};
 pub use montecarlo::monte_carlo;
 pub use particle::Particle;
-pub use vector::Vector;
 pub use system::System;
 pub use threadpool::ThreadPool;
 pub use utils::det;
+pub use vector::Vector;
 pub use wavefunction::WaveFunction;
 
 fn main() {

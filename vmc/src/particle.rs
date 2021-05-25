@@ -20,16 +20,26 @@ impl Particle {
             _ => return Err("Unsupported dimensionality.".to_owned()),
         };
 
-        Ok(Particle{ position, qforce: position, dim, energy_state })
+        Ok(Particle {
+            position,
+            qforce: position,
+            dim,
+            energy_state,
+        })
     }
 
     pub fn from_vector(position: Vector) -> Self {
         let (dim, qforce, energy_state) = match position {
             D1(_) => (1, D1(0.), D1(0.)),
-            D2(_,_) => (2, D2(0., 0.), D2(0., 0.)),
-            D3(_,_,_) => (3, D3(0., 0., 0.), D3(0., 0., 0.)),
+            D2(_, _) => (2, D2(0., 0.), D2(0., 0.)),
+            D3(_, _, _) => (3, D3(0., 0., 0.), D3(0., 0., 0.)),
         };
-        Particle { position, qforce, dim, energy_state }
+        Particle {
+            position,
+            qforce,
+            dim,
+            energy_state,
+        }
     }
 
     /// Computes the squared sum of each coordinate.
@@ -44,7 +54,7 @@ impl Particle {
     /// Computes the squared sum of each coordinate, but the z-component is scaled by a factor
     pub fn squared_sum_scaled_z(&self, factor: f64) -> f64 {
         match self.position {
-            D1(_) | D2(_,_) => self.squared_sum(),
+            D1(_) | D2(_, _) => self.squared_sum(),
             D3(x, y, z) => x.powi(2) + y.powi(2) + factor * z.powi(2),
         }
     }
@@ -54,7 +64,9 @@ impl Particle {
         match (self.position, other.position) {
             (D1(x1), D1(x2)) => Ok((x1 - x2).powi(2).sqrt()),
             (D2(x1, y1), D2(x2, y2)) => Ok(((x1 - x2).powi(2) + (y1 - y2).powi(2)).sqrt()),
-            (D3(x1, y1, z1), D3(x2, y2, z2)) => Ok(((x1 - x2).powi(2) + (y1 - y2).powi(2) + (z1 - z2).powi(2)).sqrt()),
+            (D3(x1, y1, z1), D3(x2, y2, z2)) => {
+                Ok(((x1 - x2).powi(2) + (y1 - y2).powi(2) + (z1 - z2).powi(2)).sqrt())
+            }
             _ => Err("Dimensions do not match".to_owned()),
         }
     }
@@ -68,20 +80,19 @@ impl Particle {
                 D1(x) => D1(x + bump_size),
                 D2(x, y) => D2(x + bump_size, y),
                 D3(x, y, z) => D3(x + bump_size, y, z),
-            }
+            },
             1 => match self.position {
                 D1(_) => self.position,
                 D2(x, y) => D2(x, y + bump_size),
                 D3(x, y, z) => D3(x, y + bump_size, z),
-            }
+            },
             2 => match self.position {
                 D1(_) | D2(_, _) => self.position,
                 D3(x, y, z) => D3(x, y, z + bump_size),
-            }
-            _ => self.position
+            },
+            _ => self.position,
         };
     }
-
 }
 
 #[cfg(test)]
@@ -102,7 +113,8 @@ mod tests {
         let tol: f64 = 0.00001;
         let want: f64 = 6.25744;
         let got: f64 = Particle::from_vector(D3(3., 5.666, 8.))
-            .distance_to(&Particle::from_vector(D3(2., 9., 13.2))).unwrap();
+            .distance_to(&Particle::from_vector(D3(2., 9., 13.2)))
+            .unwrap();
         assert!((want - got).abs() < tol);
     }
 

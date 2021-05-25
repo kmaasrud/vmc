@@ -98,7 +98,7 @@ impl Metropolis for ImportanceMetropolis {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Hamiltonian, System, WaveFunction, Vector};
+    use crate::{Hamiltonian, System, Vector, WaveFunction};
 
     #[test]
     fn test_hastings_check() {
@@ -121,13 +121,15 @@ mod tests {
         // a = 1, alpha = 0.5 omega = 1, beta = 1
         let r12: f64 = p0.distance_to(&pold).unwrap();
         let qforce_vec = p0.position.scale(-2. * 0.5)
-                            + (p0.position-pold.position).scale(2. /(r12* (1.+r12).powf(2.)))
-                            + pold.position.scale(-2.*0.5)
-                            + (pold.position-p0.position).scale(2. / (r12* (1.+r12).powf(2.)));
-        println!("{:?}",qforce_vec);
-        let relpos = pnew.position-pold.position;
-        let poldscaled = pold.position.scale(diffusion_coeff*dt);
-        let therest = (relpos - poldscaled).scale(-1.).scale(1./(4.*diffusion_coeff*dt)); //Fuck me for doing this ugly shit
+            + (p0.position - pold.position).scale(2. / (r12 * (1. + r12).powf(2.)))
+            + pold.position.scale(-2. * 0.5)
+            + (pold.position - p0.position).scale(2. / (r12 * (1. + r12).powf(2.)));
+        println!("{:?}", qforce_vec);
+        let relpos = pnew.position - pold.position;
+        let poldscaled = pold.position.scale(diffusion_coeff * dt);
+        let therest = (relpos - poldscaled)
+            .scale(-1.)
+            .scale(1. / (4. * diffusion_coeff * dt)); //Fuck me for doing this ugly shit
         let analytical: f64 = therest.inner(therest).unwrap();
 
         //Assertation
@@ -153,10 +155,18 @@ mod tests {
         //Generate own energies and wf deriv
         let d_energy = system.ham.energy(&system.wf, &mut system.particles, 1.0);
         let d_wf_deriv = system.wf.gradient_alpha(&system.particles, 0, 0); //Set n in hermite polynomials to 0 this sould be changed
-        assert!((
-            system.ham.energy(&system.wf, &mut system.particles, 1.0).unwrap()
-            - system.ham.energy(&system.wf, &mut system.particles, 1.0).unwrap()
-        ).abs() < tol);
+        assert!(
+            (system
+                .ham
+                .energy(&system.wf, &mut system.particles, 1.0)
+                .unwrap()
+                - system
+                    .ham
+                    .energy(&system.wf, &mut system.particles, 1.0)
+                    .unwrap())
+            .abs()
+                < tol
+        );
         // Assertion
         //assert_eq!(smpldvls.map["energy"], d_energy);
         //assert_eq!(smpldvls.map["energy_sqrd"], d_energy.powi(2));
