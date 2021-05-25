@@ -98,7 +98,7 @@ impl Metropolis for ImportanceMetropolis {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Hamiltonian, System, WaveFunction};
+    use crate::{Hamiltonian, System, WaveFunction, Vector};
 
     #[test]
     fn test_hastings_check() {
@@ -109,43 +109,30 @@ mod tests {
 
     #[test]
     fn test_greens() {
-        // System parameters
-        let alpha: f64 = 0.5;
-        let beta: f64 = 1.;
-        let a: f64 = 1.;
-
-        // The below is defined separately in evaluate() function
-        let omega: f64 = 1.;        //Defined separately in evaluate() function
-        let c: f64 = 1.;            //Defined separately in evaluate() function
-        let h: f64 = 0.0001;        //Defined separately in laplace() function
-        let h2: f64 = h.powi(2);    //Defined separately in laplace() function
-
-        // Spawn a system with defined wavefunction and energy
-        let ham: Hamiltonian = Hamiltonian;
-        let wf = WaveFunction {
-            alpha, beta, a,
-        }; // Set beta = gamma
-        let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
-        system.particles[0].position = vec![0., 0.]; //Just placing the particles at specific positions
-        system.particles[1].position = vec![1., 1.];
-        // Make next step used in greens
-        let (next_step, i) = system.quantum_force_particle_change();
-        // Name the old and new particle for eazy comparison
-        let oldpos = system.particles[i];
-        let newpos = next_step[i];
-
         // Special greens variables
         let diffusion_coeff: f64 = 0.5;
         let dt: f64 = 0.005;
 
-        
-        let xdim:f64 = (newpos.position[0] - oldpos.position[0] * diffusion_coeff * dt * oldpos.qforce[0]).powi(2);
-        let ydim:f64 = (newpos.position[1] - oldpos.position[1] * diffusion_coeff * dt * oldpos.qforce[1]).powi(2);
-        let analytical: f64 = (-(xdim+ydim)/(4. * diffusion_coeff * dt)).exp();
+        let p0 = Particle::from_vector(Vector::D2(0., 0.));
+        let pold = Particle::from_vector(Vector::D2(0.01, 0.01));
+        let pnew = Particle::from_vector(Vector::D2(0.011, 0.011));
+        pnew.qforce += Vector::D2(0.2, 0.2);
+
+        // a = 1, alpha = 0.5 omega = 1, beta = 1
+        let r12: f64 = p0.distance_to(&pold).unwrap();
+        let qforce_vec = p0.position.scale(-2. * 0.5)
+                            + (p0.position-pold.position).scale(2. /(r12* (1.+r12).powf(2.)))
+                            + pold.position.scale(-2.*0.5)
+                            + (pold.position-p0.position).scale(2. / (r12* (1.+r12).powf(2.)));
+        println!("{:?}",qforce_vec);
+        let relpos = pnew.position-pold.position;
+        let poldscaled = pold.position.scale(diffusion_coeff*dt);
+        let therest = (relpos - poldscaled).scale(-1.).scale(1./(4.*diffusion_coeff*dt)); //Fuck me for doing this ugly shit
+        let analytical: f64 = therest.inner(therest).unwrap();
 
         //Assertation
         let tol: f64 = 1E-13;
-        assert!((BruteForceMetropolis::greens(&next_step[i], &system.particles[i]) - analytical) < tol);
+        assert!((BruteForceMetropolis::greens(&pnew, &pold).unwrap() - analytical) < tol);
     }
 
     #[test]
