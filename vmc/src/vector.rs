@@ -26,6 +26,24 @@ impl Vector {
             _ => Err("Incompatible dimensions.".to_owned())
         }  
     }
+    
+    pub fn get(&self, index: usize) -> Option<f64> {
+        match self {
+            D1(x) => if index != 0 { return None } else { Some(*x) },
+            D2(x, y) => {
+                match [*x, *y].get(index) {
+                    Some(val) => Some(*val),
+                    None => None,
+                }
+            },
+            D3(x, y, z) => {
+                match [*x, *y, *z].get(index) {
+                    Some(val) => Some(*val),
+                    None => None,
+                }
+            },
+        }
+    }
 }
 
 impl Add for Vector {
