@@ -339,7 +339,7 @@ mod tests {
                             + 2./r12 * frac * 1.
                             - 2. * alpha * omega * 1.
                             + 2./r12 * frac * (-1.);
-        let analytical = vec!(analyticalx, analyticaly);
+        let analytical = Vector::D2(analyticalx, analyticaly);
         
         // Assertion
         let tol: f64 = 1E-13;
