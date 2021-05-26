@@ -1,7 +1,9 @@
-use crate::Hamiltonian;
-use crate::Particle;
-use crate::Vector;
-use crate::WaveFunction;
+use crate::{
+    Hamiltonian,
+    Particle,
+    Vector,
+    WaveFunction,
+};
 
 use rand::distributions::{Distribution, Uniform};
 use rand::{prelude::random, thread_rng};
