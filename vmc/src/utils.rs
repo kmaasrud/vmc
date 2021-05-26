@@ -52,6 +52,11 @@ impl<T, const N: usize> DerefMut for SmallVector<T, N> {
     }
 }
 
+pub enum Spin {
+    Up,
+    Down,
+}
+
 pub fn det(mat: &Vec<Vec<f64>>) -> Option<f64> {
     // Check for non-square matrix
     if mat.len() != mat[0].len() {
