@@ -8,34 +8,23 @@ use crate::{
 use rand::distributions::{Distribution, Uniform};
 use rand::{prelude::random, thread_rng};
 use rand_distr::Normal;
+use nalgebra::base::SMatrix;
 
-pub struct System {
+pub struct System<const N: usize> {
     pub particles: Vec<Particle>,
     pub dim: usize,
     pub wf: WaveFunction,
     pub ham: Hamiltonian,
+    pub slater_matrix_up: SMatrix<f64, N, N>,
+    pub slater_matrix_down: SMatrix<f64, N, N>,
+    pub slater_inverse_up: SMatrix<f64, N, N>,
+    pub slater_inverse_down: SMatrix<f64, N, N>,
     pub interacting: bool,
 }
 
-impl System {
-    pub fn new(
-        n_particles: usize,
-        dim: usize,
-        wf: WaveFunction,
-        ham: Hamiltonian,
-        interact: bool,
-    ) -> Result<Self, String> {
-        Ok(System {
-            particles: vec![Particle::new(dim)?; n_particles],
-            dim,
-            wf,
-            ham,
-            interacting: interact,
-        })
-    }
-
+impl<const N: usize> System<N> {
     /// Creates a new system with particles distributed randomly
-    pub fn distributed(
+    pub fn new(
         n_particles: usize,
         dim: usize,
         wf: WaveFunction,
@@ -45,11 +34,11 @@ impl System {
     ) -> Result<Self, String> {
         let mut rng = thread_rng();
         let uniform = Uniform::new(0., 1.);
-        let mut sys: System = System::new(n_particles, dim, wf, ham, interact)?;
+        let mut particles = vec![Particle::new(dim)?; n_particles];
 
-        for i in 0..sys.particles.len() {
+        for i in 0..particles.len() {
             // Make a new randomly placed particle
-            let new_particle = Particle::from_vector(match sys.dim {
+            let new_particle = Particle::from_vector(match dim {
                 1 => Vector::D1(uniform.sample(&mut rng) - 0.5),
                 2 => Vector::D2(
                     uniform.sample(&mut rng) - 0.5,
@@ -62,9 +51,31 @@ impl System {
                 ),
             });
 
-            sys.particles[i].position = new_particle.position.scale(spread);
+            particles[i].position = new_particle.position.scale(spread);
         }
-        Ok(sys)
+
+        let mut slater_matrix_up: SMatrix<f64, N, N> = SMatrix::repeat(0.);
+        let mut slater_matrix_down: SMatrix<f64, N, N> = SMatrix::repeat(0.);
+
+        let n_div_2 = n_particles / 2;
+        for i in 0..n_div_2 {
+            for j in 0..n_div_2 {
+                slater_matrix_up[(i, j)] = wf.spf(particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1, 1.);
+                slater_matrix_down[(i, j)] = wf.spf(particles[i + n_div_2], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1, 1.);
+            }
+        }
+
+        Ok(System {
+            particles: vec![Particle::new(dim)?; n_particles],
+            dim,
+            wf,
+            ham,
+            slater_matrix_up,
+            slater_matrix_down,
+            slater_inverse_up: slater_matrix_up.try_inverse().unwrap(),
+            slater_inverse_down: slater_matrix_down.try_inverse().unwrap(),
+            interacting: interact,
+        })
     }
 
     /// Change a random particle's position by a random value
