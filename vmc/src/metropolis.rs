@@ -6,7 +6,7 @@ use std::collections::HashMap;
 /// Trait for Metropolis samplers.
 pub trait Metropolis {
     fn new(step_size: f64) -> Self;
-    fn step(&mut self, sys: &mut System) -> Result<Option<SampledValues>, String>;
+    fn step<const N: usize>(&mut self, sys: &mut System<N>) -> Result<Option<SampledValues>, String>;
 
     fn hastings_check(acceptance_factor: f64) -> bool {
         if acceptance_factor >= 1. {
@@ -18,7 +18,7 @@ pub trait Metropolis {
         }
     }
 
-    fn sample(sys: &mut System) -> Result<SampledValues, String> {
+    fn sample<const N: usize>(sys: &mut System<N>) -> Result<SampledValues, String> {
         let d_wf_deriv = sys.wf.gradient_alpha(&sys.particles, 0, 0);
         // The 1.0 inputted below is a placeholder for the omega value. We are testing over
         // different omega values. TODO: Consider storing omega in the System struct instead of
@@ -49,7 +49,7 @@ impl Metropolis for BruteForceMetropolis {
         Self { step_size }
     }
 
-    fn step(&mut self, sys: &mut System) -> Result<Option<SampledValues>, String> {
+    fn step<const N: usize>(&mut self, sys: &mut System<N>) -> Result<Option<SampledValues>, String> {
         // Make a step
         let next_step = sys.random_particle_change(self.step_size);
 
@@ -73,7 +73,7 @@ impl Metropolis for ImportanceMetropolis {
         Self
     }
 
-    fn step(&mut self, sys: &mut System) -> Result<Option<SampledValues>, String> {
+    fn step<const N: usize>(&mut self, sys: &mut System<N>) -> Result<Option<SampledValues>, String> {
         // Make a step
         let (next_step, i) = sys.quantum_force_particle_change();
 

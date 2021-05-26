@@ -2,7 +2,7 @@ use crate::{Hermite, Particle, Vector, System, Spin};
 
 // Hard-coding quantum states of up to 20 particles. This is done for speed, an should be
 // generalized if this code is to be used seriously
-const QUANTUM_NUMBERS: [(usize, usize, Spin); 20] = [
+pub const QUANTUM_NUMBERS: [(usize, usize, Spin); 20] = [
     (0, 0, Spin::Up),
     (0, 0, Spin::Down),
     (1, 0, Spin::Up),
@@ -72,29 +72,21 @@ impl WaveFunction {
     }
 
     /// Evaluates the single particle wave function  
-    fn spf(&self, particle: &Particle, omega: f64) -> Result<f64, String> {
+    pub fn spf(&self, particle: &Particle, nx: usize, ny: usize, omega: f64) -> Result<f64, String> {
         let sqrt_alpha_omega = (self.alpha * omega).sqrt();
-        let result = match (particle.position, particle.energy_state) {
-            (Vector::D1(x), Vector::D1(nx)) => Hermite::evaluate(sqrt_alpha_omega * x, nx as usize)?,
-
-            (Vector::D2(x, y), Vector::D2(nx, ny)) => {
+        let result = match particle.position {
+            Vector::D2(x, y) => {
                 Hermite::evaluate(sqrt_alpha_omega * x, nx as usize)?
                     * Hermite::evaluate(sqrt_alpha_omega * y, ny as usize)?
             }
-
-            (Vector::D3(x, y, z), Vector::D3(nx, ny, nz)) => {
-                Hermite::evaluate(sqrt_alpha_omega * x, nx as usize)?
-                    * Hermite::evaluate(sqrt_alpha_omega * y, ny as usize)?
-                    * Hermite::evaluate(sqrt_alpha_omega * z, nz as usize)?
-            }
-            _ => panic!("Something wrong happened!"),
+            _ => return Err("spf only supports two dimension right now".to_owned()),
         };
 
         Ok(result * (-0.5 * self.alpha * omega * particle.position.inner(particle.position)?).exp())
     }
 
     // --- Laplacian ---
-    pub fn laplace(&self, particle_i: usize, sys: System) -> f64 {
+    pub fn laplace<const N: usize>(&self, particle_i: usize, sys: System<N>) -> f64 {
         for i in 0..(sys.particles.len() / 2) {
             for j in 0..(sys.particles.len() / 2) {
                 let nx = QUANTUM_NUMBERS[particle_i].0;

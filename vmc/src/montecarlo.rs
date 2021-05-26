@@ -29,9 +29,9 @@ impl SampledValues {
 
 /// Does Monte Carlo integration over the WaveFunction of a System, using a given Metropolis
 /// algorithm.
-pub fn monte_carlo<T: Metropolis>(
+pub fn monte_carlo<T: Metropolis, const N: usize>(
     n: usize,
-    sys: &mut System,
+    sys: &mut System<N>,
     metro: &mut T,
 ) -> Result<SampledValues, String> {
     let pre_steps = n / 4;

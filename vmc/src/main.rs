@@ -18,7 +18,7 @@ pub use system::System;
 pub use threadpool::ThreadPool;
 pub use utils::{det, SmallVector, Spin};
 pub use vector::Vector;
-pub use wavefunction::WaveFunction;
+pub use wavefunction::{WaveFunction, QUANTUM_NUMBERS};
 
 fn main() {
     println!("Hello from VMC!");
