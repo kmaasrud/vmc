@@ -12,7 +12,7 @@ Here $r_{ij} = |r_i - r_j|$ is the distance between two electrons. The first sum
 
 Disregarding interactions, there is a closed-form solution for the Hamiltonian shown in equation ([@eq:hamiltonian]) for a single particle. The solutions follows [@Project2]:
 
-$$\phi_{n_x, n_y} (x,y) = A H_{n_x} (\sqrt{\omega} x) H_{n_y}(\sqrt{\omega}y) \exp{\left[-\frac{\omega}{2}(x^2 + y^2)\right]}.$${#eq:spwf}
+$$\phi_{n_x, n_y} (x, y, \alpha) = A H_{n_x} (\sqrt{\alpha\omega} x) H_{n_y}(\sqrt{\alpha\omega}y) \exp{\left[-\frac{\alpha\omega}{2}(x^2 + y^2)\right]}.$${#eq:spwf}
 
 Here, $H_{n_i}$ are Hermite polynomials (see [@sec:hermite]), and $A$ is the normalization constant. For the lowest lying state, we have $n_x = n_y = 0$ and hence the energy of a non-interacting fermion $\epsilon$ is:
 
@@ -20,7 +20,7 @@ $$ \epsilon_{n_x, n_y} = \omega(n_x + n_y + 1) = \omega. $$ {#eq:non-interacting
 
 The Pauli exclusion principle states that two fermions can not occupy the same quantum state simultaneously. For each state $(n_x, n_y)$ a fermion may have spin up or down, which means it can be occupied by at most two fermions. Using this principle, the ground state energies of the closed-shell configurations $N = 2, 6, 12$ and $20$ can easily be calculated using equation ([@eq:non-interacting-energy]). The energies are given in table [@tbl:energies].
 
-| **Number of particles $N$** | **$E$ (a.u)** |
+| **Number of particles $N$** | **$E$ (a.u)**        |
 | ----:                       | ---                  |
 | $2$                         | $2 \omega$           |
 | $6$                         | $10 \omega$          |
@@ -41,7 +41,7 @@ $$ \Psi_T(\mathbf R, \alpha, \beta) = \Psi_D \Psi_J = \det(D(\mathbf R, \alpha))
 where $D(\mathbf R)$ is a Slater matrix and $J(\mathbf R)$ is a Padé-Jastrow correlation function. $\mathbf R$ here represents the set of all the individual particle's positions, and $\alpha$ and $\beta$ are the variational parameters. Following @Project2, our ansatz for the factors of this trial wave function is:
 
 $$\begin{aligned}
-\Psi_D &= \det(D(\mathbf R)),\qquad D_{ij} = \phi_j(\mathbf r_i), \\
+\Psi_D &= \det(D(\mathbf R, \alpha)),\qquad D_{ij} = \phi_j(\mathbf r_i, \alpha), \\
 \Psi_J &= \prod_{i<j}^N \exp\left(\frac{ar_{ij}}{1 + \beta r_{ij}}\right).
 \end{aligned}$$ {#eq:trial-ansatz}
 
