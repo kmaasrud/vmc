@@ -1,4 +1,29 @@
-use crate::{Hermite, Particle, Vector};
+use crate::{Hermite, Particle, Vector, System, Spin};
+
+// Hard-coding quantum states of up to 20 particles. This is done for speed, an should be
+// generalized if this code is to be used seriously
+const QUANTUM_NUMBERS: [(usize, usize, Spin); 20] = [
+    (0, 0, Spin::Up),
+    (0, 0, Spin::Down),
+    (1, 0, Spin::Up),
+    (1, 0, Spin::Down),
+    (0, 1, Spin::Up),
+    (0, 1, Spin::Down),
+    (2, 0, Spin::Up),
+    (2, 0, Spin::Down),
+    (1, 1, Spin::Up),
+    (1, 1, Spin::Down),
+    (0, 2, Spin::Up),
+    (0, 2, Spin::Down),
+    (3, 0, Spin::Up),
+    (3, 0, Spin::Down),
+    (2, 1, Spin::Up),
+    (2, 1, Spin::Down),
+    (1, 2, Spin::Up),
+    (1, 2, Spin::Down),
+    (0, 3, Spin::Up),
+    (0, 3, Spin::Down),
+];
 
 #[derive(Clone)]
 pub struct WaveFunction {
@@ -35,7 +60,14 @@ impl WaveFunction {
                 Ok(result)
             }
             // This is the general evaluation, using Slater determinants
-            _ => Ok(1.),
+            _ => {
+                for q_number in QUANTUM_NUMBERS.iter() {
+                    for particle in particles.iter() {
+                        
+                    }
+                }
+                Ok(1.)
+            }
         }
     }
 
@@ -62,9 +94,22 @@ impl WaveFunction {
     }
 
     // --- Laplacian ---
+    pub fn laplace(&self, particle_i: usize, sys: System) -> f64 {
+        for i in 0..(sys.particles.len() / 2) {
+            for j in 0..(sys.particles.len() / 2) {
+                let nx = QUANTUM_NUMBERS[particle_i].0;
+                let ny = QUANTUM_NUMBERS[particle_i].1;
+                let result = match QUANTUM_NUMBERS[particle_i].2 {
+                    Spin::Up => self.laplace_spf(sys.particles[i], nx, ny) * self.slater_inverse(j, i, Spin::Up),
+                    Spin::Down => 1.,
+                };
+            }
+        }
+        1.
+    }
     /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
     /// Returns laplacian for the wavefunction with hermitian polynomials
-    pub fn laplace(&self, particles: &mut Vec<Particle>) -> Result<f64, String> {
+    pub fn laplace_numerical(&self, particles: &mut Vec<Particle>) -> Result<f64, String> {
         let h: f64 = 0.0001; //stepsize
         let h2 = h.powi(2);
 
@@ -88,34 +133,30 @@ impl WaveFunction {
         Ok(laplace / wf)
     }
 
-    pub fn laplace_hermitian(&self, particles: &mut Vec<Particle>, nx: usize, ny: usize) -> f64 {
-        let r1: f64 = particles[0].squared_sum();
-        let r2: f64 = particles[1].squared_sum();
+    pub fn laplace_spf(&self, particle: Particle, nx: usize, ny: usize) -> Result<f64, String> {
         let omega = 1.0;
-
-        // Hermitian polynomials
-        // TODO: The unwraps below should not be left untouched. We should not panic at an error,
-        // but rather propagate them up the stack. Will fix ASAP.
-        let omega_alpha_sqrt = (omega * self.alpha).sqrt();
-        let hnx = Hermite::evaluate(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
-        let hny = Hermite::evaluate(omega_alpha_sqrt * r2.powf(0.5), ny).unwrap();
-
-        let d_hnx = Hermite::derivative(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
-        let d_hny = Hermite::derivative(omega_alpha_sqrt * r1.powf(0.5), ny).unwrap();
-
-        let dd_hnx = Hermite::double_derivative(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
-        let dd_hny = Hermite::double_derivative(omega_alpha_sqrt * r1.powf(0.5), ny).unwrap();
-
-        let r = r1 + r2;
         let omega_alpha = omega * self.alpha;
+        let omega_alpha_sqrt = omega_alpha.sqrt();
 
-        let result = (-0.5 * omega_alpha * r).exp()
-            * (-2.0 * omega_alpha * r1.powf(0.5) * hny * d_hnx
-                - 2.0 * omega_alpha * r2.powf(0.5) * hnx * d_hny
-                + omega_alpha * hnx * hny * (omega_alpha * r - 2.0)
-                + hny * dd_hnx
-                + hnx * dd_hny);
-        result
+        match particle.position {
+            Vector::D2(x, y) => {
+                let hnx = Hermite::evaluate(omega_alpha_sqrt * x, nx)?;
+                let hny = Hermite::evaluate(omega_alpha_sqrt * y, ny)?;
+                let d_hnx = Hermite::derivative(omega_alpha_sqrt * x, nx)? * omega_alpha_sqrt;
+                let d_hny = Hermite::derivative(omega_alpha_sqrt * y, ny)? * omega_alpha_sqrt;
+                let dd_hnx = Hermite::double_derivative(omega_alpha_sqrt * x, nx)? * omega_alpha_sqrt;
+                let dd_hny = Hermite::double_derivative(omega_alpha_sqrt * y, ny)? * omega_alpha_sqrt;
+
+                Ok((-0.5 * omega_alpha * particle.squared_sum()).exp()
+                    * (-2.0 * omega_alpha * x * hny * d_hnx
+                        - 2.0 * omega_alpha * y * hnx * d_hny
+                        + omega_alpha * hnx * hny * (omega_alpha * particle.squared_sum() - 2.0)
+                        + hny * dd_hnx
+                        + hnx * dd_hny))
+            },
+            _ => return Err("laplace_spf only supports two dimensions right now.".to_owned())
+        }
+
     }
 
     // --- Gradients ---
