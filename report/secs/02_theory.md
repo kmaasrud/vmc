@@ -63,7 +63,7 @@ We define the *local energy* of a wave function as:
 
 $$ E_L \equiv \frac{1}{\Psi}H\Psi. $$
 
-As shown in [@sec:local-energy-derivation], the local energy for a two-fermion system is:
+As shown in [@sec:two-fermion-derivation], the local energy for a two-fermion system is:
 
 $$ \begin{aligned}
 E_L &= 2 \alpha \omega + \frac{1}{2} + \omega^2 (1 - \alpha^2) (r_1^2 + r_2^2) \\
@@ -76,7 +76,7 @@ $$ \frac{d g(x)}{dx} \approx \frac{g(x + \Delta x) - g ( x - \Delta x)}{2 \Delta
 
 Second derivative by three point approximation
 
-$$ \frac{d g(x)}{dx} \approx \frac{g(x + \Delta x) - 2 g(x)  + g ( x - \Delta x) }{ \Delta x^2}  $$
+$$ \frac{d g(x)}{dx^2} \approx \frac{g(x + \Delta x) - 2 g(x)  + g ( x - \Delta x) }{ \Delta x^2}  $$
 
 $\Delta x$ is the stepsize which we let run towards zero. The error is proportional to $(\Delta x ^2 )$.
 

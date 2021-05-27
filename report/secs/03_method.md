@@ -4,7 +4,7 @@
 
 Our variational Monte Carlo approach is as explained by our previous work [@Vmc-bosonic2021]. Roughly, it proceeds by proposing a change to the system $\mathbf R \mapsto \mathbf R'$ by changing the position of a single particle $\mathbf r_i$. The choice of this particle and how it moves is done both randomly and by way of the *quantum force*, both explained in @Vmc-bosonic2021. From the states $\mathbf R$ and $\mathbf R'$, and the trial wave function $\Psi_T$, we evaluate an acceptance factor, that determines whether or not we accept the proposed changed system.
 
-Regardless of whether the new step is accepted or not, the desired quantities - in our case the energy, it's gradient and their composites - are sampled in Monte Carlo integration. The integrated values are then used in steepest gradient descent [@Vmc-bosonic2021] to find the optimal variational parameters.
+Regardless of whether the new step is accepted or not, the desired quantities - in our case the energy, its gradient and their composites - are sampled in Monte Carlo integration. The integrated values are then used in steepest gradient descent [@Vmc-bosonic2021] to find the optimal variational parameters.
 
 ## Optimization of wave function ratio
 
@@ -38,7 +38,7 @@ This has an operation complexity of $\mathcal O(N)$.
 
 ## Testing
 
-Testing in Rust is normally divided in two categories: *unit tests* and *integration tests*. Unit tests are small codes to test specific functions inside the code. These tests are normally written in the same file as the functions themselves, but inside a module annotated with `cfg(test)`.
+Testing in Rust is normally divided in two categories: *unit tests* and *integration tests*. Unit tests are small codes to test specific functions inside the code. These tests are normally written in the same file as the functions themselves, but inside a module annotated with `#[cfg(test)]`.
 
 On the other hand, integration tests are written externally to the library, and is made to test the integration of the functions in the program. These tests are often much larger than unit tests, and are made to make sure that the internal functions work well with each other, from the standpoint of an external user. Therefore, integration tests are normally written in a separate `tests` directory at the same level as the `src` directory.
 
@@ -49,3 +49,24 @@ More on testing can be found in the official documentation of the Rust programmi
 ## Parallelization
 
 ![Temporary diagram for visualization](diagrams/metropolis-hastings-tree.jpg)
+
+## Evaluation and performance of the VMC solver
+
+The first performance evaluations are done for a case with two electrons in a quantum dot with frequency of $\hbar \omega = 1$.
+
+###  Performance evaluation of different energy calculation methods
+
+The performance of the analytical expression for the local energy is compared to the performance of the numerical derivation of the kinetic energy in results section [@sec:results-performance-calc-methods].  This test is performed without importance sampling and the Jastrow factor. Following this, importance sampling is added and tested only with the analytical expression for the local energy. Lastly, a blocking analysis is performed in order to obtain the optimal standard deviation.
+
+The energy should equal 2.0 atomic units with a variance exactly equal to zero.
+
+### Evaluating the variational parameters
+
+By using the steepest descent method, the best variational parameters, $\alpha$ and $\beta$ are found. The results for this is found in section [@sec:results-variational-params].
+
+
+### Computation of the two electron system
+
+The minimum energy of the system is calculated and compared to Taut's work[@cite taut]. In addition, the mean distance between the two electrons and the onebody density is calculated for the best variational parameters. Lastly the results are compared with a calculation containing only pure harmonic oscillator wavefunctions.
+
+Other things to test: How important is the Jastrow factor (test with and without), Local energy with $\omega \in {0.01, 0.05, 0.1, 0.5, 1.0}$ and compare these results, hint: virial theorem.
