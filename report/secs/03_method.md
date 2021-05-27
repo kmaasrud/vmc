@@ -67,6 +67,7 @@ By using the steepest descent method, the best variational parameters, $\alpha$ 
 
 ### Computation of the two electron system
 
-The minimum energy of the system is calculated and compared to Taut's work[@cite taut]. In addition, the mean distance between the two electrons and the onebody density is calculated for the best variational parameters. Lastly the results are compared with a calculation containing only pure harmonic oscillator wavefunctions.
+The minimum energy of the system is computed and compared to Taut's work[@cite taut]. In addition, the mean distance between the two electrons and the onebody density is calculated for the best variational parameters. These results are also compared with the results form the same computations, where only the pure harmonic oscillator wavefunctions are used, and where pure HO wavefunctions are used but without the Jastrow factor.
 
-Other things to test: How important is the Jastrow factor (test with and without), Local energy with $\omega \in {0.01, 0.05, 0.1, 0.5, 1.0}$ and compare these results, hint: virial theorem.
+Lastly the expectation value for the kinetic energy is calculated with $\omega \in {0.01, 0.05, 0.1, 0.5, 1.0}$.
+
