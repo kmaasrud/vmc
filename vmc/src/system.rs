@@ -60,8 +60,8 @@ impl<const N: usize> System<N> {
         let n_div_2 = n_particles / 2;
         for i in 0..n_div_2 {
             for j in 0..n_div_2 {
-                slater_matrix_up[(i, j)] = wf.spf(particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1, 1.);
-                slater_matrix_down[(i, j)] = wf.spf(particles[i + n_div_2], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1, 1.);
+                slater_matrix_up[(i, j)] = wf.spf(&particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1, 1.).unwrap();
+                slater_matrix_down[(i, j)] = wf.spf(&particles[i + n_div_2], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1, 1.).unwrap();
             }
         }
 
