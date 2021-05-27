@@ -86,13 +86,13 @@ impl WaveFunction {
     }
 
     // --- Laplacian ---
-    pub fn laplace<const N: usize>(&self, particle_i: usize, sys: System<N>) -> f64 {
-        for i in 0..(sys.particles.len() / 2) {
-            for j in 0..(sys.particles.len() / 2) {
+    pub fn laplace<const N: usize>(&self, particle_i: usize, particles: &mut Vec<Particle>, interacting: bool) -> f64 {
+        for i in 0..(particles.len() / 2) {
+            for j in 0..(particles.len() / 2) {
                 let nx = QUANTUM_NUMBERS[particle_i].0;
                 let ny = QUANTUM_NUMBERS[particle_i].1;
                 let result = match QUANTUM_NUMBERS[particle_i].2 {
-                    Spin::Up => self.laplace_spf(sys.particles[i], nx, ny) * self.slater_inverse(j, i, Spin::Up),
+                    Spin::Up => self.laplace_spf(particles[i], nx, ny) * self.slater_inverse(j, i, Spin::Up),
                     Spin::Down => 1.,
                 };
             }

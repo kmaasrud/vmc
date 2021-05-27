@@ -6,7 +6,7 @@ pub struct Hamiltonian;
 impl Hamiltonian {
     // --- Kinetic energy ---
     fn kinetic(wf: &WaveFunction, particles: &mut Vec<Particle>) -> Result<f64, String> {
-        Ok(-0.5 * wf.laplace(particles))
+        Ok(-0.5 * wf.laplace(particle_i, particles, interacting))
     }
 
     // --- Potential energy ---
