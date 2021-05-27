@@ -86,6 +86,10 @@ Importance sampling requires the quantum force, which for the two-fermion case i
 
 $$ F = -2 \alpha \omega \mathrm{r}_{1}+\frac{2 a}{r_{12}\left(1+\beta r_{12}\right)^{2}} \mathrm{r}_{12}-2 \alpha \omega \mathrm{r}_{2}+\frac{2 a}{r_{12}\left(1+\beta r_{12}\right)^{2}} \mathrm{r}_{21}, $$
 
+or generally as
+
+$$F = 2\frac{\nabla \Psi_T}{\Psi_T}$$
+
 as shown in Appendix [@sec:two-fermion-derivation].
 
 ## Slater determinant

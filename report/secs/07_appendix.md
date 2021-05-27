@@ -33,7 +33,7 @@ The trial wavefunction of a two-particle system is
 
 $$ \Psi_T (\mathbf{r_1}, \mathbf{r_2}) = \Psi_1  * \Psi_2 = C \exp{(-\alpha \omega (r_1^2 + r_2^2)/2)} \exp{\left( \frac{ar_{12}}{1 + \beta r_{12}}\right)} $$
 
-as defined in theory section [@sec:theory-local-energy].
+
 
 The Laplacian is the double derivative in all dimensions, defined as:
 
