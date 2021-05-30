@@ -180,9 +180,12 @@ impl WaveFunction {
 
             // Can safely unwrap distance_to. The dimensions are guaranteed to be equal
             let distance: f64 = particles[i].distance_to(&particles[j]).unwrap();
-            let factor = a / (distance.powi(2) * (distance - a));
+            let factor = * a / (distance * (1. + self.beta * distance).powi(2));
 
-            gradient += (particles[i].position - particles[j].position).scale(factor);
+            gradient += - particles[i].position.scale(self.alpha * self.omega) 
+                        + (particles[i].position - particles[j].position).scale(factor)
+                        - particles[j].position.scale(self.alpha * self.omega)
+                        + (particles[j].position - particles[i].position).scale(factor);
         }
 
         gradient
@@ -193,7 +196,7 @@ impl WaveFunction {
         let r1: f64 = particles[0].squared_sum();
         let r2: f64 = particles[1].squared_sum();
         let omega = 1.0;
-
+         
         // Hermitian polynomials
         // TODO: Find alternative solution to avoid repeated code.
         let omega_alpha_sqrt = (omega * self.alpha).sqrt();
@@ -215,6 +218,7 @@ impl WaveFunction {
 
     // --- Quantum forces ---
     pub fn quantum_force(&self, i: usize, particles: &Vec<Particle>) -> Vector {
+        // The gradients need not be devided by the wavefunc since it already has been inside the gradient functions (this cancels terms and easen the computation)
         (self.gradient_spf(&particles[i]) + self.gradient_interaction(i, particles)).scale(2.)
     }
 
