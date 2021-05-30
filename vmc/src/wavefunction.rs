@@ -1,4 +1,5 @@
 use crate::{Hermite, Particle, Vector, System, Spin};
+use nalgebra::SMatrix;
 
 // Hard-coding quantum states of up to 20 particles. This is done for speed, an should be
 // generalized if this code is to be used seriously
@@ -29,7 +30,6 @@ pub const QUANTUM_NUMBERS: [(usize, usize, Spin); 20] = [
 pub struct WaveFunction {
     pub alpha: f64,
     pub beta: f64,
-    pub a: f64,
 }
 
 impl WaveFunction {
@@ -43,11 +43,12 @@ impl WaveFunction {
         match particles.len() {
             // In the case of two particles, evaluating the wavefunction is a bit simpler.
             2 => {
+                let a = 1.; // TODO: What to do here?
                 let mut exp_sum = 0.;
                 for (i, particle) in particles.iter().enumerate() {
                     for other in particles[i + 1..].iter() {
                         let fermion_distance: f64 = particle.distance_to(other)?;
-                        exp_sum += self.a * fermion_distance / (1. + self.beta * fermion_distance);
+                        exp_sum += a * fermion_distance / (1. + self.beta * fermion_distance);
                     }
                 }
 
@@ -63,7 +64,7 @@ impl WaveFunction {
             _ => {
                 for q_number in QUANTUM_NUMBERS.iter() {
                     for particle in particles.iter() {
-                        
+                                                
                     }
                 }
                 Ok(1.)
@@ -86,19 +87,23 @@ impl WaveFunction {
     }
 
     // --- Laplacian ---
-    pub fn laplace<const N: usize>(&self, particle_i: usize, particles: &mut Vec<Particle>, interacting: bool) -> f64 {
-        for i in 0..(particles.len() / 2) {
-            for j in 0..(particles.len() / 2) {
+    pub fn laplace(&self, particle_i: usize, particles: &mut Vec<Particle>, interacting: bool) -> f64 {
+        let result: f64;
+        let n = particles.len();
+
+        for i in 0..(n / 2) {
+            for j in 0..(n / 2) {
                 let nx = QUANTUM_NUMBERS[particle_i].0;
                 let ny = QUANTUM_NUMBERS[particle_i].1;
-                let result = match QUANTUM_NUMBERS[particle_i].2 {
-                    Spin::Up => self.laplace_spf(particles[i], nx, ny) * self.slater_inverse(j, i, Spin::Up),
-                    Spin::Down => 1.,
+                result += match QUANTUM_NUMBERS[particle_i].2 {
+                    Spin::Up => self.laplace_spf(particles[i], nx, ny) * self.slater_inverse_up[(j, i)],
+                    Spin::Down => self.laplace_spf(particles[i + n / 2], nx, ny) * self.slater_inverse_down[(j, i)],
                 };
             }
         }
         1.
     }
+
     /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
     /// Returns laplacian for the wavefunction with hermitian polynomials
     pub fn laplace_numerical(&self, particles: &mut Vec<Particle>) -> Result<f64, String> {
@@ -125,6 +130,8 @@ impl WaveFunction {
         Ok(laplace / wf)
     }
 
+    /// Returns the Laplacian of the single particle wave function
+    /// Works only in two dimensions right now
     pub fn laplace_spf(&self, particle: Particle, nx: usize, ny: usize) -> Result<f64, String> {
         let omega = 1.0;
         let omega_alpha = omega * self.alpha;
