@@ -9,17 +9,18 @@ use rand::distributions::{Distribution, Uniform};
 use rand::{prelude::random, thread_rng};
 use rand_distr::Normal;
 use nalgebra::base::SMatrix;
+use nalgebra::base::SVector;
 
 pub struct System<const N: usize> {
     pub particles: Vec<Particle>,
     pub dim: usize,
+    pub omega: f64,
     pub wf: WaveFunction,
     pub ham: Hamiltonian,
-    pub slater_matrix_up: SMatrix<f64, N, N>,
-    pub slater_matrix_down: SMatrix<f64, N, N>,
-    pub slater_inverse_up: SMatrix<f64, N, N>,
-    pub slater_inverse_down: SMatrix<f64, N, N>,
-    pub interacting: bool,
+    interacting: bool,
+    slater_matrix: SMatrix<f64, N, N>,
+    slater_inverse: SMatrix<f64, N, N>,
+    slater_ratio: f64,
 }
 
 impl<const N: usize> System<N> {
@@ -30,6 +31,7 @@ impl<const N: usize> System<N> {
         wf: WaveFunction,
         ham: Hamiltonian,
         interact: bool,
+        omega: f64,
         spread: f64,
     ) -> Result<Self, String> {
         let mut rng = thread_rng();
@@ -54,14 +56,11 @@ impl<const N: usize> System<N> {
             particles[i].position = new_particle.position.scale(spread);
         }
 
-        let mut slater_matrix_up: SMatrix<f64, N, N> = SMatrix::repeat(0.);
-        let mut slater_matrix_down: SMatrix<f64, N, N> = SMatrix::repeat(0.);
+        let mut slater_matrix: SMatrix<f64, N, N> = SMatrix::repeat(0.);
 
-        let n_div_2 = n_particles / 2;
-        for i in 0..n_div_2 {
-            for j in 0..n_div_2 {
-                slater_matrix_up[(i, j)] = wf.spf(&particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1, 1.).unwrap();
-                slater_matrix_down[(i, j)] = wf.spf(&particles[i + n_div_2], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1, 1.).unwrap();
+        for i in 0..n_particles {
+            for j in 0..n_particles {
+                slater_matrix[(i, j)] = wf.spf(&particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1, 1.).unwrap();
             }
         }
 
@@ -70,16 +69,55 @@ impl<const N: usize> System<N> {
             dim,
             wf,
             ham,
-            slater_matrix_up,
-            slater_matrix_down,
-            slater_inverse_up: slater_matrix_up.try_inverse().unwrap(),
-            slater_inverse_down: slater_matrix_down.try_inverse().unwrap(),
+            omega,
+            slater_matrix,
+            slater_inverse: slater_matrix.try_inverse().unwrap(),
             interacting: interact,
         })
     }
 
+
+    // NOTE: Storing the Laplacian here is messy, but it allows a much cleaner function signature.
+    // WaveFunction and System are intimately tied together, and should've ideally been made as one
+    // struct, but it is too late for that now.
+    /// Returns the Laplacian at this current state
+    pub fn laplace(&self) -> Result<f64, String> {
+        let result: f64;
+        let n = self.particles.len();
+
+        for i in 0..n {
+            for j in 0..n {
+                let nx = crate::QUANTUM_NUMBERS[j].0;
+                let ny = crate::QUANTUM_NUMBERS[j].1;
+                result += self.wf.laplace_spf(self.particles[i], nx, ny)? * self.slater_inverse[(j, i)];
+            }
+        }
+        Ok(result)
+    }
+
+    pub fn slater_ratio(&self, step_size: f64) -> Result<f64, String> {
+        let v: SVector<f64, N> = SVector::repeat(0.);
+        let (new_particles, p) = self.random_particle_change(step_size);
+
+        // Find v_p
+        for i in 0..N {
+            let ny = crate::QUANTUM_NUMBERS[i].1;
+            let nx = crate::QUANTUM_NUMBERS[i].0;
+            v[i] = self.wf.spf(&new_particles[p], nx, ny, self.omega)? - self.wf.spf(&self.particles[p], nx, ny, self.omega)?
+        }
+
+        // Find I - D_p v_p^T / R_D
+        let mul_by: SMatrix<f64, N, N> = SMatrix::identity();
+        for i in 0..N {
+            mul_by[(i, i)] -= self.slater_inverse[(i, p)] * v.transpose()[i] / self.slater_ratio;
+        }
+        let new_inverse = mul_by * self.slater_inverse;
+
+        Ok(1.)
+    }
+
     /// Change a random particle's position by a random value
-    pub fn random_particle_change(&self, step_size: f64) -> Vec<Particle> {
+    pub fn random_particle_change(&self, step_size: f64) -> (Vec<Particle>, usize) {
         let mut new_particles = self.particles.clone();
         let i = random::<usize>() % self.particles.len();
         let add = match new_particles[i].position {
@@ -92,7 +130,7 @@ impl<const N: usize> System<N> {
             ),
         };
         new_particles[i].position += add.scale(step_size);
-        new_particles
+        (new_particles, i)
     }
 
     /// Takes in a step size and returns the next particle state of the system.
