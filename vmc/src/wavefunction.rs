@@ -30,6 +30,7 @@ pub const QUANTUM_NUMBERS: [(usize, usize, Spin); 20] = [
 pub struct WaveFunction {
     pub alpha: f64,
     pub beta: f64,
+    pub omega: f64,
 }
 
 impl WaveFunction {
@@ -37,7 +38,6 @@ impl WaveFunction {
     /// Trial wavefunction for the ground state of the two electron/fermion system.
     /// Returns an f64 representing the wavefunction value
     pub fn evaluate(&self, particles: &Vec<Particle>) -> Result<f64, String> {
-        let omega: f64 = 1.0;
         let c: f64 = 1.0; //normalization constant - dont know value
 
         match particles.len() {
@@ -55,7 +55,7 @@ impl WaveFunction {
                 let r1: f64 = particles[0].squared_sum();
                 let r2: f64 = particles[1].squared_sum();
 
-                let result: f64 = c * (-0.5 * self.alpha * omega * (r1 + r2) + exp_sum).exp();
+                let result: f64 = c * (-0.5 * self.alpha * self.omega * (r1 + r2) + exp_sum).exp();
 
                 println!("{}", result);
                 Ok(result)
@@ -68,8 +68,8 @@ impl WaveFunction {
     }
 
     /// Evaluates the single particle wave function  
-    pub fn spf(&self, particle: &Particle, nx: usize, ny: usize, omega: f64) -> Result<f64, String> {
-        let sqrt_alpha_omega = (self.alpha * omega).sqrt();
+    pub fn spf(&self, particle: &Particle, nx: usize, ny: usize) -> Result<f64, String> {
+        let sqrt_alpha_omega = (self.alpha * self.omega).sqrt();
         let result = match particle.position {
             Vector::D2(x, y) => {
                 Hermite::evaluate(sqrt_alpha_omega * x, nx as usize)?
@@ -78,27 +78,10 @@ impl WaveFunction {
             _ => return Err("spf only supports two dimension right now".to_owned()),
         };
 
-        Ok(result * (-0.5 * self.alpha * omega * particle.position.inner(particle.position)?).exp())
+        Ok(result * (-0.5 * self.alpha * self.omega * particle.position.inner(particle.position)?).exp())
     }
 
     // --- Laplacian ---
-    pub fn laplace(&self, particle_i: usize, particles: &mut Vec<Particle>, interacting: bool) -> f64 {
-        let result: f64;
-        let n = particles.len();
-
-        for i in 0..(n / 2) {
-            for j in 0..(n / 2) {
-                let nx = QUANTUM_NUMBERS[particle_i].0;
-                let ny = QUANTUM_NUMBERS[particle_i].1;
-                result += match QUANTUM_NUMBERS[particle_i].2 {
-                    Spin::Up => self.laplace_spf(particles[i], nx, ny) * self.slater_inverse_up[(j, i)],
-                    Spin::Down => self.laplace_spf(particles[i + n / 2], nx, ny) * self.slater_inverse_down[(j, i)],
-                };
-            }
-        }
-        1.
-    }
-
     /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
     /// Returns laplacian for the wavefunction with hermitian polynomials
     pub fn laplace_numerical(&self, particles: &mut Vec<Particle>) -> Result<f64, String> {
@@ -184,7 +167,7 @@ impl WaveFunction {
             let distance: f64 = particles[i].distance_to(&particles[j]).unwrap();
             let factor = * a / (distance * (1. + self.beta * distance).powi(2));
 
-            gradient += - particles[i].position.scale(self.alpha * self.omega) 
+            gradient += particles[i].position.scale(-self.alpha * self.omega) 
                         + (particles[i].position - particles[j].position).scale(factor)
                         - particles[j].position.scale(self.alpha * self.omega)
                         + (particles[j].position - particles[i].position).scale(factor);
@@ -197,21 +180,20 @@ impl WaveFunction {
     pub fn gradient_alpha(&self, particles: &Vec<Particle>, nx: usize, ny: usize) -> f64 {
         let r1: f64 = particles[0].squared_sum();
         let r2: f64 = particles[1].squared_sum();
-        let omega = 1.0;
-         
+
         // Hermitian polynomials
         // TODO: Find alternative solution to avoid repeated code.
-        let omega_alpha_sqrt = (omega * self.alpha).sqrt();
+        let omega_alpha_sqrt = (self.omega * self.alpha).sqrt();
         let hnx = Hermite::evaluate(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
         let hny = Hermite::evaluate(omega_alpha_sqrt * r2.powf(0.5), ny).unwrap();
 
-        let _d_alpha_hnx = Hermite::derivative_alpha(nx, r1.powf(0.5), omega, self.alpha);
-        let _d_alpha_hny = Hermite::derivative_alpha(ny, r1.powf(0.5), omega, self.alpha);
+        let _d_alpha_hnx = Hermite::derivative_alpha(nx, r1.powf(0.5), self.omega, self.alpha);
+        let _d_alpha_hny = Hermite::derivative_alpha(ny, r1.powf(0.5), self.omega, self.alpha);
 
         let r = r1 + r2;
 
-        let alpha_gradient = (-0.5 * omega * self.alpha * r).exp()
-            * (_d_alpha_hnx * hny + hnx * _d_alpha_hny - 0.5 * omega * r * hnx * hny);
+        let alpha_gradient = (-0.5 * self.omega * self.alpha * r).exp()
+            * (_d_alpha_hnx * hny + hnx * _d_alpha_hny - 0.5 * self.omega * r * hnx * hny);
         alpha_gradient
 
         /* let squared_position_sum_sum: f64 = particles.iter().map(|x| x.squared_sum_scaled_z(self.beta)).sum();
@@ -231,22 +213,20 @@ impl WaveFunction {
 
     /// Returns the gradient of the wavefunction with regards to x
     pub fn gradient_x(&self, particles: &Vec<Particle>, nx: usize, ny: usize) -> f64 {
-        let omega = 1.0;
-
         let r1: f64 = particles[0].squared_sum();
         let r2: f64 = particles[1].squared_sum();
 
         //Hermitian polynomials
         // TODO: Find alternative solution to avoid repeated code.
-        let omega_alpha_sqrt = (omega * self.alpha).sqrt();
+        let omega_alpha_sqrt = (self.omega * self.alpha).sqrt();
         let hnx = Hermite::evaluate(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
         let hny = Hermite::evaluate(omega_alpha_sqrt * r2.powf(0.5), ny).unwrap();
 
         let d_hnx = Hermite::derivative(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
 
-        let gradient: f64 = (-0.5 * omega * self.alpha * (r1 + r2)).exp()
+        let gradient: f64 = (-0.5 * self.omega * self.alpha * (r1 + r2)).exp()
             * hny
-            * (d_hnx - hnx * omega * self.alpha * r1.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
+            * (d_hnx - hnx * self.omega * self.alpha * r1.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
 
         gradient
     }
@@ -255,19 +235,18 @@ impl WaveFunction {
     pub fn gradient_y(&self, particles: &Vec<Particle>, nx: usize, ny: usize) -> f64 {
         let r1: f64 = particles[0].squared_sum();
         let r2: f64 = particles[1].squared_sum();
-        let omega = 1.0;
 
         //Hermitian polynomials
         // TODO: Find alternative solution to avoid repeated code.
-        let omega_alpha_sqrt = (omega * self.alpha).sqrt();
+        let omega_alpha_sqrt = (self.omega * self.alpha).sqrt();
         let hnx = Hermite::evaluate(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
         let hny = Hermite::evaluate(omega_alpha_sqrt * r2.powf(0.5), ny).unwrap();
 
         let d_hny = Hermite::derivative(omega_alpha_sqrt * r1.powf(0.5), ny).unwrap();
 
-        let gradient: f64 = (-0.5 * omega * self.alpha * (r1 + r2)).exp()
+        let gradient: f64 = (-0.5 * self.omega * self.alpha * (r1 + r2)).exp()
             * hnx
-            * (d_hny - hny * omega * self.alpha * r2.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
+            * (d_hny - hny * self.omega * self.alpha * r2.powf(0.5)); //correct ? x*x + y*y = r1 + r2??
 
         gradient
     }
@@ -286,7 +265,6 @@ mod tests {
         let a: f64 = 1.;
 
         // The below is defined separately in evaluate() function
-        let omega: f64 = 1.; //Defined separately in evaluate() function
         let c: f64 = 1.; //Defined separately in evaluate() function
         let h: f64 = 0.0001; //Defined separately in laplace() function
         let h2: f64 = h.powi(2); //Defined separately in laplace() function
@@ -303,9 +281,9 @@ mod tests {
         let r2: f64 = (2. as f64).sqrt();
         let r12: f64 = r2;
         let frac: f64 = a / ((1. + beta * r12).powi(2));
-        let analytical = 2. * alpha.powi(2) * omega.powi(2) * (r1.powi(2) + r2.powi(2))
-            - 4. * alpha * omega
-            - frac * 2. * alpha * omega * r12
+        let analytical = 2. * alpha.powi(2) * self.omega.powi(2) * (r1.powi(2) + r2.powi(2))
+            - 4. * alpha * self.omega
+            - frac * 2. * alpha * self.omega * r12
             + 2. * frac * (frac + 1. / r12 - 2. * beta / (1. + beta * r12));
 
         // Assertion
@@ -338,7 +316,6 @@ mod tests {
         let alpha: f64 = 0.5;
         let beta: f64 = 1.;
         let a: f64 = 1.;
-        let omega: f64 = 1.; //Defined separately in evaluate() function
         let c: f64 = 1.; //Defined separately in evaluate() function
 
         // Spawn a system with defined wavefunction and energy
@@ -350,7 +327,7 @@ mod tests {
 
         // Define the analytical answer to this problem
         let analytical = c
-            * (-alpha * omega * (0. + 1. * 1. + 1. * 1.) / 2.).exp()
+            * (-alpha * self.omega * (0. + 1. * 1. + 1. * 1.) / 2.).exp()
             * (a * ((1. * 1. + 1. * 1.) as f64).sqrt()
                 / (1. + beta * ((1. * 1. + 1. * 1.) as f64).sqrt()))
             .exp();
@@ -369,7 +346,6 @@ mod tests {
         let a: f64 = 1.;
 
         // The below is defined separately in evaluate() function
-        let omega: f64 = 1.; //Defined separately in evaluate() function
         let c: f64 = 1.; //Defined separately in evaluate() function
         let h: f64 = 0.0001; //Defined separately in laplace() function
         let h2: f64 = h.powi(2); //Defined separately in laplace() function
@@ -387,10 +363,10 @@ mod tests {
         let r12: f64 = r2;
         let r21: f64 = -r2;
         let frac: f64 = a / ((1. + beta * r12).powi(2));
-        let analyticalx = 2. * alpha * omega * 0. + 2. / r12 * frac * 1. - 2. * alpha * omega * 1.
+        let analyticalx = 2. * alpha * self.omega * 0. + 2. / r12 * frac * 1. - 2. * alpha * self.omega * 1.
             + 2. / r12 * frac * (-1.);
 
-        let analyticaly = 2. * alpha * omega * 0. + 2. / r12 * frac * 1. - 2. * alpha * omega * 1.
+        let analyticaly = 2. * alpha * self.omega * 0. + 2. / r12 * frac * 1. - 2. * alpha * self.omega * 1.
             + 2. / r12 * frac * (-1.);
         let analytical = Vector::D2(analyticalx, analyticaly);
 

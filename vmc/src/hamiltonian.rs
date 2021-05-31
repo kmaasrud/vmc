@@ -1,12 +1,12 @@
-use crate::{Particle, WaveFunction};
+use crate::{Particle, WaveFunction, System};
 
 #[derive(Clone)]
 pub struct Hamiltonian;
 
 impl Hamiltonian {
     // --- Kinetic energy ---
-    fn kinetic(wf: &WaveFunction, particles: &mut Vec<Particle>) -> Result<f64, String> {
-        Ok(-0.5 * wf.laplace(particle_i, particles, interacting))
+    fn kinetic<const N: usize>(sys: &System<N>, particles: &mut Vec<Particle>) -> Result<f64, String> {
+        Ok(-0.5 * sys.laplace()?)
     }
 
     // --- Potential energy ---

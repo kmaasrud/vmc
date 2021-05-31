@@ -15,7 +15,6 @@ use nalgebra::base::MatrixSlice;
 pub struct System<const N: usize> {
     pub particles: Vec<Particle>,
     pub dim: usize,
-    pub omega: f64,
     pub wf: WaveFunction,
     pub ham: Hamiltonian,
     interacting: bool,
@@ -33,7 +32,6 @@ impl<const N: usize> System<N> {
         wf: WaveFunction,
         ham: Hamiltonian,
         interact: bool,
-        omega: f64,
         spread: f64,
     ) -> Result<Self, String> {
         let mut rng = thread_rng();
@@ -71,7 +69,6 @@ impl<const N: usize> System<N> {
             dim,
             wf,
             ham,
-            omega,
             interacting: interact,
             slater_matrix,
             slater_inverse: slater_matrix.try_inverse().unwrap(),
@@ -105,7 +102,7 @@ impl<const N: usize> System<N> {
         for i in 0..N {
             let ny = crate::QUANTUM_NUMBERS[i].1;
             let nx = crate::QUANTUM_NUMBERS[i].0;
-            self.v[i] = self.wf.spf(&new_particles[p], nx, ny, self.omega)? - self.wf.spf(&self.particles[p], nx, ny, self.omega)?
+            self.v[i] = self.wf.spf(&new_particles[p], nx, ny)? - self.wf.spf(&self.particles[p], nx, ny)?
         }
 
         let mut new_inverse: SMatrix<f64, N, N> = SMatrix::repeat(0.);
