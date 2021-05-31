@@ -16,7 +16,7 @@ The blocking analysis shows that the optimal standard deviation is $FILL$.
 
 The VMC approximation to the correct energy dependent on the variational parameters $\alpha$ and $\beta$ are shown in Table [@tbl:results-variational-parameters] below.
 
-Table: Optimal variatonal parameters for the different systems with and without the Jastrow factor, for comparison. 
+
 | N     	| $\omega$ 	| $\alpha$ 	| $\beta$ 	| $\alpha$ withouth Jastrow 	|
 |-------	|:---------:|----------	|---------	|---------------------------	|
 | 2     	| 1        	|          	|         	|                           	|
@@ -41,7 +41,9 @@ Table: Optimal variatonal parameters for the different systems with and without 
 |       	| 0.5      	|          	|         	|                           	|
 |       	| 0.1      	|          	|         	|                           	|
 |       	| 0.05     	|          	|         	|                           	|
-|       	| 0.01     	|          	|         	|                           	|{#tbl:results-variational-parameters} 
+|       	| 0.01     	|          	|         	|                           	|
+
+Table: Optimal variatonal parameters for the different systems with and without the Jastrow factor, for comparison.{#tbl:results-variational-parameters} 
 ## Computations for the two electron system
 
 By using the variational parameters $\alpha = FILL ME$ and $\beta = FILL ME$, the calculation of minimum energy for the system has been compared to Taut's analytical values in table [@tbl:results-calculations]. This table also contains the mean distance between the two electrons and the onebody density. Calculations are done with interaction, purely Harmonic Oscillator wavefunctions and pure HO wavefunctions without the Jastrow factor.

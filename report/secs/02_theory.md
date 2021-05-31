@@ -97,6 +97,19 @@ The slater determinant is a crucial, time consuming part of the trail wavefuncti
 
 Calcutating the trasition probability of the trial wavefunction $\Psi_{old}(\mathbf{R}) / \Psi_{new}(\mathbf{R})$ requieres a computation of the ratio of the determinants $det(D_{old}(\mathbf{R})) / det(D_{new}(\mathbf{R}))$. Insted of recalculate the whole determinant for each step, the algorithm can be optimized using Sherman-Morrison formula, reducing the computational cost of evaluating the ratio of the determinants with a factor of $N$ of the move is accepted.  
 
-## The Viral Theorem
+## The Virial Theorem
 
-<!-- For comparison later, see exercise -->
+<!-- For comparison later, see exercise f-->
+The Viral theorem relates the avarage time $\langle T \rangle$ for the total kinetic and potential energy in a system of $N$ particles by the following equation
+
+$$ \langle T \rangle  = - \frac{1}{2} \sum_{k=1}^N \langle \mathbf{F_k \cdot r_k} \rangle $$,
+
+where $\mathbf{F_k}$ and $\mathbf{r_k}$ is the is the force on and position of particle $k$ respectivly. The theorem allows for calculations of the avrage total kinetiv energy of complex systems, independent of temperature. 
+
+The more relevant quentum mechanical version of the theorem, the potential around the confined particles are concidered istead of the force, hence,
+
+$$ 2 \langle T \rangle = - \frac{1}{2} \sum_n \langle X_n \frac{dV}{dX_n} \rangle$$
+
+where $V$ is the potential. For a Harmonic oscilator $V = \frac{1}{2} k x^2$. 
+
+<!-- source: https://en.wikipedia.org/wiki/Virial_theorem -->
