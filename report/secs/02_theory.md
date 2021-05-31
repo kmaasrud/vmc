@@ -20,14 +20,13 @@ $$ \epsilon_{n_x, n_y} = \omega(n_x + n_y + 1) = \omega. $$ {#eq:non-interacting
 
 The Pauli exclusion principle states that two fermions can not occupy the same quantum state simultaneously. For each state $(n_x, n_y)$ a fermion may have spin up or down, which means it can be occupied by at most two fermions. Using this principle, the ground state energies of the closed-shell configurations $N = 2, 6, 12$ and $20$ can easily be calculated using equation ([@eq:non-interacting-energy]). The energies are given in table [@tbl:energies].
 
+Table: The ground state energy of $N$ non-interacting particles in an isotropic harmonic potential well. $\omega$ is the oscillator frequency. Energies are given in Hartree's atomic units. 
 | **Number of particles $N$** | **$E$ (a.u)**        |
 | ----:                       | ---                  |
 | $2$                         | $2 \omega$           |
 | $6$                         | $10 \omega$          |
 | $12$                        | $28 \omega$          |
-| $20$                        | $60 \omega$          | 
-
-Table: The ground state energy of $N$ non-interacting particles in an isotropic harmonic potential well. $\omega$ is the oscillator frequency. Energies are given in Hartree's atomic units. {#tbl:energies}
+| $20$                        | $60 \omega$          | {#tbl:energies}
 
 These energies serve as great values to benchmark our program against.
 
@@ -98,4 +97,6 @@ The slater determinant is a crucial, time consuming part of the trail wavefuncti
 
 Calcutating the trasition probability of the trial wavefunction $\Psi_{old}(\mathbf{R}) / \Psi_{new}(\mathbf{R})$ requieres a computation of the ratio of the determinants $det(D_{old}(\mathbf{R})) / det(D_{new}(\mathbf{R}))$. Insted of recalculate the whole determinant for each step, the algorithm can be optimized using Sherman-Morrison formula, reducing the computational cost of evaluating the ratio of the determinants with a factor of $N$ of the move is accepted.  
 
+## The Viral Theorem
 
+<!-- For comparison later, see exercise -->
