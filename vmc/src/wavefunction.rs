@@ -62,11 +62,6 @@ impl WaveFunction {
             }
             // This is the general evaluation, using Slater determinants
             _ => {
-                for q_number in QUANTUM_NUMBERS.iter() {
-                    for particle in particles.iter() {
-                                                
-                    }
-                }
                 Ok(1.)
             }
         }
