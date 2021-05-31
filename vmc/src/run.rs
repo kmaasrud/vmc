@@ -28,7 +28,7 @@ pub fn simple(){
     const NON_INTERACTING: bool = true;
     const MC_CYCLES: usize = 10_000;
     const DIM : usize = 2;
-    const N: usize = 4;
+    const N: usize = 2;
     const INTERACT: bool = false;
     const SPREAD: f64 = 0.1;
     
@@ -60,10 +60,11 @@ pub fn simple(){
                 Some(val) => *val,
                 None => 0.,
             };
+
             let data = format!("{},{},{:?}\n", alpha, energy, start.elapsed());
             println!("{}", data);
             f.write_all(data.as_bytes()).expect("Unable to write data");
-            println!("Time spent for alpha = {}: {:?}", alpha,  start.elapsed());
+            // println!("Time spent for alpha = {}: {:?}", alpha,  start.elapsed());
         }
             
     }   

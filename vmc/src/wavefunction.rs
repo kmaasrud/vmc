@@ -57,7 +57,6 @@ impl WaveFunction {
 
                 let result: f64 = c * (-0.5 * self.alpha * self.omega * (r1 + r2) + exp_sum).exp();
 
-                println!("{}", result);
                 Ok(result)
             }
             // This is the general evaluation, using Slater determinants

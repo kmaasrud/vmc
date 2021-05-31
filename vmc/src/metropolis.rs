@@ -2,6 +2,7 @@ use crate::{montecarlo::SampledValues, Particle, System, Hamiltonian};
 use rand::distributions::{Distribution, Uniform};
 use rand::thread_rng;
 use std::collections::HashMap;
+use nalgebra::SMatrix;
 
 /// Trait for Metropolis samplers.
 pub trait Metropolis {
@@ -50,10 +51,21 @@ impl Metropolis for BruteForceMetropolis {
     }
 
     fn step<const N: usize>(&mut self, sys: &mut System<N>) -> Result<Option<SampledValues>, String> {
-        // Make a step
+        let mut acceptance_factor;
         let (new_particles, p) = sys.random_particle_change(self.step_size);
-        let new_inverse = sys.next_slater_inverse(&new_particles, p)?;
-        let acceptance_factor = sys.next_slater_ratio(p, &new_inverse);
+        let mut new_inverse: SMatrix<f64, N, N> = SMatrix::repeat(0.);
+
+        match N {
+            2 => {
+                let wf_old = sys.wf.evaluate(&sys.particles)?;
+                let wf_new = sys.wf.evaluate(&new_particles)?;
+                acceptance_factor = wf_new.powi(2) / wf_old.powi(2);
+            },
+            _ => {
+                new_inverse = sys.next_slater_inverse(&new_particles, p)?;
+                acceptance_factor = sys.next_slater_ratio(p, &new_inverse);
+            }
+        }
 
         if Self::hastings_check(acceptance_factor) {
             sys.particles = new_particles;

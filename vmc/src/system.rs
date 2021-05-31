@@ -61,6 +61,13 @@ impl<const N: usize> System<N> {
                 slater_matrix[(i, j)] = wf.spf(&particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1).unwrap();
             }
         }
+        
+        // Slater matrix is not invertible when N = 2, so set it to 0-matrix in that case.
+        let slater_inverse = match (slater_matrix.try_inverse(), N) {
+            (None, 2) => SMatrix::<f64, N, N>::repeat(0.),
+            (Some(inv), _) => inv,
+            _ => return Err("N > 2 and Slater matrix was not invertible.".to_owned()),
+        };
 
         Ok(System {
             particles: vec![Particle::new(dim)?; n_particles],
@@ -68,7 +75,7 @@ impl<const N: usize> System<N> {
             wf,
             interacting: interact,
             slater_matrix,
-            slater_inverse: slater_matrix.try_inverse().ok_or("Could not initialize inverse Slater matrix.")?,
+            slater_inverse,
             slater_ratio: 1.,
             v: SVector::<f64, N>::repeat(0.),
         })
