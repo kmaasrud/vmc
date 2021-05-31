@@ -64,3 +64,15 @@ Lastly the expectation value for the kinetic energy and the potential energy is 
 | $0.5$     | $1$   |    $1$  |
 | $1.0$     | $1$   |    $1$  |{#tbl:results-calculations-omega}
 
+
+
+## Ground state energies
+
+
+## One body densities
+
+## Performance analysis
+<!--  -->
+Lastly a analysis of the algorithms are given for $N = 6$ electrons, $FILL IN$ Monte Carlo steps, optimal variational parameters, $\omega = 1$ and with the Jastrow factor off. The analysis is done by comparing the avarage time used for a calculation with and withouth vecotrization. The procedure is repeated with paralellization, expecting approximatly a 100% speedup.  The quantities which are calculated are the expectation energy, the kinetic and the potential energy. The most time consuming part is the **FILL INN** , and hence the clock is started here. 
+
+<!-- Nececerry to write something about which computers/specs the analysis is done at?? -->
