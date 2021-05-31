@@ -8,6 +8,7 @@ mod threadpool;
 mod utils;
 mod vector;
 mod wavefunction;
+mod run;
 
 pub use hamiltonian::Hamiltonian;
 pub use hermite::Hermite;
@@ -21,5 +22,6 @@ pub use vector::Vector;
 pub use wavefunction::{WaveFunction, QUANTUM_NUMBERS};
 
 fn main() {
-    println!("Hello from VMC!");
+    println!("Hello from VMC!(running run::simple())");
+    run::simple();
 }
