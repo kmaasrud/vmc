@@ -60,7 +60,7 @@ impl<const N: usize> System<N> {
 
         for i in 0..n_particles {
             for j in 0..n_particles {
-                slater_matrix[(i, j)] = wf.spf(&particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1, 1.).unwrap();
+                slater_matrix[(i, j)] = wf.spf(&particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1).unwrap();
             }
         }
 
@@ -83,7 +83,7 @@ impl<const N: usize> System<N> {
     // struct, but it is too late for that now.
     /// Returns the Laplacian at this current state
     pub fn laplace(&self) -> Result<f64, String> {
-        let result: f64;
+        let mut result: f64 = 0.;
         let n = self.particles.len();
 
         for i in 0..n {

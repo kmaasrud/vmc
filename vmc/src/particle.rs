@@ -1,7 +1,7 @@
 use crate::Vector::{self, *};
 
 /// Struct that represents a single particle.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct Particle {
     pub position: Vector,
     pub dim: usize,

@@ -5,7 +5,7 @@ pub struct Hamiltonian;
 
 impl Hamiltonian {
     // --- Kinetic energy ---
-    fn kinetic<const N: usize>(sys: &System<N>, particles: &mut Vec<Particle>) -> Result<f64, String> {
+    fn kinetic<const N: usize>(sys: &System<N>) -> Result<f64, String> {
         Ok(-0.5 * sys.laplace()?)
     }
 
@@ -16,7 +16,7 @@ impl Hamiltonian {
     }
 
     // --- Repulsive energy ---
-    pub fn repulsive(particles: &mut Vec<Particle>) -> f64 {
+    pub fn repulsive(particles: &Vec<Particle>) -> f64 {
         let mut distance_sum: f64 = 0.;
         for (i, particle) in particles.iter().enumerate() {
             for other in particles[i + 1..].iter() {
@@ -29,13 +29,13 @@ impl Hamiltonian {
 
     /// Calculates the energy of a system of `particles` described by `wf`.
     /// If `non_interacting` is `true`, will calculate the non-interacting energy (unused for now).
-    pub fn energy(
+    pub fn energy<const N: usize>(
         &self,
-        wf: &WaveFunction,
-        particles: &mut Vec<Particle>,
+        sys: &System<N>,
+        particles: &Vec<Particle>,
         omega: f64,
     ) -> Result<f64, String> {
-        Ok(Self::kinetic(wf, particles)?
+        Ok(Self::kinetic(sys)?
             + Self::potential(omega, particles)
             + Self::repulsive(particles))
     }
