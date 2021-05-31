@@ -1,4 +1,4 @@
-use crate::{montecarlo::SampledValues, Particle, System};
+use crate::{montecarlo::SampledValues, Particle, System, Hamiltonian};
 use rand::distributions::{Distribution, Uniform};
 use rand::thread_rng;
 use std::collections::HashMap;
@@ -23,7 +23,7 @@ pub trait Metropolis {
         // The 1.0 inputted below is a placeholder for the omega value. We are testing over
         // different omega values. TODO: Consider storing omega in the System struct instead of
         // passing it through the stack.
-        let d_energy = sys.ham.energy(&sys, &sys.particles, 1.0)?;
+        let d_energy = Hamiltonian::energy(&sys, &sys.particles, 1.0)?;
 
         let mut map = HashMap::new();
         map.insert("energy".to_string(), d_energy);
@@ -57,6 +57,8 @@ impl Metropolis for BruteForceMetropolis {
 
         if Self::hastings_check(acceptance_factor) {
             sys.particles = new_particles;
+            sys.slater_inverse = new_inverse;
+            sys.slater_ratio = acceptance_factor;
             Ok(Some(Self::sample(sys)?))
         } else {
             Ok(None)

@@ -30,7 +30,6 @@ impl Hamiltonian {
     /// Calculates the energy of a system of `particles` described by `wf`.
     /// If `non_interacting` is `true`, will calculate the non-interacting energy (unused for now).
     pub fn energy<const N: usize>(
-        &self,
         sys: &System<N>,
         particles: &Vec<Particle>,
         omega: f64,

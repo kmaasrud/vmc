@@ -16,11 +16,10 @@ pub struct System<const N: usize> {
     pub particles: Vec<Particle>,
     pub dim: usize,
     pub wf: WaveFunction,
-    pub ham: Hamiltonian,
     interacting: bool,
     slater_matrix: SMatrix<f64, N, N>,
-    slater_inverse: SMatrix<f64, N, N>,
-    slater_ratio: f64,
+    pub slater_inverse: SMatrix<f64, N, N>,
+    pub slater_ratio: f64,
     v: SVector<f64, N>,
 }
 
@@ -30,7 +29,6 @@ impl<const N: usize> System<N> {
         n_particles: usize,
         dim: usize,
         wf: WaveFunction,
-        ham: Hamiltonian,
         interact: bool,
         spread: f64,
     ) -> Result<Self, String> {
@@ -68,11 +66,10 @@ impl<const N: usize> System<N> {
             particles: vec![Particle::new(dim)?; n_particles],
             dim,
             wf,
-            ham,
             interacting: interact,
             slater_matrix,
-            slater_inverse: slater_matrix.try_inverse().unwrap(),
-            slater_ratio: 0.,
+            slater_inverse: slater_matrix.try_inverse().ok_or("Could not initialize inverse Slater matrix.")?,
+            slater_ratio: 1.,
             v: SVector::<f64, N>::repeat(0.),
         })
     }

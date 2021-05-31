@@ -28,7 +28,7 @@ pub fn simple(){
     const NON_INTERACTING: bool = true;
     const MC_CYCLES: usize = 10_000;
     const DIM : usize = 2;
-    const N: usize= 2;
+    const N: usize = 4;
     const INTERACT: bool = false;
     const SPREAD: f64 = 0.1;
     
@@ -52,12 +52,16 @@ pub fn simple(){
         
         for alpha in alphas.iter(){
             let start = Instant::now();
-            let ham = Hamiltonian;
             let wf = WaveFunction{ alpha: *alpha, beta: 1., omega: 1. }; // Set beta = gamma
-            let mut system: System<N> = System::new( N,DIM,wf,ham, INTERACT,SPREAD,).unwrap();
-            let vals = montecarlo::monte_carlo(N, &mut system, &mut metro); 
+            let mut system: System<N> = System::new(N, DIM, wf, INTERACT, SPREAD).unwrap();
+            let vals = montecarlo::monte_carlo(N, &mut system, &mut metro).unwrap();
             
-            let data = format!("{},{},{:?}\n", alpha, vals.unwrap().map["energy"], start.elapsed());
+            let energy = match vals.map.get("energy") {
+                Some(val) => *val,
+                None => 0.,
+            };
+            let data = format!("{},{},{:?}\n", alpha, energy, start.elapsed());
+            println!("{}", data);
             f.write_all(data.as_bytes()).expect("Unable to write data");
             println!("Time spent for alpha = {}: {:?}", alpha,  start.elapsed());
         }

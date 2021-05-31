@@ -72,8 +72,8 @@ impl WaveFunction {
         let sqrt_alpha_omega = (self.alpha * self.omega).sqrt();
         let result = match particle.position {
             Vector::D2(x, y) => {
-                Hermite::evaluate(sqrt_alpha_omega * x, nx as usize)?
-                    * Hermite::evaluate(sqrt_alpha_omega * y, ny as usize)?
+                Hermite::evaluate(sqrt_alpha_omega * x, nx)?
+                    * Hermite::evaluate(sqrt_alpha_omega * y, ny)?
             }
             _ => return Err("spf only supports two dimension right now".to_owned()),
         };
@@ -271,9 +271,8 @@ mod tests {
         let h2: f64 = h.powi(2); //Defined separately in laplace() function
 
         // Spawn a system with defined wavefunction and energy
-        let ham: Hamiltonian = Hamiltonian;
         let wf = WaveFunction { alpha, beta, a }; // Set beta = gamma
-        let mut system: System = System::distributed(2, 2, wf.clone(), ham.clone(), false, 1.);
+        let mut system: System = System::new(2, 2, wf.clone(), false, 1.);
         system.particles[0].position = Vector::D2(0., 0.); //Just placing the particles at specific positions
         system.particles[1].position = Vector::D2(1., 1.);
 

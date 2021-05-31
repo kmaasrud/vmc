@@ -52,6 +52,7 @@ impl<T, const N: usize> DerefMut for SmallVector<T, N> {
     }
 }
 
+#[derive(Debug)]
 pub enum Spin {
     Up,
     Down,
