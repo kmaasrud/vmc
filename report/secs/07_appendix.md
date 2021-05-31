@@ -9,7 +9,7 @@ The Hermite polynomials are the solutions to the following contour integral [@Ar
 
 $$ H_n(z) = \frac{n!}{2\pi i}\oint e^{-r^2 - tz}t^{-n-1}dt. $$
 
-In this report, we will consider the real Hermite polynomials, and only up to a given order. A computationally efficient way of finding these is given by the following sequence:
+In this report, we will consider the real Hermite polynomials, and only up to o the der of four. A computationally efficient way of finding these is given by the following sequence:
 
 $$ H_n(x) = c_{n + m}x^n + c_{n-1 + m}x^{n-1}... + c_{m}x^0, \qquad m = \sum_{i=1}^n i$$
 
@@ -149,3 +149,4 @@ E_{L}=& 2 \alpha^{2} \omega^{2}\left(r_{1}^{2}+r_{2}^{2}\right)-4 \alpha \omega-
 & \frac{1}{2} \omega^{2}\left(r_{1}^{2}+r_{2}^{2}\right)+\frac{1}{r_{12}}
 \end{aligned}
 $$
+
