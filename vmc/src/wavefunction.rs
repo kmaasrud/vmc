@@ -187,9 +187,10 @@ impl WaveFunction {
 
             // Can safely unwrap distance_to. The dimensions are guaranteed to be equal
             let distance: f64 = particles[i].distance_to(&particles[j]).unwrap();
-            let factor = * a / (distance * (1. + self.beta * distance).powi(2));
+            let factor = a / (distance * (1. + self.beta * distance).powi(2));
 
-            gradient += - particles[i].position.scale(self.alpha * self.omega) 
+            // This actually calculates the derivative devided by the actual wavefunction, so not dPsi itself, but rather dPsi / Psi.
+            gradient +=   particles[i].position.scale(- self.alpha * self.omega) 
                         + (particles[i].position - particles[j].position).scale(factor)
                         - particles[j].position.scale(self.alpha * self.omega)
                         + (particles[j].position - particles[i].position).scale(factor);
@@ -226,7 +227,7 @@ impl WaveFunction {
     // --- Quantum forces ---
     pub fn quantum_force(&self, i: usize, particles: &Vec<Particle>) -> Vector {
         // The gradients need not be devided by the wavefunc since it already has been inside the gradient functions (this cancels terms and easen the computation)
-        (self.gradient_spf(&particles[i]) + self.gradient_interaction(i, particles)).scale(2.)
+        self.gradient_interaction(i, particles).scale(2.)
     }
 
     /// Calculates the quantum force of a particle not interacting with its surrounding particles
