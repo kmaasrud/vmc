@@ -10,17 +10,18 @@ use rand::{prelude::random, thread_rng};
 use rand_distr::Normal;
 use nalgebra::base::SMatrix;
 use nalgebra::base::SVector;
+use nalgebra::base::MatrixSlice;
 
 pub struct System<const N: usize> {
     pub particles: Vec<Particle>,
     pub dim: usize,
-    pub omega: f64,
     pub wf: WaveFunction,
     pub ham: Hamiltonian,
     interacting: bool,
     slater_matrix: SMatrix<f64, N, N>,
     slater_inverse: SMatrix<f64, N, N>,
     slater_ratio: f64,
+    v: SVector<f64, N>,
 }
 
 impl<const N: usize> System<N> {
@@ -31,7 +32,6 @@ impl<const N: usize> System<N> {
         wf: WaveFunction,
         ham: Hamiltonian,
         interact: bool,
-        omega: f64,
         spread: f64,
     ) -> Result<Self, String> {
         let mut rng = thread_rng();
@@ -60,7 +60,7 @@ impl<const N: usize> System<N> {
 
         for i in 0..n_particles {
             for j in 0..n_particles {
-                slater_matrix[(i, j)] = wf.spf(&particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1, 1.).unwrap();
+                slater_matrix[(i, j)] = wf.spf(&particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1).unwrap();
             }
         }
 
@@ -69,10 +69,11 @@ impl<const N: usize> System<N> {
             dim,
             wf,
             ham,
-            omega,
+            interacting: interact,
             slater_matrix,
             slater_inverse: slater_matrix.try_inverse().unwrap(),
-            interacting: interact,
+            slater_ratio: 0.,
+            v: SVector::<f64, N>::repeat(0.),
         })
     }
 
@@ -82,7 +83,7 @@ impl<const N: usize> System<N> {
     // struct, but it is too late for that now.
     /// Returns the Laplacian at this current state
     pub fn laplace(&self) -> Result<f64, String> {
-        let result: f64;
+        let mut result: f64 = 0.;
         let n = self.particles.len();
 
         for i in 0..n {
@@ -92,28 +93,37 @@ impl<const N: usize> System<N> {
                 result += self.wf.laplace_spf(self.particles[i], nx, ny)? * self.slater_inverse[(j, i)];
             }
         }
+
         Ok(result)
     }
 
-    pub fn slater_ratio(&self, step_size: f64) -> Result<f64, String> {
-        let v: SVector<f64, N> = SVector::repeat(0.);
-        let (new_particles, p) = self.random_particle_change(step_size);
-
+    pub fn next_slater_inverse(&mut self, new_particles: &Vec<Particle>, p: usize) -> Result<SMatrix<f64, N, N>, String> {
         // Find v_p
         for i in 0..N {
             let ny = crate::QUANTUM_NUMBERS[i].1;
             let nx = crate::QUANTUM_NUMBERS[i].0;
-            v[i] = self.wf.spf(&new_particles[p], nx, ny, self.omega)? - self.wf.spf(&self.particles[p], nx, ny, self.omega)?
+            self.v[i] = self.wf.spf(&new_particles[p], nx, ny)? - self.wf.spf(&self.particles[p], nx, ny)?
         }
 
-        // Find I - D_p v_p^T / R_D
-        let mul_by: SMatrix<f64, N, N> = SMatrix::identity();
+        let mut new_inverse: SMatrix<f64, N, N> = SMatrix::repeat(0.);
+        let identity: SMatrix<f64, N, N> = SMatrix::identity();
+        // NOTE: Double for-loop, so the complexity is O(n^2), contary to what we mention in Method...
         for i in 0..N {
-            mul_by[(i, i)] -= self.slater_inverse[(i, p)] * v.transpose()[i] / self.slater_ratio;
+            for j in 0..N {
+                new_inverse[(i, j)] = (identity[(i, j)] - self.slater_inverse[(i, p)] * self.v[i] / self.slater_ratio) * self.slater_inverse[(i, j)];
+            }
         }
-        let new_inverse = mul_by * self.slater_inverse;
 
-        Ok(1.)
+        Ok(new_inverse)
+    }
+
+    pub fn next_slater_ratio(&self, p: usize, new_inverse: &SMatrix<f64, N, N>) -> f64 {
+        let mut result = 0.;
+        let u = new_inverse.column(p);
+        for i in 0..N {
+            result += self.v[i] * u[i];
+        }
+        1. + result
     }
 
     /// Change a random particle's position by a random value

@@ -23,7 +23,7 @@ pub trait Metropolis {
         // The 1.0 inputted below is a placeholder for the omega value. We are testing over
         // different omega values. TODO: Consider storing omega in the System struct instead of
         // passing it through the stack.
-        let d_energy = sys.ham.energy(&sys.wf, &mut sys.particles, 1.0)?;
+        let d_energy = sys.ham.energy(&sys, &sys.particles, 1.0)?;
 
         let mut map = HashMap::new();
         map.insert("energy".to_string(), d_energy);
@@ -51,14 +51,12 @@ impl Metropolis for BruteForceMetropolis {
 
     fn step<const N: usize>(&mut self, sys: &mut System<N>) -> Result<Option<SampledValues>, String> {
         // Make a step
-        let next_step = sys.random_particle_change(self.step_size);
+        let (new_particles, p) = sys.random_particle_change(self.step_size);
+        let new_inverse = sys.next_slater_inverse(&new_particles, p)?;
+        let acceptance_factor = sys.next_slater_ratio(p, &new_inverse);
 
-        // Evaluate wavefunction for old and new states
-        let wf_old: f64 = sys.wf.evaluate(&sys.particles)?;
-        let wf_new: f64 = sys.wf.evaluate(&next_step)?;
-
-        if Self::hastings_check(wf_new.powi(2) / wf_old.powi(2)) {
-            sys.particles = next_step;
+        if Self::hastings_check(acceptance_factor) {
+            sys.particles = new_particles;
             Ok(Some(Self::sample(sys)?))
         } else {
             Ok(None)
