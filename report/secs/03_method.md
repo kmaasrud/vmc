@@ -26,11 +26,11 @@ $\mathbf e_p$ is simply the unit vector with $1$ on the $p$-th entry and zero ev
 
 Now, how do we calculate $D^{-1}$ effectively? Once again, Gaussian elimination gives us an $\mathcal O(N^3)$ cost, which is no-go. However, if we do the matrix inversion with Gaussian elimination initially, to aquire $D_0^{-1}$, we can iteratively find the succeeding inversions by using a special case of the *Sherman-Morrison-Woodbury formula*[^smw] [@GolubLoan2013], which states:
 
-$$ \left(D + D^{-1}\mathbf e_p \mathbf v_p^T\right)^{-1} = D^{-1} - \frac{D^{-1}\mathbf e_p \mathbf v_p^T D^{-1}}{1 + \mathbf v_p^T D^{-1}(\mathbf R)\mathbf e_p}. $$
+$$ \left(D + D^{-1}\mathbf e_p \mathbf v_p^T\right)^{-1} = D^{-1} - \frac{D^{-1}\mathbf e_p \mathbf v_p^T D^{-1}}{1 + \mathbf v_p^T D^{-1}\mathbf e_p}. $$
 
 We introduce the index $k$, referring to an arbitrary Monte Carlo step. Recognizing $D_k + D_k^{-1}\mathbf e_p \mathbf v_p^T$ as $D_{k+1}$ [@NukalaKent2009], we can simplify this to the iterative statement
 
-$$ D_{k+1} = \left(\mathbf I - \frac{D_k^{-1}\mathbf e_p \mathbf v_p^T}{\mathcal R_{D, k}}\right)D_k^{-1}. $$
+$$ D_{k+1}^{-1} = \left(\mathbf I - \frac{D_k^{-1}\mathbf e_p \mathbf v_p^T}{\mathcal R_{D, k}}\right)D_k^{-1}. $$
 
 This has an operation complexity of $\mathcal O(N)$.
 
@@ -67,7 +67,7 @@ By using the steepest descent method, the best variational parameters, $\alpha$ 
 
 ### Computation of the two electron system
 
-The minimum energy of the system is computed and compared to Taut's work[@cite taut]. In addition, the mean distance between the two electrons and the onebody density is calculated for the best variational parameters. These results are also compared with the results form the same computations, where only the pure harmonic oscillator wavefunctions are used, and where pure HO wavefunctions are used but without the Jastrow factor.
+The minimum energy of the system is computed and compared to Taut's work <!-- [@cite taut] -->. In addition, the mean distance between the two electrons and the onebody density is calculated for the best variational parameters. These results are also compared with the results form the same computations, where only the pure harmonic oscillator wavefunctions are used, and where pure HO wavefunctions are used but without the Jastrow factor.
 
 Lastly the expectation value for the kinetic energy is calculated with $\omega \in {0.01, 0.05, 0.1, 0.5, 1.0}$.
 
