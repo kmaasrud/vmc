@@ -35,7 +35,7 @@ pub fn simple() {
         let numerical_str = if numerical_laplace { "numerical" } else { "analytical" };
         path.push(format!("{}_{}_{}.csv", metro_type, interact_str, numerical_str));
         let mut f = create_file(&path);
-        f.write_all("energy,time".as_bytes()).expect("Unable to write data");
+        f.write_all("energy,time\n".as_bytes()).expect("Unable to write data");
 
         // Run 10 times
         for _ in 0..10 {
@@ -56,11 +56,15 @@ pub fn simple() {
     }
 
     let start = Instant::now();
-    let pool = ThreadPool::new(4);
+    let pool = ThreadPool::new(8);
     pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(false, true));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
+    pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
+    pool.execute(move || simulate::<ImportanceMetropolis>(false, true));
+    pool.execute(move || simulate::<ImportanceMetropolis>(true, false));
+    pool.execute(move || simulate::<ImportanceMetropolis>(true, true));
     pool.join_all();
     println!("Total time spent: {:?}", start.elapsed());
 }
