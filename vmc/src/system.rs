@@ -67,18 +67,19 @@ impl<const N: usize> System<N> {
                 }
             }
             
-            // Slater matrix is not invertible when N = 2, so set it to 0-matrix in that case.
-            match (slater_matrix.try_inverse(), N) {
-                (None, 2) => {
-                    slater_inverse = SMatrix::<f64, N, N>::repeat(0.);
-                    break
-                },
-                (Some(inv), _) => {
-                    slater_inverse = inv;
-                    break
-                },
-                _ => continue,
-            };
+            // Slater matrix is not invertible when N = 2, so set it to a 0-matrix in that case.
+            if N == 2 {
+                slater_inverse = SMatrix::<f64, N, N>::repeat(0.);
+                break
+            } else {
+                match slater_matrix.try_inverse() {
+                    Some(inv) => {
+                        slater_inverse = inv;
+                        break
+                    },
+                    _ => continue,
+                }
+            }
         }
 
         Ok(System {
