@@ -1,13 +1,16 @@
-use crate::{montecarlo::SampledValues, Particle, System, Hamiltonian};
+use crate::{montecarlo::SampledValues, Hamiltonian, Particle, System};
+use nalgebra::SMatrix;
 use rand::distributions::{Distribution, Uniform};
 use rand::thread_rng;
 use std::collections::HashMap;
-use nalgebra::SMatrix;
 
 /// Trait for Metropolis samplers.
 pub trait Metropolis {
     fn new(step_size: f64) -> Self;
-    fn step<const N: usize>(&mut self, sys: &mut System<N>) -> Result<Option<SampledValues>, String>;
+    fn step<const N: usize>(
+        &mut self,
+        sys: &mut System<N>,
+    ) -> Result<Option<SampledValues>, String>;
 
     fn hastings_check(acceptance_factor: f64) -> bool {
         if acceptance_factor >= 1. {
@@ -50,17 +53,20 @@ impl Metropolis for BruteForceMetropolis {
         Self { step_size }
     }
 
-    fn step<const N: usize>(&mut self, sys: &mut System<N>) -> Result<Option<SampledValues>, String> {
+    fn step<const N: usize>(
+        &mut self,
+        sys: &mut System<N>,
+    ) -> Result<Option<SampledValues>, String> {
         let mut acceptance_factor;
         let (new_particles, p) = sys.random_particle_change(self.step_size);
         let mut new_inverse: SMatrix<f64, N, N> = SMatrix::repeat(0.);
 
         match N {
             2 => {
-                let wf_old = sys.wf.evaluate(&sys.particles)?;
-                let wf_new = sys.wf.evaluate(&new_particles)?;
+                let wf_old = sys.wf.evaluate(&sys.particles, sys.interacting)?;
+                let wf_new = sys.wf.evaluate(&new_particles, sys.interacting)?;
                 acceptance_factor = wf_new.powi(2) / wf_old.powi(2);
-            },
+            }
             _ => {
                 new_inverse = sys.next_slater_inverse(&new_particles, p)?;
                 acceptance_factor = sys.next_slater_ratio(p, &new_inverse);
@@ -85,13 +91,16 @@ impl Metropolis for ImportanceMetropolis {
         Self
     }
 
-    fn step<const N: usize>(&mut self, sys: &mut System<N>) -> Result<Option<SampledValues>, String> {
+    fn step<const N: usize>(
+        &mut self,
+        sys: &mut System<N>,
+    ) -> Result<Option<SampledValues>, String> {
         // Make a step
         let (next_step, i) = sys.quantum_force_particle_change();
 
         // Evaluate wavefunction for old and new states
-        let wf_old: f64 = sys.wf.evaluate(&sys.particles)?;
-        let wf_new: f64 = sys.wf.evaluate(&next_step)?;
+        let wf_old: f64 = sys.wf.evaluate(&sys.particles, sys.interacting)?;
+        let wf_new: f64 = sys.wf.evaluate(&next_step, sys.interacting)?;
 
         // Calculate the acceptance factor
         let greens_factor = Self::greens(&sys.particles[i], &next_step[i])?

@@ -1,4 +1,4 @@
-use crate::{Particle, WaveFunction, System};
+use crate::{Particle, System};
 
 #[derive(Clone)]
 pub struct Hamiltonian;
@@ -34,9 +34,7 @@ impl Hamiltonian {
         particles: &Vec<Particle>,
         omega: f64,
     ) -> Result<f64, String> {
-        Ok(Self::kinetic(sys)?
-            + Self::potential(omega, particles)
-            + Self::repulsive(particles))
+        Ok(Self::kinetic(sys)? + Self::potential(omega, particles) + Self::repulsive(particles))
     }
 }
 
