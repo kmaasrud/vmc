@@ -1,4 +1,4 @@
-use crate::{Hermite, Particle, Vector, System, Spin};
+use crate::{Hermite, Particle, Spin, System, Vector};
 use nalgebra::SMatrix;
 
 // Hard-coding quantum states of up to 20 particles. This is done for speed, an should be
@@ -37,7 +37,7 @@ impl WaveFunction {
     //-- Trial wavefunction --
     /// Trial wavefunction for the ground state of the two electron/fermion system.
     /// Returns an f64 representing the wavefunction value
-    pub fn evaluate(&self, particles: &Vec<Particle>) -> Result<f64, String> {
+    pub fn evaluate(&self, particles: &Vec<Particle>, interacting: bool) -> Result<f64, String> {
         let c: f64 = 1.0; //normalization constant - dont know value
 
         match particles.len() {
@@ -45,10 +45,12 @@ impl WaveFunction {
             2 => {
                 let a = 1.; // TODO: What to do here?
                 let mut exp_sum = 0.;
-                for (i, particle) in particles.iter().enumerate() {
-                    for other in particles[i + 1..].iter() {
-                        let fermion_distance: f64 = particle.distance_to(other)?;
-                        exp_sum += a * fermion_distance / (1. + self.beta * fermion_distance);
+                if interacting {
+                    for (i, particle) in particles.iter().enumerate() {
+                        for other in particles[i + 1..].iter() {
+                            let fermion_distance: f64 = particle.distance_to(other)?;
+                            exp_sum += a * fermion_distance / (1. + self.beta * fermion_distance);
+                        }
                     }
                 }
 
@@ -60,9 +62,7 @@ impl WaveFunction {
                 Ok(result)
             }
             // This is the general evaluation, using Slater determinants
-            _ => {
-                Ok(1.)
-            }
+            _ => Ok(1.),
         }
     }
 
@@ -77,27 +77,32 @@ impl WaveFunction {
             _ => return Err("spf only supports two dimension right now".to_owned()),
         };
 
-        Ok(result * (-0.5 * self.alpha * self.omega * particle.position.inner(particle.position)?).exp())
+        Ok(result
+            * (-0.5 * self.alpha * self.omega * particle.position.inner(particle.position)?).exp())
     }
 
     // --- Laplacian ---
     /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
     /// Returns laplacian for the wavefunction with hermitian polynomials
-    pub fn laplace_numerical(&self, particles: &mut Vec<Particle>) -> Result<f64, String> {
+    pub fn laplace_numerical(
+        &self,
+        particles: &mut Vec<Particle>,
+        interacting: bool,
+    ) -> Result<f64, String> {
         let h: f64 = 0.0001; //stepsize
         let h2 = h.powi(2);
 
         let mut laplace = 0.;
 
-        let wf = self.evaluate(&particles)?;
+        let wf = self.evaluate(&particles, interacting)?;
 
         for i in 0..particles.len() {
             for dim in 0..particles[i].dim {
                 particles[i].bump_at_dim(dim, h); // Initial position +h
-                let wf_plus = self.evaluate(particles)?;
+                let wf_plus = self.evaluate(particles, interacting)?;
 
                 particles[i].bump_at_dim(dim, -2. * h); // Initial position -h
-                let wf_minus = self.evaluate(particles)?;
+                let wf_minus = self.evaluate(particles, interacting)?;
 
                 particles[i].bump_at_dim(dim, h); // Reset back to initial position
 
@@ -120,19 +125,19 @@ impl WaveFunction {
                 let hny = Hermite::evaluate(omega_alpha_sqrt * y, ny)?;
                 let d_hnx = Hermite::derivative(omega_alpha_sqrt * x, nx)? * omega_alpha_sqrt;
                 let d_hny = Hermite::derivative(omega_alpha_sqrt * y, ny)? * omega_alpha_sqrt;
-                let dd_hnx = Hermite::double_derivative(omega_alpha_sqrt * x, nx)? * omega_alpha_sqrt;
-                let dd_hny = Hermite::double_derivative(omega_alpha_sqrt * y, ny)? * omega_alpha_sqrt;
+                let dd_hnx =
+                    Hermite::double_derivative(omega_alpha_sqrt * x, nx)? * omega_alpha_sqrt;
+                let dd_hny =
+                    Hermite::double_derivative(omega_alpha_sqrt * y, ny)? * omega_alpha_sqrt;
 
                 Ok((-0.5 * omega_alpha * particle.squared_sum()).exp()
-                    * (-2.0 * omega_alpha * x * hny * d_hnx
-                        - 2.0 * omega_alpha * y * hnx * d_hny
+                    * (-2.0 * omega_alpha * x * hny * d_hnx - 2.0 * omega_alpha * y * hnx * d_hny
                         + omega_alpha * hnx * hny * (omega_alpha * particle.squared_sum() - 2.0)
                         + hny * dd_hnx
                         + hnx * dd_hny))
-            },
-            _ => return Err("laplace_spf only supports two dimensions right now.".to_owned())
+            }
+            _ => return Err("laplace_spf only supports two dimensions right now.".to_owned()),
         }
-
     }
 
     // --- Gradients ---
@@ -167,10 +172,10 @@ impl WaveFunction {
             let factor = a / (distance * (1. + self.beta * distance).powi(2));
 
             // This actually calculates the derivative devided by the actual wavefunction, so not dPsi itself, but rather dPsi / Psi.
-            gradient +=   particles[i].position.scale(- self.alpha * self.omega) 
-                        + (particles[i].position - particles[j].position).scale(factor)
-                        - particles[j].position.scale(self.alpha * self.omega)
-                        + (particles[j].position - particles[i].position).scale(factor);
+            gradient += particles[i].position.scale(-self.alpha * self.omega)
+                + (particles[i].position - particles[j].position).scale(factor)
+                - particles[j].position.scale(self.alpha * self.omega)
+                + (particles[j].position - particles[i].position).scale(factor);
         }
 
         gradient
@@ -362,10 +367,12 @@ mod tests {
         let r12: f64 = r2;
         let r21: f64 = -r2;
         let frac: f64 = a / ((1. + beta * r12).powi(2));
-        let analyticalx = 2. * alpha * self.omega * 0. + 2. / r12 * frac * 1. - 2. * alpha * self.omega * 1.
+        let analyticalx = 2. * alpha * self.omega * 0. + 2. / r12 * frac * 1.
+            - 2. * alpha * self.omega * 1.
             + 2. / r12 * frac * (-1.);
 
-        let analyticaly = 2. * alpha * self.omega * 0. + 2. / r12 * frac * 1. - 2. * alpha * self.omega * 1.
+        let analyticaly = 2. * alpha * self.omega * 0. + 2. / r12 * frac * 1.
+            - 2. * alpha * self.omega * 1.
             + 2. / r12 * frac * (-1.);
         let analytical = Vector::D2(analyticalx, analyticaly);
 

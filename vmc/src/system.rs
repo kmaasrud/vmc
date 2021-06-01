@@ -1,22 +1,17 @@
-use crate::{
-    Hamiltonian,
-    Particle,
-    Vector,
-    WaveFunction,
-};
+use crate::{Hamiltonian, Particle, Vector, WaveFunction};
 
+use nalgebra::base::MatrixSlice;
+use nalgebra::base::SMatrix;
+use nalgebra::base::SVector;
 use rand::distributions::{Distribution, Uniform};
 use rand::{prelude::random, thread_rng};
 use rand_distr::Normal;
-use nalgebra::base::SMatrix;
-use nalgebra::base::SVector;
-use nalgebra::base::MatrixSlice;
 
 pub struct System<const N: usize> {
     pub particles: Vec<Particle>,
     pub dim: usize,
     pub wf: WaveFunction,
-    interacting: bool,
+    pub interacting: bool,
     slater_matrix: SMatrix<f64, N, N>,
     pub slater_inverse: SMatrix<f64, N, N>,
     pub slater_ratio: f64,
@@ -35,39 +30,57 @@ impl<const N: usize> System<N> {
         let mut rng = thread_rng();
         let uniform = Uniform::new(0., 1.);
         let mut particles = vec![Particle::new(dim)?; n_particles];
-
-        for i in 0..particles.len() {
-            // Make a new randomly placed particle
-            let new_particle = Particle::from_vector(match dim {
-                1 => Vector::D1(uniform.sample(&mut rng) - 0.5),
-                2 => Vector::D2(
-                    uniform.sample(&mut rng) - 0.5,
-                    uniform.sample(&mut rng) - 0.5,
-                ),
-                _ => Vector::D3(
-                    uniform.sample(&mut rng) - 0.5,
-                    uniform.sample(&mut rng) - 0.5,
-                    uniform.sample(&mut rng) - 0.5,
-                ),
-            });
-
-            particles[i].position = new_particle.position.scale(spread);
-        }
-
         let mut slater_matrix: SMatrix<f64, N, N> = SMatrix::repeat(0.);
+        let mut slater_inverse = slater_matrix.clone();
 
-        for i in 0..n_particles {
-            for j in 0..n_particles {
-                slater_matrix[(i, j)] = wf.spf(&particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1).unwrap();
+        // Keep initializing particles until we get an invertable Slater matrix
+        loop {
+            for i in 0..particles.len() {
+                // Make a new randomly placed particle
+                let new_particle = Particle::from_vector(match dim {
+                    1 => Vector::D1(uniform.sample(&mut rng) - 0.5),
+                    2 => Vector::D2(
+                        uniform.sample(&mut rng) - 0.5,
+                        uniform.sample(&mut rng) - 0.5,
+                    ),
+                    _ => Vector::D3(
+                        uniform.sample(&mut rng) - 0.5,
+                        uniform.sample(&mut rng) - 0.5,
+                        uniform.sample(&mut rng) - 0.5,
+                    ),
+                });
+
+                particles[i].position = new_particle.position.scale(spread);
+            }
+
+            for i in 0..n_particles {
+                for j in 0..n_particles {
+                    let nx = crate::QUANTUM_NUMBERS
+                        .get(j)
+                        .ok_or("System can not have more than 20 particles.")?
+                        .0;
+                    let ny = crate::QUANTUM_NUMBERS
+                        .get(j)
+                        .ok_or("System can not have more than 20 particles.")?
+                        .1;
+                    slater_matrix[(i, j)] = wf.spf(&particles[i], nx, ny).unwrap();
+                }
+            }
+
+            // Slater matrix is not invertible when N = 2, so set it to a 0-matrix in that case.
+            if N == 2 {
+                slater_inverse = SMatrix::<f64, N, N>::repeat(0.);
+                break;
+            } else {
+                match slater_matrix.try_inverse() {
+                    Some(inv) => {
+                        slater_inverse = inv;
+                        break;
+                    }
+                    _ => continue,
+                }
             }
         }
-        
-        // Slater matrix is not invertible when N = 2, so set it to 0-matrix in that case.
-        let slater_inverse = match (slater_matrix.try_inverse(), N) {
-            (None, 2) => SMatrix::<f64, N, N>::repeat(0.),
-            (Some(inv), _) => inv,
-            _ => return Err("N > 2 and Slater matrix was not invertible.".to_owned()),
-        };
 
         Ok(System {
             particles: vec![Particle::new(dim)?; n_particles],
@@ -81,7 +94,6 @@ impl<const N: usize> System<N> {
         })
     }
 
-
     // NOTE: Storing the Laplacian here is messy, but it allows a much cleaner function signature.
     // WaveFunction and System are intimately tied together, and should've ideally been made as one
     // struct, but it is too late for that now.
@@ -94,19 +106,25 @@ impl<const N: usize> System<N> {
             for j in 0..n {
                 let nx = crate::QUANTUM_NUMBERS[j].0;
                 let ny = crate::QUANTUM_NUMBERS[j].1;
-                result += self.wf.laplace_spf(self.particles[i], nx, ny)? * self.slater_inverse[(j, i)];
+                result +=
+                    self.wf.laplace_spf(self.particles[i], nx, ny)? * self.slater_inverse[(j, i)];
             }
         }
 
         Ok(result)
     }
 
-    pub fn next_slater_inverse(&mut self, new_particles: &Vec<Particle>, p: usize) -> Result<SMatrix<f64, N, N>, String> {
+    pub fn next_slater_inverse(
+        &mut self,
+        new_particles: &Vec<Particle>,
+        p: usize,
+    ) -> Result<SMatrix<f64, N, N>, String> {
         // Find v_p
         for i in 0..N {
             let ny = crate::QUANTUM_NUMBERS[i].1;
             let nx = crate::QUANTUM_NUMBERS[i].0;
-            self.v[i] = self.wf.spf(&new_particles[p], nx, ny)? - self.wf.spf(&self.particles[p], nx, ny)?
+            self.v[i] =
+                self.wf.spf(&new_particles[p], nx, ny)? - self.wf.spf(&self.particles[p], nx, ny)?
         }
 
         let mut new_inverse: SMatrix<f64, N, N> = SMatrix::repeat(0.);
@@ -114,7 +132,9 @@ impl<const N: usize> System<N> {
         // NOTE: Double for-loop, so the complexity is O(n^2), contary to what we mention in Method...
         for i in 0..N {
             for j in 0..N {
-                new_inverse[(i, j)] = (identity[(i, j)] - self.slater_inverse[(i, p)] * self.v[i] / self.slater_ratio) * self.slater_inverse[(i, j)];
+                new_inverse[(i, j)] = (identity[(i, j)]
+                    - self.slater_inverse[(i, p)] * self.v[i] / self.slater_ratio)
+                    * self.slater_inverse[(i, j)];
             }
         }
 

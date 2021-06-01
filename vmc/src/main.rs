@@ -3,12 +3,12 @@ mod hermite;
 mod metropolis;
 mod montecarlo;
 mod particle;
+mod run;
 mod system;
 mod threadpool;
 mod utils;
 mod vector;
 mod wavefunction;
-mod run;
 
 pub use hamiltonian::Hamiltonian;
 pub use hermite::Hermite;

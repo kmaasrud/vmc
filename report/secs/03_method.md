@@ -2,12 +2,13 @@
 
 ## Variational Monte Carlo
 
-Our variational Monte Carlo approach is as explained by our previous work [@Vmc-bosonic2021]. Roughly, it proceeds by proposing a change to the system $\mathbf R \mapsto \mathbf R'$ by changing the position of a single particle $\mathbf r_i$. The choice of this particle and how it moves is done both randomly and by way of the *quantum force*, both explained in @Vmc-bosonic2021. From the states $\mathbf R$ and $\mathbf R'$, and the trial wave function $\Psi_T$, we evaluate an acceptance factor, that determines whether or not we accept the proposed changed system. The flowchart below describes the Monte Carlo cycling.
+Our variational Monte Carlo approach is as explained by our previous work [@Vmc-bosonic2021]. Roughly, it proceeds by proposing a change to the system $\mathbf R \mapsto \mathbf R'$ by changing the position of a single particle $\mathbf r_i$. The choice of this particle and how it moves is done both randomly and by way of the *quantum force*, both explained in @Vmc-bosonic2021. From the states $\mathbf R$ and $\mathbf R'$, and the trial wave function $\Psi_T$, we evaluate an acceptance factor, that determines whether or not we accept the proposed changed system. The flowchart shown in figure [@fig:fermion-vmc] briefly describes the process.
 
-![Monte Carlo cycling flowchart](diagrams/Fermoin-VMC.png){ width=300px }
-
+![Flowchart showcasing our Monte Carlo sampling](diagrams/fermion-vmc.png){#fig:fermion-vmc width=300px}
 
 Regardless of whether the new step is accepted or not, the desired quantities - in our case the energy, its gradient and their composites - are sampled in Monte Carlo integration. The integrated values are then used in steepest gradient descent [@Vmc-bosonic2021] to find the optimal variational parameters.
+
+\FloatBarrier
 
 ## Optimization of wave function ratio
 
