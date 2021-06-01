@@ -61,7 +61,9 @@ impl<const N: usize> System<N> {
 
             for i in 0..n_particles {
                 for j in 0..n_particles {
-                    slater_matrix[(i, j)] = wf.spf(&particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1).unwrap();
+                    let nx = crate::QUANTUM_NUMBERS.get(j).ok_or("System can not have more than 20 particles.")?.0;
+                    let ny = crate::QUANTUM_NUMBERS.get(j).ok_or("System can not have more than 20 particles.")?.1;
+                    slater_matrix[(i, j)] = wf.spf(&particles[i], nx, ny).unwrap();
                 }
             }
             

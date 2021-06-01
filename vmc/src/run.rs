@@ -24,11 +24,11 @@ pub fn simple(){
     //The run::simple() only does BruteForceMetropolis sampling without multithreading.
     
     const CSV_HEADER: &str = "Alpha,Energy,Time\n";
-    const STEP_SIZE: f64 = 1.0;
+    const STEP_SIZE: f64 = 0.1;
     const NON_INTERACTING: bool = true;
-    const MC_CYCLES: usize = 10_000;
+    const MC_CYCLES: usize = 1_000_000;
     const DIM : usize = 2;
-    const N: usize = 2;
+    const N: usize = 21;
     const INTERACT: bool = false;
     const SPREAD: f64 = 0.1;
     
