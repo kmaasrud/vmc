@@ -28,7 +28,7 @@ pub fn simple(){
     const NON_INTERACTING: bool = true;
     const MC_CYCLES: usize = 1_000_000;
     const DIM : usize = 2;
-    const N: usize = 21;
+    const N: usize = 20;
     const INTERACT: bool = false;
     const SPREAD: f64 = 0.1;
     
