@@ -205,9 +205,23 @@ impl WaveFunction {
     }
 
     // --- Quantum forces ---
-    pub fn quantum_force(&self, i: usize, particles: &Vec<Particle>) -> Vector {
-        // The gradients need not be devided by the wavefunc since it already has been inside the gradient functions (this cancels terms and easen the computation)
-        self.gradient_interaction(i, particles).scale(2.)
+    pub fn quantum_force(&self, i: usize, particles: &Vec<Particle>) -> Result<Vector, String> {
+        let a = 1.;
+        if particles.len() == 2 {
+            let r1 = particles[0].position;
+            let r2 = particles[1].position;
+            let r12 = r1 - r2;
+            let r21 = r2 - r1;
+            let distance = particles[0].distance_to(&particles[1])?;
+
+            let factor1 = -2. * self.alpha * self.omega;
+            let factor2 = 2. * a / (distance * (1. + self.beta * distance));
+
+            Ok(r1.scale(factor1) + r12.scale(factor2) + r2.scale(factor1) + r21.scale(factor2))
+        } else {
+            // The gradients need not be devided by the wavefunc since it already has been inside the gradient functions (this cancels terms and easen the computation)
+            Ok(self.gradient_interaction(i, particles).scale(2.))
+        }
     }
 
     /// Calculates the quantum force of a particle not interacting with its surrounding particles

@@ -57,21 +57,20 @@ impl Metropolis for BruteForceMetropolis {
         &mut self,
         sys: &mut System<N>,
     ) -> Result<Option<SampledValues>, String> {
-        let mut acceptance_factor;
         let (new_particles, p) = sys.random_particle_change(self.step_size);
         let mut new_inverse: SMatrix<f64, N, N> = SMatrix::repeat(0.);
 
-        match N {
+        let acceptance_factor = match N {
             2 => {
                 let wf_old = sys.wf.evaluate(&sys.particles, sys.interacting)?;
                 let wf_new = sys.wf.evaluate(&new_particles, sys.interacting)?;
-                acceptance_factor = wf_new.powi(2) / wf_old.powi(2);
+                wf_new.powi(2) / wf_old.powi(2)
             }
             _ => {
                 new_inverse = sys.next_slater_inverse(&new_particles, p)?;
-                acceptance_factor = sys.next_slater_ratio(p, &new_inverse);
+                sys.next_slater_ratio(p, &new_inverse)
             }
-        }
+        };
 
         if Self::hastings_check(acceptance_factor) {
             sys.particles = new_particles;
@@ -95,20 +94,30 @@ impl Metropolis for ImportanceMetropolis {
         &mut self,
         sys: &mut System<N>,
     ) -> Result<Option<SampledValues>, String> {
-        // Make a step
-        let (next_step, i) = sys.quantum_force_particle_change();
+        let mut new_inverse: SMatrix<f64, N, N> = SMatrix::repeat(0.);
 
-        // Evaluate wavefunction for old and new states
-        let wf_old: f64 = sys.wf.evaluate(&sys.particles, sys.interacting)?;
-        let wf_new: f64 = sys.wf.evaluate(&next_step, sys.interacting)?;
+        // Make a step
+        let (new_particles, p) = sys.quantum_force_particle_change()?;
 
         // Calculate the acceptance factor
-        let greens_factor = Self::greens(&sys.particles[i], &next_step[i])?
-            / Self::greens(&next_step[i], &sys.particles[i])?;
-        let acceptance_factor = greens_factor * wf_new.powi(2) / wf_old.powi(2);
+        let greens_factor = Self::greens(&sys.particles[p], &new_particles[p])?
+            / Self::greens(&new_particles[p], &sys.particles[p])?;
+        let acceptance_factor = match N {
+            2 => {
+                let wf_old = sys.wf.evaluate(&sys.particles, sys.interacting)?;
+                let wf_new = sys.wf.evaluate(&new_particles, sys.interacting)?;
+                greens_factor * wf_new.powi(2) / wf_old.powi(2)
+            }
+            _ => {
+                new_inverse = sys.next_slater_inverse(&new_particles, p)?;
+                greens_factor * sys.next_slater_ratio(p, &new_inverse)
+            }
+        };
 
         if Self::hastings_check(acceptance_factor) {
-            sys.particles = next_step;
+            sys.particles = new_particles;
+            sys.slater_inverse = new_inverse;
+            sys.slater_ratio = acceptance_factor;
             Ok(Some(Self::sample(sys)?))
         } else {
             Ok(None)

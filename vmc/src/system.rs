@@ -176,7 +176,7 @@ impl<const N: usize> System<N> {
     }
 
     /// Takes in a step size and returns the next particle state of the system.
-    pub fn quantum_force_particle_change(&mut self) -> (Vec<Particle>, usize) {
+    pub fn quantum_force_particle_change(&mut self) -> Result<(Vec<Particle>, usize), String> {
         let mut rng = thread_rng();
         let normal = Normal::new(0., 1.).unwrap();
 
@@ -187,7 +187,7 @@ impl<const N: usize> System<N> {
         let i = random::<usize>() % self.particles.len();
 
         self.particles[i].qforce = if self.interacting {
-            self.wf.quantum_force(i, &self.particles)
+            self.wf.quantum_force(i, &self.particles)?
         } else {
             self.wf.quantum_force_non_interacting(&self.particles[i])
         };
@@ -211,11 +211,11 @@ impl<const N: usize> System<N> {
 
         // Calculate quantum force of new state
         new_particles[i].qforce = if self.interacting {
-            self.wf.quantum_force(i, &new_particles)
+            self.wf.quantum_force(i, &new_particles)?
         } else {
             self.wf.quantum_force_non_interacting(&new_particles[i])
         };
 
-        (new_particles, i)
+        Ok((new_particles, i))
     }
 }
