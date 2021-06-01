@@ -13,14 +13,16 @@ use std::{
 
 #[allow(dead_code)]
 pub fn simple() {
+    const ALPHA: f64 = 1.0;
+    const OMEGA: f64 = 1.0;
     const STEP_SIZE: f64 = 1.0;
-    const MC_CYCLES: usize = 10_000;
+    const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
     const N: usize = 2;
-    const INTERACT: bool = false;
     const SPREAD: f64 = 0.1;
+    const NUMERICAL_LAPLACE: bool = true;
 
-    fn simulate<T: Metropolis>(alpha: f64, omega: f64) {
+    fn simulate<T: Metropolis>(numerical_laplace: bool, interacting: bool) {
         let mut metro: T = T::new(STEP_SIZE);
 
         let mut path = find_cargo_root().unwrap();
@@ -28,42 +30,38 @@ pub fn simple() {
         path.push("N2");
         create_dir(&path);
 
-        path.push(format!(
-            "alpha_{}_{}.csv",
-            alpha,
-            std::any::type_name::<T>().split("::").last().unwrap()
-        ));
+        let metro_type = std::any::type_name::<T>().split("::").last().unwrap();
+        let interact_str = if interacting { "interacting" } else { "non-interacting" };
+        let numerical_str = if numerical_laplace { "numerical" } else { "analytical" };
+        path.push(format!("{}_{}_{}.csv", metro_type, interact_str, numerical_str));
         let mut f = create_file(&path);
-        f.write_all("energy,time".as_bytes())
-            .expect("Unable to write data");
+        f.write_all("energy,time".as_bytes()).expect("Unable to write data");
 
-        println!("Dimension: {}", DIM);
+        // Run 10 times
+        for _ in 0..10 {
+            let start = Instant::now();
+            let wf = WaveFunction { alpha: ALPHA, beta: 1., omega: OMEGA }; // Set beta = gamma
+            let mut system: System<N> = System::new(N, DIM, wf, interacting, numerical_laplace, SPREAD).unwrap();
+            let vals = montecarlo::monte_carlo(MC_CYCLES, &mut system, &mut metro).unwrap();
 
-        let start = Instant::now();
-        let wf = WaveFunction {
-            alpha,
-            beta: 1.,
-            omega,
-        }; // Set beta = gamma
-        let mut system: System<N> = System::new(N, DIM, wf, INTERACT, SPREAD).unwrap();
-        let vals = montecarlo::monte_carlo(MC_CYCLES, &mut system, &mut metro).unwrap();
+            let energy = match vals.map.get("energy") {
+                Some(val) => *val,
+                None => 0.,
+            };
 
-        let energy = match vals.map.get("energy") {
-            Some(val) => *val,
-            None => 0.,
-        };
-
-        let data = format!("{},{:?}\n", energy, start.elapsed());
-        println!("{}", data);
-        f.write_all(data.as_bytes()).expect("Unable to write data");
+            let data = format!("{},{:?}\n", energy, start.elapsed());
+            println!("{}", data);
+            f.write_all(data.as_bytes()).expect("Unable to write data");
+        }
     }
 
     let start = Instant::now();
-    //let pool = ThreadPool::new(2);
-    //pool.execute(move || simulate::<BruteForceMetropolis>());
-    //pool.execute(move || simulate::<ImportanceMetropolis>());
-    //pool.join_all();
-    simulate::<BruteForceMetropolis>(1.0, 1.);
+    let pool = ThreadPool::new(4);
+    pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
+    pool.execute(move || simulate::<BruteForceMetropolis>(false, true));
+    pool.execute(move || simulate::<BruteForceMetropolis>(true, false));
+    pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
+    pool.join_all();
     println!("Total time spent: {:?}", start.elapsed());
 }
 

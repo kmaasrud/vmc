@@ -86,23 +86,24 @@ impl WaveFunction {
     /// Returns laplacian for the wavefunction with hermitian polynomials
     pub fn laplace_numerical(
         &self,
-        particles: &mut Vec<Particle>,
+        particles: &Vec<Particle>,
         interacting: bool,
     ) -> Result<f64, String> {
         let h: f64 = 0.0001; //stepsize
         let h2 = h.powi(2);
 
         let mut laplace = 0.;
+        let mut particles = particles.clone();
 
         let wf = self.evaluate(&particles, interacting)?;
 
         for i in 0..particles.len() {
             for dim in 0..particles[i].dim {
                 particles[i].bump_at_dim(dim, h); // Initial position +h
-                let wf_plus = self.evaluate(particles, interacting)?;
+                let wf_plus = self.evaluate(&particles, interacting)?;
 
                 particles[i].bump_at_dim(dim, -2. * h); // Initial position -h
-                let wf_minus = self.evaluate(particles, interacting)?;
+                let wf_minus = self.evaluate(&particles, interacting)?;
 
                 particles[i].bump_at_dim(dim, h); // Reset back to initial position
 
@@ -125,10 +126,8 @@ impl WaveFunction {
                 let hny = Hermite::evaluate(omega_alpha_sqrt * y, ny)?;
                 let d_hnx = Hermite::derivative(omega_alpha_sqrt * x, nx)? * omega_alpha_sqrt;
                 let d_hny = Hermite::derivative(omega_alpha_sqrt * y, ny)? * omega_alpha_sqrt;
-                let dd_hnx =
-                    Hermite::double_derivative(omega_alpha_sqrt * x, nx)? * omega_alpha_sqrt;
-                let dd_hny =
-                    Hermite::double_derivative(omega_alpha_sqrt * y, ny)? * omega_alpha_sqrt;
+                let dd_hnx = Hermite::double_derivative(omega_alpha_sqrt * x, nx)? * omega_alpha_sqrt;
+                let dd_hny = Hermite::double_derivative(omega_alpha_sqrt * y, ny)? * omega_alpha_sqrt;
 
                 Ok((-0.5 * omega_alpha * particle.squared_sum()).exp()
                     * (-2.0 * omega_alpha * x * hny * d_hnx - 2.0 * omega_alpha * y * hnx * d_hny

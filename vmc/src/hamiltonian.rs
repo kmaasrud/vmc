@@ -31,10 +31,9 @@ impl Hamiltonian {
     /// If `non_interacting` is `true`, will calculate the non-interacting energy (unused for now).
     pub fn energy<const N: usize>(
         sys: &System<N>,
-        particles: &Vec<Particle>,
         omega: f64,
     ) -> Result<f64, String> {
-        Ok(Self::kinetic(sys)? + Self::potential(omega, particles) + Self::repulsive(particles))
+        Ok(Self::kinetic(sys)? + Self::potential(omega, &sys.particles))
     }
 }
 
