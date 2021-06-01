@@ -76,9 +76,9 @@ Lastly the expectation value for the kinetic energy and the potential energy is 
 
 ## Performance analysis
 <!--  -->
-Lastly a analysis of the algorithms are given for $N = 6$ electrons, $FILL IN$ Monte Carlo cycles, optimal variational parameters  $\omega = 1$ and without the Jastrow factor. The analysis is done by comparing the avarage time used for a calculation with and without vecotrization. The procedure is repeated with paralellization, expecting approximatly a 100% speedup.  The quantities which are calculated are **FILL INN**. The most time consuming part is the **FILL INN** , and hence the clock is started here. The results are presented in table [@tbl:results-performence-analysis]. **ADD SOME MORE DESCRIPTION OF HOW HERE**
+Lastly a analysis of the algorithms are given for $N = 6$ electrons, $FILL IN$ Monte Carlo cycles, optimal variational parameters, $\omega = 1$ and with the Jastrow factor off. The analysis is done by comparing the avarage time used for a calculation with and withouth vecotrization. The procedure is repeated with paralellization, expecting approximatly a 100% speedup.  The quantities which are calculated are the **FILL INN**. The most time consuming part is the **FILL INN** , and hence the clock is started here.  The results are presented in table [@tbl:results-performence-analysis]
 
-Table: Results from performance analysis with and without vectorization and compile flags. The time is avaraged over 10 runs with **FILL INN** MC cycles. The sampling method is the **Brute Force Metropolis OR Importance sampling**
+Table: Results from performance analysis with and without vectorization. The time is avaraged over 10 runs with **FILL INN** MC cycles. The sampling method is the **Brute Force Metropolis OR Importance sampling**
 | Optimization/compile flags 	| $\bar{t}$ [s] 	|
 |----------------------------	|---------------	|
 | **With vectorization**:       |               	|
