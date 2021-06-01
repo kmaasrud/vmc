@@ -35,39 +35,49 @@ impl<const N: usize> System<N> {
         let mut rng = thread_rng();
         let uniform = Uniform::new(0., 1.);
         let mut particles = vec![Particle::new(dim)?; n_particles];
-
-        for i in 0..particles.len() {
-            // Make a new randomly placed particle
-            let new_particle = Particle::from_vector(match dim {
-                1 => Vector::D1(uniform.sample(&mut rng) - 0.5),
-                2 => Vector::D2(
-                    uniform.sample(&mut rng) - 0.5,
-                    uniform.sample(&mut rng) - 0.5,
-                ),
-                _ => Vector::D3(
-                    uniform.sample(&mut rng) - 0.5,
-                    uniform.sample(&mut rng) - 0.5,
-                    uniform.sample(&mut rng) - 0.5,
-                ),
-            });
-
-            particles[i].position = new_particle.position.scale(spread);
-        }
-
         let mut slater_matrix: SMatrix<f64, N, N> = SMatrix::repeat(0.);
+        let mut slater_inverse = slater_matrix.clone();
 
-        for i in 0..n_particles {
-            for j in 0..n_particles {
-                slater_matrix[(i, j)] = wf.spf(&particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1).unwrap();
+        // Keep initializing particles until we get an invertable Slater matrix
+        loop {
+            for i in 0..particles.len() {
+                // Make a new randomly placed particle
+                let new_particle = Particle::from_vector(match dim {
+                    1 => Vector::D1(uniform.sample(&mut rng) - 0.5),
+                    2 => Vector::D2(
+                        uniform.sample(&mut rng) - 0.5,
+                        uniform.sample(&mut rng) - 0.5,
+                    ),
+                    _ => Vector::D3(
+                        uniform.sample(&mut rng) - 0.5,
+                        uniform.sample(&mut rng) - 0.5,
+                        uniform.sample(&mut rng) - 0.5,
+                    ),
+                });
+
+                particles[i].position = new_particle.position.scale(spread);
             }
+
+
+            for i in 0..n_particles {
+                for j in 0..n_particles {
+                    slater_matrix[(i, j)] = wf.spf(&particles[i], crate::QUANTUM_NUMBERS[j].0, crate::QUANTUM_NUMBERS[j].1).unwrap();
+                }
+            }
+            
+            // Slater matrix is not invertible when N = 2, so set it to 0-matrix in that case.
+            match (slater_matrix.try_inverse(), N) {
+                (None, 2) => {
+                    slater_inverse = SMatrix::<f64, N, N>::repeat(0.);
+                    break
+                },
+                (Some(inv), _) => {
+                    slater_inverse = inv;
+                    break
+                },
+                _ => continue,
+            };
         }
-        
-        // Slater matrix is not invertible when N = 2, so set it to 0-matrix in that case.
-        let slater_inverse = match (slater_matrix.try_inverse(), N) {
-            (None, 2) => SMatrix::<f64, N, N>::repeat(0.),
-            (Some(inv), _) => inv,
-            _ => return Err("N > 2 and Slater matrix was not invertible.".to_owned()),
-        };
 
         Ok(System {
             particles: vec![Particle::new(dim)?; n_particles],
