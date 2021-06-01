@@ -12,9 +12,10 @@ pub struct System<const N: usize> {
     pub dim: usize,
     pub wf: WaveFunction,
     pub interacting: bool,
-    slater_matrix: SMatrix<f64, N, N>,
+    pub num_laplace: bool,
     pub slater_inverse: SMatrix<f64, N, N>,
     pub slater_ratio: f64,
+    slater_matrix: SMatrix<f64, N, N>,
     v: SVector<f64, N>,
 }
 
@@ -24,7 +25,8 @@ impl<const N: usize> System<N> {
         n_particles: usize,
         dim: usize,
         wf: WaveFunction,
-        interact: bool,
+        interacting: bool,
+        num_laplace: bool,
         spread: f64,
     ) -> Result<Self, String> {
         let mut rng = thread_rng();
@@ -86,7 +88,8 @@ impl<const N: usize> System<N> {
             particles: vec![Particle::new(dim)?; n_particles],
             dim,
             wf,
-            interacting: interact,
+            interacting,
+            num_laplace,
             slater_matrix,
             slater_inverse,
             slater_ratio: 1.,
@@ -106,8 +109,13 @@ impl<const N: usize> System<N> {
             for j in 0..n {
                 let nx = crate::QUANTUM_NUMBERS[j].0;
                 let ny = crate::QUANTUM_NUMBERS[j].1;
-                result +=
-                    self.wf.laplace_spf(self.particles[i], nx, ny)? * self.slater_inverse[(j, i)];
+                result += if self.num_laplace {
+                    self.wf.laplace_numerical(&self.particles, self.interacting)?
+                } else if n == 2 {
+                    self.wf.laplace_spf(self.particles[i], nx, ny)?
+                } else {
+                    self.wf.laplace_spf(self.particles[i], nx, ny)? * self.slater_inverse[(j, i)]
+                };
             }
         }
 
