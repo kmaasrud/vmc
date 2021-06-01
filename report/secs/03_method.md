@@ -75,3 +75,24 @@ The minimum energy of the system is computed and compared to Taut's work <!-- [@
 
 Lastly the expectation value for the kinetic energy is calculated with $\omega \in {0.01, 0.05, 0.1, 0.5, 1.0}$.
 
+## Increasing computational performance 
+Beeing able to simulate many-body system of large scale without running out of time is an important part of numerical computations. Hence taking advantage of available tools such as compiling flags, vectorization and parallelization is important. The Rust language provides a great set of such tools, similar to the ones used in C++. More information about the vectorization and compiling flag options in Rust, see @Vmc-bosonic2021. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
