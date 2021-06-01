@@ -35,7 +35,7 @@ pub fn simple() {
         let numerical_str = if numerical_laplace { "numerical" } else { "analytical" };
         path.push(format!("{}_{}_{}.csv", metro_type, interact_str, numerical_str));
         let mut f = create_file(&path);
-        f.write_all("energy,time\n".as_bytes()).expect("Unable to write data");
+        f.write_all("energy[a.u.],time[s]\n".as_bytes()).expect("Unable to write data");
 
         // Run 10 times
         for _ in 0..10 {
@@ -49,7 +49,7 @@ pub fn simple() {
                 None => 0.,
             };
 
-            let data = format!("{},{:?}\n", energy, start.elapsed());
+            let data = format!("{},{}\n", energy, start.elapsed().as_millis() as f64 / 1000.);
             println!("{}", data);
             f.write_all(data.as_bytes()).expect("Unable to write data");
         }
