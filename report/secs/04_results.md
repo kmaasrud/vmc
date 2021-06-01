@@ -1,14 +1,17 @@
 # Results
 
-## Performance evaluation of different energy calculation methods{#sec:results-performance-calc-methods}
+## Two electrons
 
-The performance of the analytical expression for the local energy, numerical derivation of the kinetic energy and the analytical local energy with importance sampling is compared in table [@tbl:results-performance-calc-methods] below.
+To validate our algorithm a simulation of the simplest case with two electrons without the Jastrow factor and perturbation was done, expecting an energy-output of excactly 2 a.u and a variance of 0. The results, togheter with a perfomance analysis(see below), is listed in Table [@tbl:results-performance-calc-methods]. 
 
-| **Calculation method**            | **Time spent (s)**    |
-| ----:                             | ---                   |
-| Analytical                        | $time$                |
-| Numerical                         | $time$                |
-| Analytical w/Importance Sampling  | $time$                |{#tbl:results-performance-calc-methods} 
+A performance analysis, taking the avarage time over several runs, of the analytical expression for the local energy, numerical derivation of the kinetic energy and the analytical local energy with importance sampling is compared in table[@tbl:results-performance-calc-methods] below.
+
+| **Sampling method**               | **Avarage time [s]** | $\langle E \rangle$|$\langle E \rangle_{kinetic}$  |$\sigma^2$ |
+| ----:                             | ---                  |---                 |---                            |---        |
+| Analytical w/ Metropolis          | $time$               |                    |                               |           |
+| Analytical w/ Importance Sampling | $time$               |                    |                               |           |
+| Numerical  w/ Metrpolis           | $time$               |                    |                               |           |
+| Numerical  w/ Importance Sampling | $time$               |                    |                               |           |   {#tbl:results-performance-calc-methods} 
 
 The blocking analysis shows that the optimal standard deviation is $FILL$.
 
@@ -73,6 +76,16 @@ Lastly the expectation value for the kinetic energy and the potential energy is 
 
 ## Performance analysis
 <!--  -->
-Lastly a analysis of the algorithms are given for $N = 6$ electrons, $FILL IN$ Monte Carlo steps, optimal variational parameters, $\omega = 1$ and with the Jastrow factor off. The analysis is done by comparing the avarage time used for a calculation with and withouth vecotrization. The procedure is repeated with paralellization, expecting approximatly a 100% speedup.  The quantities which are calculated are the expectation energy, the kinetic and the potential energy. The most time consuming part is the **FILL INN** , and hence the clock is started here. 
+Lastly a analysis of the algorithms are given for $N = 6$ electrons, $FILL IN$ Monte Carlo cycles, optimal variational parameters, $\omega = 1$ and with the Jastrow factor off. The analysis is done by comparing the avarage time used for a calculation with and withouth vecotrization. The procedure is repeated with paralellization, expecting approximatly a 100% speedup.  The quantities which are calculated are the **FILL INN**. The most time consuming part is the **FILL INN** , and hence the clock is started here.  The results are presented in table [@tbl:results-performence-analysis]
+
+| Optimization/compile flags 	| $\bar{t}$ [s] 	|
+|----------------------------	|---------------	|
+| With vectorization         	|               	|
+| Without Vectorization      	|               	|
+| Parallelization            	|               	|{#tbl:results-performence-analysis}
+
+
+
+
 
 <!-- Nececerry to write something about which computers/specs the analysis is done at?? -->

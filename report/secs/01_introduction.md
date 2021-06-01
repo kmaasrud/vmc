@@ -1,7 +1,7 @@
 # Introduction
 
 <!-- Something about quantum /system-->
-Quantum dots are concidered as point particles, usualy exisiting in semiconductor materials, with different electrical and optical properties compared to its host. The difference in properties are du to quantum mechanical effects, yielding quantification of the energy of the system. The technology is utilized in photovoltaic devices to enhance performance, in LED's, photodetectors and more. 
+Quantum dots are concidered as point particles with vonfiend electrons, usualy exisiting in semiconductor materials, with different electrical and optical properties compared to its host. The difference in properties are du to quantum mechanical effects, yielding quantification of the energy of the system. The technology is utilized in photovoltaic devices to enhance performance, in LED's, photodetectors and more. 
 
 <!-- Something what we have done -->
 
