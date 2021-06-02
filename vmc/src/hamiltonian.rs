@@ -29,11 +29,19 @@ impl Hamiltonian {
 
     /// Calculates the energy of a system of `particles` described by `wf`.
     /// If `non_interacting` is `true`, will calculate the non-interacting energy (unused for now).
-    pub fn energy<const N: usize>(
-        sys: &System<N>,
-        omega: f64,
-    ) -> Result<f64, String> {
-        Ok(Self::kinetic(sys)? + Self::potential(omega, &sys.particles))
+    pub fn energy<const N: usize>(sys: &System<N>) -> Result<f64, String> {
+        if sys.particles.len() == 200 {
+            let a = 1. / 3.;
+            let distance = sys.particles[0].distance_to(&sys.particles[1])?;
+            Ok(2. * sys.wf.alpha * sys.wf.omega + 0.5
+                  + sys.wf.omega.powi(2) * (1. - sys.wf.alpha.powi(2)) * (sys.particles[0].squared_sum() + sys.particles[1].squared_sum())
+                  - a / (1. + sys.wf.beta * distance).powi(2) * (- sys.wf.alpha * sys.wf.omega * distance
+                                                                 + a / (1. + sys.wf.beta * distance).powi(2)
+                                                                 + (1. - sys.wf.beta * distance) / (distance * (1. + sys.wf.beta * distance)))
+                  + 1. / distance)
+        } else {
+            Ok(Self::kinetic(sys)? + Self::potential(sys.wf.omega, &sys.particles))
+        }
     }
 }
 
