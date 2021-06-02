@@ -17,7 +17,7 @@ pub use montecarlo::monte_carlo;
 pub use particle::Particle;
 pub use system::System;
 pub use threadpool::ThreadPool;
-pub use utils::{det, SmallVector, Spin};
+pub use utils::{Spin, a};
 pub use vector::Vector;
 pub use wavefunction::{WaveFunction, QUANTUM_NUMBERS};
 
