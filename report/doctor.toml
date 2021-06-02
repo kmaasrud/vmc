@@ -9,7 +9,7 @@ document-class = "report"
 
 [bib]
 bibliography-title = "References"
-csl = "apa"
+csl = "ieee"
 
 [build]
 engine = "pdflatex"
