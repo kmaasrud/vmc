@@ -15,8 +15,8 @@ use std::{
 pub fn simple() {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
-    const STEP_SIZE: f64 = 0.001;
-    const MC_CYCLES: usize = 1048576;
+    const STEP_SIZE: f64 = 0.01;
+    const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
     const N: usize = 2;
     const SPREAD: f64 = 0.1;
@@ -40,7 +40,7 @@ pub fn simple() {
         // Run 10 times
         for _ in 0..10 {
             let start = Instant::now();
-            let wf = WaveFunction { alpha: ALPHA, beta: 1., omega: OMEGA }; // Set beta = gamma
+            let wf = WaveFunction { alpha: ALPHA, beta: 1.0, omega: OMEGA }; // Set beta = gamma
             let mut system: System<N> = System::new(N, DIM, wf, interacting, numerical_laplace, SPREAD).unwrap();
             let vals = montecarlo::monte_carlo(MC_CYCLES, &mut system, &mut metro).unwrap();
 
