@@ -37,19 +37,17 @@ impl WaveFunction {
     //-- Trial wavefunction --
     /// Trial wavefunction for the ground state of the two electron/fermion system.
     /// Returns an f64 representing the wavefunction value
-    pub fn evaluate(&self, particles: &Vec<Particle>, interacting: bool) -> Result<f64, String> {
+    pub fn evaluate(&self, particles: &Vec<Particle>) -> Result<f64, String> {
         let c: f64 = 1.0; //normalization constant - dont know value
 
         match particles.len() {
             // In the case of two particles, evaluating the wavefunction is a bit simpler.
             2 => {
                 let mut exp_sum = 0.;
-                if interacting {
-                    for (i, particle) in particles.iter().enumerate() {
-                        for (j, other) in particles[i + 1..].iter().enumerate() {
-                            let fermion_distance: f64 = particle.distance_to(other)?;
-                            exp_sum += a(i, j, 2) * fermion_distance / (1. + self.beta * fermion_distance);
-                        }
+                for (i, particle) in particles.iter().enumerate() {
+                    for (j, other) in particles[i + 1..].iter().enumerate() {
+                        let fermion_distance: f64 = particle.distance_to(other)?;
+                        exp_sum += a(i, j, 2) * fermion_distance / (1. + self.beta * fermion_distance);
                     }
                 }
 
@@ -86,7 +84,6 @@ impl WaveFunction {
     pub fn laplace_numerical(
         &self,
         particles: &Vec<Particle>,
-        interacting: bool,
     ) -> Result<f64, String> {
         let h: f64 = 0.000001; //stepsize
         let h2 = h.powi(2);
@@ -94,15 +91,15 @@ impl WaveFunction {
         let mut laplace = 0.;
         let mut particles = particles.clone();
 
-        let wf = self.evaluate(&particles, interacting)?;
+        let wf = self.evaluate(&particles)?;
 
         for i in 0..particles.len() {
             for dim in 0..particles[i].dim {
                 particles[i].bump_at_dim(dim, h); // Initial position +h
-                let wf_plus = self.evaluate(&particles, interacting)?;
+                let wf_plus = self.evaluate(&particles)?;
 
                 particles[i].bump_at_dim(dim, -2. * h); // Initial position -h
-                let wf_minus = self.evaluate(&particles, interacting)?;
+                let wf_minus = self.evaluate(&particles)?;
 
                 particles[i].bump_at_dim(dim, h); // Reset back to initial position
 

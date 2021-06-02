@@ -15,6 +15,7 @@ use std::{
 pub fn simple() {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
+    const BETA: f64 = 1.0;
     const STEP_SIZE: f64 = 0.01;
     const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
@@ -60,7 +61,7 @@ pub fn simple() {
     }
 
     let start = Instant::now();
-    let pool = ThreadPool::new(8);
+    /* let pool = ThreadPool::new(8);
     pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(false, true));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, false));
@@ -69,7 +70,8 @@ pub fn simple() {
     pool.execute(move || simulate::<ImportanceMetropolis>(false, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(true, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(true, true));
-    pool.join_all();
+    pool.join_all(); */
+    simulate::<BruteForceMetropolis>(false, false);
     println!("Total time spent: {:?}", start.elapsed());
 }
 

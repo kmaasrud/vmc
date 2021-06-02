@@ -62,8 +62,8 @@ impl Metropolis for BruteForceMetropolis {
 
         let acceptance_factor = match N {
             2 => {
-                let wf_old = sys.wf.evaluate(&sys.particles, sys.interacting)?;
-                let wf_new = sys.wf.evaluate(&new_particles, sys.interacting)?;
+                let wf_old = sys.wf.evaluate(&sys.particles)?;
+                let wf_new = sys.wf.evaluate(&new_particles)?;
                 wf_new.powi(2) / wf_old.powi(2)
             }
             _ => {
@@ -104,8 +104,8 @@ impl Metropolis for ImportanceMetropolis {
             / Self::greens(&new_particles[p], &sys.particles[p])?;
         let acceptance_factor = match N {
             2 => {
-                let wf_old = sys.wf.evaluate(&sys.particles, sys.interacting)?;
-                let wf_new = sys.wf.evaluate(&new_particles, sys.interacting)?;
+                let wf_old = sys.wf.evaluate(&sys.particles)?;
+                let wf_new = sys.wf.evaluate(&new_particles)?;
                 greens_factor * wf_new.powi(2) / wf_old.powi(2)
             }
             _ => {

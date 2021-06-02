@@ -110,7 +110,7 @@ impl<const N: usize> System<N> {
                 let nx = crate::QUANTUM_NUMBERS[j].0;
                 let ny = crate::QUANTUM_NUMBERS[j].1;
                 result += if self.num_laplace {
-                    self.wf.laplace_numerical(&self.particles, self.interacting)?
+                    self.wf.laplace_numerical(&self.particles)?
                 } else if n == 2 {
                     self.wf.laplace_spf(self.particles[i], nx, ny)?
                 } else {
