@@ -36,15 +36,15 @@ var     = lambda x: sum(map(lambda y: (y - mean(x))**2, x)) / len(x)
 
 
 #readout energy from daraframe and convert to float
-df1['energy'] = df1['energy'].astype(float)
-df2['energy'] = df2['energy'].astype(float)
-df3['energy'] = df3['energy'].astype(float)
-df4['energy'] = df4['energy'].astype(float)
+df1['energy[au]'] = df1['energy[au]'].astype(float)
+df2['energy[au]'] = df2['energy[au]'].astype(float)
+df3['energy[au]'] = df3['energy[au]'].astype(float)
+df4['energy[au]'] = df4['energy[au]'].astype(float)
 
-df5['energy'] = df5['energy'].astype(float)
-df6['energy'] = df6['energy'].astype(float)
-df7['energy'] = df7['energy'].astype(float)
-df8['energy'] = df8['energy'].astype(float)
+df5['energy[au]'] = df5['energy[au]'].astype(float)
+df6['energy[au]'] = df6['energy[au]'].astype(float)
+df7['energy[au]'] = df7['energy[au]'].astype(float)
+df8['energy[au]'] = df8['energy[au]'].astype(float)
 
 #Energy dataframe to list
 energy1 = df1.energy.to_list()

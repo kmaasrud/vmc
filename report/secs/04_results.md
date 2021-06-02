@@ -1,6 +1,6 @@
 # Results
 
-## Two electrons
+## Two electrons/Algorithm validation
 
 To validate our algorithm a simulation of the simplest case with two electrons without the Jastrow factor and perturbation was done, expecting an energy-output of excactly 2 a.u and a variance of 0. The results, togheter with a perfomance analysis(see below), is listed in Table [@tbl:results-performance-calc-methods]. 
 
@@ -20,7 +20,7 @@ The blocking analysis shows that the optimal standard deviation is $FILL$.
 The VMC approximation to the correct energy dependent on the variational parameters $\alpha$ and $\beta$ are shown in Table [@tbl:results-variational-parameters] below.
 
 
-| N     	| $\omega$ 	| $\alpha$ 	| $\beta$ 	| $\alpha$ withouth Jastrow 	|
+| N     	| $\omega$ 	| $\alpha$ 	| $\beta$ 	| $\alpha$ without Jastrow 	|
 |-------	|:---------:|----------	|---------	|---------------------------	|
 | 2     	| 1        	|          	|         	|                           	|
 |       	| 0.5      	|          	|         	|                           	|
@@ -73,6 +73,7 @@ Lastly the expectation value for the kinetic energy and the potential energy is 
 
 
 ## One body densities
+The one body density is computed for 2 and 6 particles with the optimal parameters obtained during the previous calculations and $\omega = 1$. The calculations are executed with and without the Jastrow factor **(and pertubation)???** for comparison and analysis of their influence. 
 
 ## Performance analysis
 <!--  -->
@@ -82,7 +83,7 @@ Table: Results from performance analysis with and without vectorization and comp
 | Optimization/compile flags 	| $\bar{t}$ [s] 	|
 |----------------------------	|---------------	|
 | **With vectorization**:       |               	|
-|  Flag 1                       |                   |
+| Flag 1                       |                   |
 | Flag 2                        |                   |
 | Flag 2                        |                   |
 | **Without Vectorization**:  	|               	|
