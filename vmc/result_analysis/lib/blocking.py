@@ -30,10 +30,9 @@ def block(x):
             x_1 = x_1[:-1]
         elif (len(x_2) > len(x_1)):
             x_2 = x_2[:-1]
-
+        
         # Blocking transformation
-        x = (x_1 + x_2)*0.5
-   
+        x = array(x_1 + x_2)*0.5
     # Test observator from theorem (chi^2-distributed)
     factor_1 = (gamma/s)**2
     factor_2 = 2**arange(1, d+1)
