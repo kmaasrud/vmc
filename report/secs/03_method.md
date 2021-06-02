@@ -2,7 +2,7 @@
 
 ## Variational Monte Carlo
 
-Our variational Monte Carlo approach is as explained by our previous work [@Vmc-bosonic2021]. Roughly, it proceeds by proposing a change to the system $\mathbf R \mapsto \mathbf R'$ by changing the position of a single particle $\mathbf r_i$. The choice of this particle and how it moves is done both randomly and by way of the *quantum force*, both explained in @Vmc-bosonic2021. From the states $\mathbf R$ and $\mathbf R'$, and the trial wave function $\Psi_T$, we evaluate an acceptance factor, that determines whether or not we accept the proposed changed system. The flowchart shown in figure [@fig:fermion-vmc] briefly describes the process.
+Our variational Monte Carlo approach is as explained in our previous work [@Vmc-bosonic2021]. Roughly, it proceeds by proposing a change to the system $\mathbf R \mapsto \mathbf R'$ by changing the position of a single particle $\mathbf r_i$. The choice of this particle and how it moves is done both randomly and by way of the *quantum force*, both explained by @Vmc-bosonic2021. From the states $\mathbf R$ and $\mathbf R'$, and the trial wave function $\Psi_T$, we evaluate an acceptance factor, that determines whether or not we accept the proposed changed system. The flowchart shown in figure [@fig:fermion-vmc] briefly describes this process.
 
 ![Flowchart showcasing our Monte Carlo sampling](diagrams/fermion-vmc.png){#fig:fermion-vmc width=300px}
 
@@ -10,7 +10,7 @@ Regardless of whether the new step is accepted or not, the desired quantities - 
 
 \FloatBarrier
 
-## Optimization of wave function ratio
+## Optimization of the wave function ratio
 
 In our approach, the most time-consuming calculation is the evaluation of the wave function. For each proposed step in the Metropolis algorithm, we need to evaluate it to determine the acceptance factor, and if the step is accepted, yet another evaluation is needed (although this might be stored for reuse). This is expensive, so we need to optimize this process to scale well with the size of the system.
 
@@ -40,6 +40,19 @@ This has an operation complexity of $\mathcal O(N)$.
 
 [^smw]: Which, confusingly, is just called the *Sherman-Morrison formula*.
 
+### Optimizing $\mathcal R_J$
+
+We consider the ratio
+
+$$ \mathcal R_J = \frac{\Psi'_J}{\Psi_J} = \prod_{i<j}^N \frac{\exp(J(r_{ij}', \beta))}{\exp (J(r_{ij}, \beta))}. $$
+
+This naive operation scales in the order of $\mathcal O\left(\frac{N^2(N-1)}{2}\right)$. It is however easily optimized, by employing the fact that we only move one particle's position $\mathbf r_p$, which means only distances $r_{pj}$ are changed. We thus get
+
+$$ \mathcal R_J = \prod_{i\ne p}^N \frac{\exp(J(r_{pi}', \beta))}{\exp(J(r_{pi}, \beta))} = \exp\left(\sum_{i \ne p}^N J(r_{pi}', \beta) - J(r_{pi}, \beta)\right), $$
+
+which scales in the order of $\mathcal O(N-1)$ operations.
+
+
 ## Testing
 
 Testing in Rust is normally divided in two categories: *unit tests* and *integration tests*. Unit tests are small codes to test specific functions inside the code. These tests are normally written in the same file as the functions themselves, but inside a module annotated with `#[cfg(test)]`.
@@ -49,10 +62,6 @@ On the other hand, integration tests are written externally to the library, and 
 We will write mainly unit tests in our program, to ensure that our functions return the expected values, and to reduce the mental overhead of debugging when making larger changes to the codebase.
 
 More on testing can be found in the official documentation of the Rust programming language [@Rust-docs-testing].
-
-## Parallelization
-
-![Temporary diagram for visualization](diagrams/metropolis-hastings-tree.jpg)
 
 ## Evaluation and performance of the VMC solver
 
@@ -76,23 +85,7 @@ The minimum energy of the system is computed and compared to Taut's work <!-- [@
 Lastly the expectation value for the kinetic energy is calculated with $\omega \in {0.01, 0.05, 0.1, 0.5, 1.0}$.
 
 ## Increasing computational performance 
-Beeing able to simulate many-body system of large scale without running out of time is an important part of numerical computations. Hence taking advantage of available tools such as compiling flags, vectorization and parallelization is important. The Rust language provides a great set of such tools, similar to the ones used in C++. More information about the vectorization and compiling flag options in Rust, see @Vmc-bosonic2021. 
 
+Beeing able to simulate many-body system at large scale without running out of time is crucial. Hence taking advantage of available tools such as compilation flags (e.g. for vectorization) and parallelization is important. The Rust language provides a great set of such tools - similar to the ones used in C++, but safer.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Since we run many different simulations with unique parameters, we parallelize over these simulations, to keep the logic of our program simple. This allows us to utilize all our cores' computation power, while still not needing to program concurrently. For future work, parallelization should be done further into the "core" of the program, in order to increase performance in single runs. For details on how we do vectorization in Rust, see @Vmc-bosonic2021. 

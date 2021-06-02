@@ -1,4 +1,4 @@
-use crate::{Hermite, Particle, Spin, System, Vector};
+use crate::{Hermite, Particle, Spin, System, Vector, a};
 use nalgebra::SMatrix;
 
 // Hard-coding quantum states of up to 20 particles. This is done for speed, an should be
@@ -43,13 +43,12 @@ impl WaveFunction {
         match particles.len() {
             // In the case of two particles, evaluating the wavefunction is a bit simpler.
             2 => {
-                let a = 1.; // TODO: What to do here?
                 let mut exp_sum = 0.;
                 if interacting {
                     for (i, particle) in particles.iter().enumerate() {
-                        for other in particles[i + 1..].iter() {
+                        for (j, other) in particles[i + 1..].iter().enumerate() {
                             let fermion_distance: f64 = particle.distance_to(other)?;
-                            exp_sum += a * fermion_distance / (1. + self.beta * fermion_distance);
+                            exp_sum += a(i, j, 2) * fermion_distance / (1. + self.beta * fermion_distance);
                         }
                     }
                 }
@@ -89,7 +88,7 @@ impl WaveFunction {
         particles: &Vec<Particle>,
         interacting: bool,
     ) -> Result<f64, String> {
-        let h: f64 = 0.0001; //stepsize
+        let h: f64 = 0.000001; //stepsize
         let h2 = h.powi(2);
 
         let mut laplace = 0.;
@@ -110,7 +109,8 @@ impl WaveFunction {
                 laplace += (wf_plus - 2. * wf + wf_minus) / h2;
             }
         }
-        Ok(laplace / wf)
+
+        Ok(laplace)
     }
 
     /// Returns the Laplacian of the single particle wave function
@@ -206,8 +206,8 @@ impl WaveFunction {
 
     // --- Quantum forces ---
     pub fn quantum_force(&self, i: usize, particles: &Vec<Particle>) -> Result<Vector, String> {
-        let a = 1.;
         if particles.len() == 2 {
+            let a = 1. / 3.;
             let r1 = particles[0].position;
             let r2 = particles[1].position;
             let r12 = r1 - r2;

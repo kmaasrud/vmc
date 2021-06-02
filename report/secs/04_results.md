@@ -1,52 +1,57 @@
 # Results
 
-## Two electrons/Algorithm validation
+## Two fermions
 
 To validate our algorithm a simulation of the simplest case with two electrons without the Jastrow factor and perturbation was done, expecting an energy-output of excactly 2 a.u and a variance of 0. The results, togheter with a perfomance analysis(see below), is listed in Table [@tbl:results-performance-calc-methods]. 
 
-A performance analysis, taking the avarage time over several runs, of the analytical expression for the local energy, numerical derivation of the kinetic energy and the analytical local energy with importance sampling is compared in table[@tbl:results-performance-calc-methods] below.
+A performance analysis, taking the avarage time over 10 runs, of the analytical expression for the local energy, numerical derivation of the kinetic energy and the analytical local energy with importance sampling is shown in table[@tbl:results-performance-calc-methods] below.
 
-| **Sampling method**               | **Avarage time [s]** | $\langle E \rangle$|$\langle E \rangle_{kinetic}$  |$\sigma^2$ |
-| ----:                             | ---                  |---                 |---                            |---        |
-| Analytical w/ Metropolis          | $time$               |                    |                               |           |
-| Analytical w/ Importance Sampling | $time$               |                    |                               |           |
-| Numerical  w/ Metrpolis           | $time$               |                    |                               |           |
-| Numerical  w/ Importance Sampling | $time$               |                    |                               |           |   {#tbl:results-performance-calc-methods} 
 
-The blocking analysis shows that the optimal standard deviation is $FILL$.
+| Sampling method                   | Avarage time [s]     | $\langle E \rangle$|$\langle E_{kinetic} \rangle$  |$\sigma^2$ |$\sigma_{\text{blocking}}$ |
+| ----:                             | ---                  |---                 |---                            |---        |---                        |
+| Analytical w/ Metropolis          | $time$               |                    |                               |           |                           |
+| Analytical w/ Importance Sampling | $time$               |                    |                               |           |                           |
+| Numerical  w/ Metrpolis           | $time$               |                    |                               |           |                           |
+| Numerical  w/ Importance Sampling | $time$               |                    |                               |           |                           |
+Table: Results from computations of the expectation value of the energy using both Importance Sampling and the Metropolis algorothm for both the analytical expression for the local energy(see equation @eq:analytical) adn numerical derivation of the kinetic energy. To compare the perfomance of the different configurations, the algorithms are timed over 10 runs and avaraged.   {#tbl:results-performance-calc-methods} 
+
+The **blocking analysis** shows that the optimal standard deviation is $FILL$.
 
 ## Evaluating the variational parameters{#sec:results-variational-params}
 
-The VMC approximation to the correct energy dependent on the variational parameters $\alpha$ and $\beta$ are shown in Table [@tbl:results-variational-parameters] below.
+To obtain the optimal variational parameters for the ground state energy, the steepest decent method is implemented in the Variatonal Monte Carlo calculations. The result, with and without the Jastrow factor are shown in Table  [@tbl:results-variational-parameters]. The table also 
 
 
-| N     	| $\omega$ 	| $\alpha$ 	| $\beta$ 	| $\alpha$ without Jastrow 	|
-|-------	|:---------:|----------	|---------	|---------------------------	|
-| 2     	| 1        	|          	|         	|                           	|
-|       	| 0.5      	|          	|         	|                           	|
-|       	| 0.1      	|          	|         	|                           	|
-|       	| 0.05     	|          	|         	|                           	|
-|       	| 0.01     	|          	|         	|                           	|
-| ----- 	| -------- 	| -------- 	| ------- 	| --------------------------- 	|
-| 6     	| 1        	|          	|         	|                           	|
-|       	|  0.5     	|          	|         	|                           	|
-|       	| 0.1      	|          	|         	|                           	|
-|       	| 0.05     	|          	|         	|                           	|
-|       	| 0.01     	|          	|         	|                           	|
-| ----- 	| -------- 	| -------- 	| ------- 	| ---------------------------   |
-| 12    	| 1        	|          	|         	|                           	|
-|       	| 0.5      	|          	|         	|                           	|
-|       	| 0.1      	|          	|         	|                           	|
-|       	| 0.05     	|          	|         	|                           	|
-|       	| 0.01     	|          	|         	|                           	|
-| ----- 	| -------- 	| -------- 	| ------- 	| --------------------------- 	|
-| 20    	| 1        	|          	|         	|                           	|
-|       	| 0.5      	|          	|         	|                           	|
-|       	| 0.1      	|          	|         	|                           	|
-|       	| 0.05     	|          	|         	|                           	|
-|       	| 0.01     	|          	|         	|                           	|
+| N   | $\omega$ | $\alpha$ | $\alpha_{\text{wo J}}$ | $\beta$ | $\langle E \rangle$ | $\sigma_{\text{blocking}}$ | $\langle E_k \rangle$ | $\langle E_p \rangle$ | $\langle r_{12}\rangle$ |
+|-----|----------|----------|------------------------|---------|---------------------|----------------------------|-----------------------|-----------------------|-------------------------|
+| 2   | 1        |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.5      |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.1      |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.05     |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.01     |          |                        |         |                     |                            |                       |                       |                         |
+| --- | -------- | -------- | -------:               |         |                     |                            |                       |                       |                         |
+| 6   | 1        |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.5      |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.1      |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.05     |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.01     |          |                        |         |                     |                            |                       |                       |                         |
+| --- | -------- | -------- | -------                |         |                     |                            |                       |                       |                         |
+| 12  | 1        |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.5      |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.1      |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.05     |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.01     |          |                        |         |                     |                            |                       |                       |                         |
+| --- | -------- | -------- | -------                |         |                     |                            |                       |                       |                         |
+| 20  | 1        |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.5      |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.1      |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.05     |          |                        |         |                     |                            |                       |                       |                         |
+|     | 0.01     |          |                        |         |                     |                            |                       |                       |                         |
 
-Table: Optimal variatonal parameters for the different systems with and without the Jastrow factor, for comparison.{#tbl:results-variational-parameters} 
+Table: Optimal variatonal parameters for the different systems without the Jastrow factor, for comparison.{#tbl:results-variational-parameters} 
+
+
+
 ## Computations for the two electron system
 
 By using the variational parameters $\alpha = FILL ME$ and $\beta = FILL ME$, the calculation of minimum energy for the system has been compared to Taut's analytical values in table [@tbl:results-calculations]. This table also contains the mean distance between the two electrons and the onebody density. Calculations are done with interaction, purely Harmonic Oscillator wavefunctions and pure HO wavefunctions without the Jastrow factor.
@@ -75,22 +80,27 @@ Lastly the expectation value for the kinetic energy and the potential energy is 
 ## One body densities
 The one body density is computed for 2 and 6 particles with the optimal parameters obtained during the previous calculations and $\omega = 1$. The calculations are executed with and without the Jastrow factor **(and pertubation)???** for comparison and analysis of their influence. 
 
+The one-body densities are calculated with and without the Jastrow factor for two (2) and (6) fermions. The results is shown in figure [@fig:one-body-densities] below
+
+![One Body densities for 2 and 6 fermions with and without the Jastrow factor. The computations are done with $\alpha = FILL$, $\beta = FILL$ and $\omega = 1$](FILENAME.png){#fig:one-body-densities width=300px}
+
 ## Performance analysis
 <!--  -->
 Lastly a analysis of the algorithms are given for $N = 6$ electrons, $FILL IN$ Monte Carlo cycles, optimal variational parameters  $\omega = 1$ and without the Jastrow factor. The analysis is done by comparing the avarage time used for a calculation with and without vecotrization. The procedure is repeated with paralellization, expecting approximatly a 100% speedup.  The quantities which are calculated are **FILL INN**. The most time consuming part is the **FILL INN** , and hence the clock is started here. The results are presented in table [@tbl:results-performence-analysis]. **ADD SOME MORE DESCRIPTION OF HOW HERE**
 
 Table: Results from performance analysis with and without vectorization and compile flags. The time is avaraged over 10 runs with **FILL INN** MC cycles. The sampling method is the **Brute Force Metropolis OR Importance sampling**
-| Optimization/compile flags 	| $\bar{t}$ [s] 	|
-|----------------------------	|---------------	|
-| **With vectorization**:       |               	|
-| Flag 1                       |                   |
-| Flag 2                        |                   |
-| Flag 2                        |                   |
-| **Without Vectorization**:  	|               	|
-| Flag 1                        |                   |
-| Flag 2                        |                   |
-| Flag 3                        |                   |
-| Parallelization            	|               	|{#tbl:results-performence-analysis}
+
+| Optimization/compile flags 	| $\bar{t}$ [s] |
+|---                        	|---            |
+| **With vectorization**        |               |
+|  Flag 1                       |               |
+| Flag 2                        |               |
+| Flag 2                        |               |
+| **Without Vectorization**  	|               |
+| Flag 1                        |               |
+| Flag 2                        |               |
+| Flag 3                        |               |
+| **Parallelization**           |               |{#tbl:results-performence-analysis}
 
 
 
