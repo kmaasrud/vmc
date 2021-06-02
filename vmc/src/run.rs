@@ -15,8 +15,8 @@ use std::{
 pub fn simple() {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
-    const STEP_SIZE: f64 = 1.0;
-    const MC_CYCLES: usize = 100_000;
+    const STEP_SIZE: f64 = 0.001;
+    const MC_CYCLES: usize = 1048576;
     const DIM: usize = 2;
     const N: usize = 2;
     const SPREAD: f64 = 0.1;
