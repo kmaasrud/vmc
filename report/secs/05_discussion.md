@@ -34,6 +34,6 @@ The results from the one body density calculations are shown in Figure [@fig:one
 <!-- Dependence of omega on kinetic energy - HO has energy steps of $\frac{1}{2}\hbar \omega$, so the kinetic energy should increase with omega-->
 
 
-<!-- Viral theorem  - compare the analytical results with the viral theorem--> 
+<!-- Viral theorem  - compare the analytical results with the viral theorem. Viral theorem does not take into concideration the interaction between the particles--> 
 
 
