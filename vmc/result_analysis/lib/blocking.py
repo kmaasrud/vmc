@@ -1,4 +1,3 @@
-
 # Common imports
 import os
 from numpy import log2, zeros, mean, var, sum, loadtxt, arange, array, cumsum, dot, transpose, diagonal, sqrt
@@ -33,7 +32,7 @@ def block(x):
             x_2 = x_2[:-1]
 
         # Blocking transformation
-        x = 0.5*(x_1 + x_2)
+        x = (x_1 + x_2)*0.5
    
     # Test observator from theorem (chi^2-distributed)
     factor_1 = (gamma/s)**2
