@@ -43,7 +43,7 @@ impl WaveFunction {
         match particles.len() {
             // In the case of two particles, evaluating the wavefunction is a bit simpler.
             2 => {
-                let a = 1.; // TODO: What to do here?
+                let a = 1. / 3.;
                 let mut exp_sum = 0.;
                 if interacting {
                     for (i, particle) in particles.iter().enumerate() {
@@ -206,8 +206,8 @@ impl WaveFunction {
 
     // --- Quantum forces ---
     pub fn quantum_force(&self, i: usize, particles: &Vec<Particle>) -> Result<Vector, String> {
-        let a = 1.;
         if particles.len() == 2 {
+            let a = 1. / 3.;
             let r1 = particles[0].position;
             let r2 = particles[1].position;
             let r12 = r1 - r2;

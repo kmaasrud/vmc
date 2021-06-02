@@ -27,7 +27,7 @@ pub trait Metropolis {
         // The 1.0 inputted below is a placeholder for the omega value. We are testing over
         // different omega values. TODO: Consider storing omega in the System struct instead of
         // passing it through the stack.
-        let d_energy = Hamiltonian::energy(&sys, 1.0)?;
+        let d_energy = Hamiltonian::energy(&sys)?;
 
         let mut map = HashMap::new();
         map.insert("energy".to_string(), d_energy);
