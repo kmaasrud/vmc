@@ -75,6 +75,7 @@ pub fn simple() {
     println!("Total time spent: {:?}", start.elapsed());
 }
 
+#[allow(dead_code)]
 pub fn sgd(interacting: bool) {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
