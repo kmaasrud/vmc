@@ -15,7 +15,6 @@ pub struct System<const N: usize> {
     pub num_laplace: bool,
     pub slater_inverse: SMatrix<f64, N, N>,
     pub slater_ratio: f64,
-    slater_matrix: SMatrix<f64, N, N>,
     v: SVector<f64, N>,
 }
 
@@ -32,8 +31,7 @@ impl<const N: usize> System<N> {
         let mut rng = thread_rng();
         let uniform = Uniform::new(0., 1.);
         let mut particles = vec![Particle::new(dim)?; n_particles];
-        let mut slater_matrix: SMatrix<f64, N, N> = SMatrix::repeat(0.);
-        let mut slater_inverse = slater_matrix.clone();
+        let slater_inverse: SMatrix<f64, N, N>;
 
         // Keep initializing particles until we get an invertable Slater matrix
         loop {
@@ -55,19 +53,7 @@ impl<const N: usize> System<N> {
                 particles[i].position = new_particle.position.scale(spread);
             }
 
-            for i in 0..n_particles {
-                for j in 0..n_particles {
-                    let nx = crate::QUANTUM_NUMBERS
-                        .get(j)
-                        .ok_or("System can not have more than 20 particles.")?
-                        .0;
-                    let ny = crate::QUANTUM_NUMBERS
-                        .get(j)
-                        .ok_or("System can not have more than 20 particles.")?
-                        .1;
-                    slater_matrix[(i, j)] = wf.spf(&particles[i], nx, ny).unwrap();
-                }
-            }
+            let slater_matrix: SMatrix<f64, N, N> = wf.slater_matrix(&particles)?;
 
             // Slater matrix is not invertible when N = 2, so set it to a 0-matrix in that case.
             if N == 2 {
@@ -90,7 +76,6 @@ impl<const N: usize> System<N> {
             wf,
             interacting,
             num_laplace,
-            slater_matrix,
             slater_inverse,
             slater_ratio: 1.,
             v: SVector::<f64, N>::repeat(0.),
@@ -110,7 +95,7 @@ impl<const N: usize> System<N> {
                 let nx = crate::QUANTUM_NUMBERS[j].0;
                 let ny = crate::QUANTUM_NUMBERS[j].1;
                 result += if self.num_laplace {
-                    self.wf.laplace_numerical(&self.particles)?
+                    self.wf.laplace_numerical::<N>(&self.particles)?
                 } else if n == 2 {
                     let mut laplace_jastrow = 0.;
                     if self.wf.beta != 0. && j != i {

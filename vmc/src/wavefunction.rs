@@ -1,5 +1,5 @@
 use crate::{Hermite, Particle, Spin, System, Vector, a};
-use nalgebra::SMatrix;
+use nalgebra::{SMatrix, linalg::LU};
 
 // Hard-coding quantum states of up to 20 particles. This is done for speed, an should be
 // generalized if this code is to be used seriously
@@ -37,7 +37,7 @@ impl WaveFunction {
     //-- Trial wavefunction --
     /// Trial wavefunction for the ground state of the two electron/fermion system.
     /// Returns an f64 representing the wavefunction value
-    pub fn evaluate(&self, particles: &Vec<Particle>) -> Result<f64, String> {
+    pub fn evaluate<const N: usize>(&self, particles: &Vec<Particle>) -> Result<f64, String> {
         let c: f64 = 1.0; //normalization constant - dont know value
 
         match particles.len() {
@@ -59,8 +59,36 @@ impl WaveFunction {
                 Ok(result)
             }
             // This is the general evaluation, using Slater determinants
-            _ => Ok(1.),
+            n => {
+                // TODO: Of course creating the determinant has to be a hassle... Looking at this tomorrow
+                /* let slater_matrix: SMatrix<f64, N, N> = self.slater_matrix(particles)?;
+                let slater_det = slater_matrix.determinant() */
+                let slater_det = 1.;
+                let mut jastrow = 1.;
+                for (i, particle) in particles.iter().enumerate() {
+                    for (j, other) in particles[i + 1..].iter().enumerate() {
+                        let distance = particle.distance_to(&other).unwrap();
+                        jastrow += a(i, j, n) * distance / (1. + self.beta * distance)
+                    }
+                }
+                Ok(slater_det * jastrow.exp())
+            },
         }
+    }
+
+    pub fn slater_matrix<const N: usize>(&self, particles: &Vec<Particle>) -> Result<SMatrix<f64, N, N>, String> {
+        let n = particles.len();
+        let mut slater_matrix: SMatrix<f64, N, N> = SMatrix::repeat(0.);
+        for i in 0..n {
+            for j in 0..n {
+                let nx = crate::QUANTUM_NUMBERS.get(j)
+                    .ok_or("System can not have more than 20 particles.")?.0;
+                let ny = crate::QUANTUM_NUMBERS.get(j)
+                    .ok_or("System can not have more than 20 particles.")?.1;
+                slater_matrix[(i, j)] = self.spf(&particles[i], nx, ny).unwrap();
+            }
+        }
+        Ok(slater_matrix)
     }
 
     /// Evaluates the single particle wave function  
@@ -80,7 +108,7 @@ impl WaveFunction {
     // --- Laplacian ---
     /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
     /// Returns laplacian for the wavefunction with hermitian polynomials
-    pub fn laplace_numerical(
+    pub fn laplace_numerical<const N: usize>(
         &self,
         particles: &Vec<Particle>,
     ) -> Result<f64, String> {
@@ -90,15 +118,15 @@ impl WaveFunction {
         let mut laplace = 0.;
         let mut particles = particles.clone();
 
-        let wf = self.evaluate(&particles)?;
+        let wf = self.evaluate::<N>(&particles)?;
 
         for i in 0..particles.len() {
             for dim in 0..particles[i].dim {
                 particles[i].bump_at_dim(dim, h); // Initial position +h
-                let wf_plus = self.evaluate(&particles)?;
+                let wf_plus = self.evaluate::<N>(&particles)?;
 
                 particles[i].bump_at_dim(dim, -2. * h); // Initial position -h
-                let wf_minus = self.evaluate(&particles)?;
+                let wf_minus = self.evaluate::<N>(&particles)?;
 
                 particles[i].bump_at_dim(dim, h); // Reset back to initial position
 
