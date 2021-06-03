@@ -118,7 +118,7 @@ impl<const N: usize> System<N> {
                         let fraction = a(i, j, n) / (1. + self.wf.beta * distance).powi(2);
                         laplace_jastrow += fraction / distance - 2. * self.wf.beta * fraction / (1. + self.wf.beta * distance);
                     }
-                    self.wf.laplace_spf(self.particles[i], nx, ny)? + laplace_jastrow
+                    self.wf.laplace_spf(&self.particles[i], nx, ny)? + laplace_jastrow
                 } else {
                     // This whole mess is from the Jastrow factor (N^3, jesus christ...)
                     let mut laplace_jastrow = 0.;
@@ -135,7 +135,7 @@ impl<const N: usize> System<N> {
                             laplace_jastrow += diff2.inner(diff1)? / (distance * distance2) * fraction * fraction2;
                         }
                     }
-                    self.wf.laplace_spf(self.particles[i], nx, ny)? * self.slater_inverse[(j, i)] + laplace_jastrow
+                    self.wf.laplace_spf(&self.particles[i], nx, ny)? * self.slater_inverse[(j, i)] + laplace_jastrow
                 };
             }
         }
@@ -222,11 +222,13 @@ impl<const N: usize> System<N> {
 
         // Picks one random particle to do the change for
         let i = random::<usize>() % self.particles.len();
+        let nx = crate::QUANTUM_NUMBERS[i].0;
+        let ny = crate::QUANTUM_NUMBERS[i].1;
 
         self.particles[i].qforce = if self.interacting {
             self.wf.quantum_force(i, &self.particles)?
         } else {
-            self.wf.quantum_force_non_interacting(&self.particles[i])
+            self.wf.quantum_force_non_interacting(&self.particles[i], nx, ny)?
         };
 
         // Clones the last particle state of the system
@@ -250,7 +252,7 @@ impl<const N: usize> System<N> {
         new_particles[i].qforce = if self.interacting {
             self.wf.quantum_force(i, &new_particles)?
         } else {
-            self.wf.quantum_force_non_interacting(&new_particles[i])
+            self.wf.quantum_force_non_interacting(&new_particles[i], nx, ny)?
         };
 
         Ok((new_particles, i))
