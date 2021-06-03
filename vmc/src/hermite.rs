@@ -64,16 +64,17 @@ impl Hermite {
         Ok(result)
     }
 
-    // TODO: Find a way of generalizing the variable scaling we do on our x values, to alleviate
-    // the need for lots of specialized functions in addition to this one.
-    pub fn derivative_alpha(n: usize, x: f64, omega: f64, alpha: f64) -> f64 {
+    /// Evaluates the derivative of the Hermite polynomial of order n, with regards to alpha.
+    /// Supports only orders 0-3.
+    pub fn derivative_alpha(n: usize, x: f64, omega: f64, alpha: f64) -> Result<f64, String> {
         let sqrt_omega_alpha: f64 = (omega * alpha).powf(0.5);
-        match n {
-            1 => x * (omega / alpha).powf(0.5),
-            2 => 4.0 * x * x * omega,
-            3 => 12.0 * x * x * x * omega * sqrt_omega_alpha - 6.0 * (omega / alpha).powf(0.5),
-            _ => 0.0, // println!("not valid n") //should prob write something else here
-        }
+        Ok(match n {
+            1 => x * (omega / alpha).sqrt(),
+            2 => 4. * x * x * omega,
+            3 => 12. * x * x * x * omega * sqrt_omega_alpha - 6.0 * (omega / alpha).sqrt(),
+            4 => 32. * alpha * omega.powi(2) * x.powi(4) - 48. * omega * x.powi(2),
+            _ => return Err("derivative_alpha supports only orders up to 4".to_owned())
+        })
     }
 }
 
