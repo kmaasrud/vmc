@@ -12,7 +12,7 @@ impl Hamiltonian {
     // --- Potential energy ---
     fn potential(omega: f64, particles: &Vec<Particle>, interacting: bool) -> f64 {
         // Harmonic oscillator
-        let sqrd_pos_sum: f64 = particles.iter().map(|x| x.squared_sum()).sum();
+        let external_potential: f64 = particles.iter().map(|x| x.squared_sum()).sum();
 
         // Repulsive
         let distance_sum = if interacting {
@@ -26,7 +26,7 @@ impl Hamiltonian {
             s
         } else { 1. };
 
-        0.5 * omega.powf(2.0) * sqrd_pos_sum + 1. / distance_sum
+        0.5 * omega.powf(2.0) * external_potential + 1. / distance_sum
     }
 
     /// Calculates the energy of a system of `particles` described by `wf`.

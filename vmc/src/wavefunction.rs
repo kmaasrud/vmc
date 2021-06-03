@@ -74,8 +74,7 @@ impl WaveFunction {
             _ => return Err("spf only supports two dimension right now".to_owned()),
         };
 
-        Ok(result
-            * (-0.5 * self.alpha * self.omega * particle.position.inner(particle.position)?).exp())
+        Ok(result * (-0.5 * self.alpha * self.omega * particle.position.inner(particle.position)?).exp())
     }
 
     // --- Laplacian ---
@@ -112,9 +111,8 @@ impl WaveFunction {
 
     /// Returns the Laplacian of the single particle wave function
     /// Works only in two dimensions right now
-    pub fn laplace_spf(&self, particle: Particle, nx: usize, ny: usize) -> Result<f64, String> {
-        let omega = 1.0;
-        let omega_alpha = omega * self.alpha;
+    pub fn laplace_spf(&self, particle: &Particle, nx: usize, ny: usize) -> Result<f64, String> {
+        let omega_alpha = self.omega * self.alpha;
         let omega_alpha_sqrt = omega_alpha.sqrt();
 
         match particle.position {
@@ -139,15 +137,22 @@ impl WaveFunction {
     // --- Gradients ---
     /// Returns the gradient for a particle with regards to the non-interacting part of the
     /// wavefunction
-    fn gradient_spf(&self, particle: &Particle) -> Vector {
+    fn gradient_spf(&self, particle: &Particle, nx: usize, ny: usize) -> Result<Vector, String> {
         let gradient = particle.position.clone();
+        let omega_alpha = self.omega * self.alpha;
+        let omega_alpha_sqrt = omega_alpha.sqrt();
         match gradient {
-            Vector::D1(_) | Vector::D2(_, _) => gradient.scale(-2. * self.alpha),
-            Vector::D3(x, y, z) => Vector::D3(
-                -2. * self.alpha * x,
-                -2. * self.alpha * y,
-                -2. * self.alpha * self.beta * z,
-            ),
+            Vector::D2(x, y) => {
+                let hnx = Hermite::evaluate(omega_alpha_sqrt * x, nx)?;
+                let hny = Hermite::evaluate(omega_alpha_sqrt * y, ny)?;
+                let d_hnx = Hermite::derivative(omega_alpha_sqrt * x, nx)? * omega_alpha_sqrt;
+                let d_hny = Hermite::derivative(omega_alpha_sqrt * y, ny)? * omega_alpha_sqrt;
+                Ok(Vector::D2(
+                    hny * (d_hnx - hnx * omega_alpha * x),
+                    hnx * (d_hny - hny * omega_alpha * y),
+                ).scale((-0.5 * omega_alpha * particle.squared_sum()).exp()))
+            }
+            _ => return Err("gradient_spf only supports two dimensions right now.".to_owned()),
         }
     }
 
@@ -178,33 +183,46 @@ impl WaveFunction {
     }
 
     /// Returns the gradient of the wavefunction with regards to alpha
-    pub fn gradient_alpha(&self, particles: &Vec<Particle>, nx: usize, ny: usize) -> f64 {
-        let r1: f64 = particles[0].squared_sum();
-        let r2: f64 = particles[1].squared_sum();
+    pub fn gradient_alpha(&self, particles: &Vec<Particle>) -> Result<f64, String> {
+        match particles.len() {
+            2 => {
+                Ok(-0.5 * self.omega * (particles[0].squared_sum() + particles[1].squared_sum()))
+            },
+            _ => {
+                let mut result = 0.;
+                let factor = 0.5 * (self.omega / self.alpha).sqrt();
+                let omega_alpha_sqrt = (self.omega * self.alpha).sqrt();
 
-        // Hermitian polynomials
-        // TODO: Find alternative solution to avoid repeated code.
-        let omega_alpha_sqrt = (self.omega * self.alpha).sqrt();
-        let hnx = Hermite::evaluate(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
-        let hny = Hermite::evaluate(omega_alpha_sqrt * r2.powf(0.5), ny).unwrap();
+                let n = particles.len();
+                for i in 0..n {
+                    for j in 0..n {
+                        let nx = QUANTUM_NUMBERS[j].0;
+                        let ny = QUANTUM_NUMBERS[j].1;
+                        let (x, y) = match particles[i].position {
+                            Vector::D2(x, y) => (x, y),
+                            _ => return Err("gradient_alpha supports only two dimensions for now.".to_owned())
+                        };
+                        let hnx = Hermite::evaluate(omega_alpha_sqrt * x, nx).unwrap();
+                        let hny = Hermite::evaluate(omega_alpha_sqrt * y, ny).unwrap();
+                        let d_alpha_hnx = Hermite::derivative_alpha(nx, x, self.omega, self.alpha);
+                        let d_alpha_hny = Hermite::derivative_alpha(ny, y, self.omega, self.alpha);
+                        result += factor * x * d_alpha_hnx / hnx + factor * y * d_alpha_hny / hny;
+                    }
+                }
 
-        let _d_alpha_hnx = Hermite::derivative_alpha(nx, r1.powf(0.5), self.omega, self.alpha);
-        let _d_alpha_hny = Hermite::derivative_alpha(ny, r1.powf(0.5), self.omega, self.alpha);
+                Ok(result - n as f64)
+            }
+        }
+    }
 
-        let r = r1 + r2;
-
-        let alpha_gradient = (-0.5 * self.omega * self.alpha * r).exp()
-            * (_d_alpha_hnx * hny + hnx * _d_alpha_hny - 0.5 * self.omega * r * hnx * hny);
-        alpha_gradient
-
-        /* let squared_position_sum_sum: f64 = particles.iter().map(|x| x.squared_sum_scaled_z(self.beta)).sum();
-        - squared_position_sum_sum */
+    pub fn gradient_beta(&self) -> f64 {
+        1.
     }
 
     // --- Quantum forces ---
     pub fn quantum_force(&self, i: usize, particles: &Vec<Particle>) -> Result<Vector, String> {
         if particles.len() == 2 {
-            let a = 1. / 3.;
+            let a = 1.;
             let r1 = particles[0].position;
             let r2 = particles[1].position;
             let r12 = r1 - r2;
@@ -222,8 +240,8 @@ impl WaveFunction {
     }
 
     /// Calculates the quantum force of a particle not interacting with its surrounding particles
-    pub fn quantum_force_non_interacting(&self, particle: &Particle) -> Vector {
-        self.gradient_spf(particle).scale(2.)
+    pub fn quantum_force_non_interacting(&self, particle: &Particle, nx: usize, ny: usize) -> Result<Vector, String> {
+        Ok(self.gradient_spf(particle, nx, ny)?.scale(2.))
     }
 
     /// Returns the gradient of the wavefunction with regards to x

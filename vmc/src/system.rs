@@ -1,4 +1,4 @@
-use crate::{Hamiltonian, Particle, Vector, WaveFunction};
+use crate::{Hamiltonian, Particle, Vector, WaveFunction, a};
 
 use nalgebra::base::MatrixSlice;
 use nalgebra::base::SMatrix;
@@ -112,9 +112,30 @@ impl<const N: usize> System<N> {
                 result += if self.num_laplace {
                     self.wf.laplace_numerical(&self.particles)?
                 } else if n == 2 {
-                    self.wf.laplace_spf(self.particles[i], nx, ny)?
+                    let mut laplace_jastrow = 0.;
+                    if self.wf.beta != 0. && j != i {
+                        let distance = self.particles[i].distance_to(&self.particles[j])?;
+                        let fraction = a(i, j, n) / (1. + self.wf.beta * distance).powi(2);
+                        laplace_jastrow += fraction / distance - 2. * self.wf.beta * fraction / (1. + self.wf.beta * distance);
+                    }
+                    self.wf.laplace_spf(&self.particles[i], nx, ny)? + laplace_jastrow
                 } else {
-                    self.wf.laplace_spf(self.particles[i], nx, ny)? * self.slater_inverse[(j, i)]
+                    // This whole mess is from the Jastrow factor (N^3, jesus christ...)
+                    let mut laplace_jastrow = 0.;
+                    if self.wf.beta != 0. && j != i {
+                        let distance = self.particles[i].distance_to(&self.particles[j])?;
+                        let fraction = a(i, j, n) / (1. + self.wf.beta * distance).powi(2);
+                        laplace_jastrow += fraction / distance - 2. * self.wf.beta * fraction / (1. + self.wf.beta * distance);
+                        let diff1 = self.particles[i].position + self.particles[j].position.scale(-1.);
+                        for k in 0..n {
+                            if k == i { continue }
+                            let diff2 = self.particles[i].position + self.particles[k].position.scale(-1.);
+                            let distance2 = self.particles[i].distance_to(&self.particles[k])?;
+                            let fraction2 = a(i, k, n) / (1. + self.wf.beta * distance2).powi(2);
+                            laplace_jastrow += diff2.inner(diff1)? / (distance * distance2) * fraction * fraction2;
+                        }
+                    }
+                    self.wf.laplace_spf(&self.particles[i], nx, ny)? * self.slater_inverse[(j, i)] + laplace_jastrow
                 };
             }
         }
@@ -149,6 +170,7 @@ impl<const N: usize> System<N> {
         Ok(new_inverse)
     }
 
+    /// Returns the new Slater ratio
     pub fn next_slater_ratio(&self, p: usize, new_inverse: &SMatrix<f64, N, N>) -> f64 {
         let mut result = 0.;
         let u = new_inverse.column(p);
@@ -156,6 +178,21 @@ impl<const N: usize> System<N> {
             result += self.v[i] * u[i];
         }
         1. + result
+    }
+
+    /// Returns the new Jastrow ratio
+    pub fn next_jastrow_ratio(&self, p: usize, new_particles: &Vec<Particle>) -> f64 {
+        let n = self.particles.len();
+        let mut result = 0.;
+        for i in 0..n {
+            if i == p { continue }
+            // Can safely unwrap these, as we know the particles share the same dimensionality
+            let old_distance = self.particles[p].distance_to(&self.particles[0]).unwrap();
+            let new_distance = new_particles[p].distance_to(&new_particles[0]).unwrap();
+            result += a(i, p, n) * new_distance / (1. + self.wf.beta * new_distance)
+                    - a(i, p, n) * old_distance / (1. + self.wf.beta * old_distance)
+        }
+        result.exp()
     }
 
     /// Change a random particle's position by a random value
@@ -185,11 +222,13 @@ impl<const N: usize> System<N> {
 
         // Picks one random particle to do the change for
         let i = random::<usize>() % self.particles.len();
+        let nx = crate::QUANTUM_NUMBERS[i].0;
+        let ny = crate::QUANTUM_NUMBERS[i].1;
 
         self.particles[i].qforce = if self.interacting {
             self.wf.quantum_force(i, &self.particles)?
         } else {
-            self.wf.quantum_force_non_interacting(&self.particles[i])
+            self.wf.quantum_force_non_interacting(&self.particles[i], nx, ny)?
         };
 
         // Clones the last particle state of the system
@@ -213,7 +252,7 @@ impl<const N: usize> System<N> {
         new_particles[i].qforce = if self.interacting {
             self.wf.quantum_force(i, &new_particles)?
         } else {
-            self.wf.quantum_force_non_interacting(&new_particles[i])
+            self.wf.quantum_force_non_interacting(&new_particles[i], nx, ny)?
         };
 
         Ok((new_particles, i))

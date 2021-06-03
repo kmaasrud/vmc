@@ -75,10 +75,11 @@ pub fn simple() {
     println!("Total time spent: {:?}", start.elapsed());
 }
 
+#[allow(dead_code)]
 pub fn sgd(interacting: bool) {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
-    const BETA: f64 = 1.0;
+    const BETA: f64 = 0.;
     const STEP_SIZE: f64 = 0.01;
     const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
@@ -107,7 +108,6 @@ pub fn sgd(interacting: bool) {
 
         let mut i:usize = 0;
         while !done {
-
             let start = Instant::now();
             let wf = WaveFunction { alpha: alphas[i], beta: start_beta, omega: OMEGA }; // Set beta = gamma
             let mut system: System<N> = System::new(N, DIM, wf, interacting, numerical_laplace, SPREAD).unwrap();
@@ -155,7 +155,7 @@ pub fn sgd(interacting: bool) {
         
     }
     let start = Instant::now();
-    simulate::<BruteForceMetropolis>(0.2 ,1. , 0.01, false, interacting);
+    simulate::<BruteForceMetropolis>(0.2 ,1. , 0.1, false, interacting);
 
     /*
     // Multithreading
@@ -187,8 +187,6 @@ pub fn sgd(interacting: bool) {
     */
     println!("Time spent: {:?}", start.elapsed());
 }
-
-
 
 
 

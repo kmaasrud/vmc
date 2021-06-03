@@ -23,7 +23,7 @@ pub trait Metropolis {
     }
 
     fn sample<const N: usize>(sys: &mut System<N>) -> Result<SampledValues, String> {
-        let d_wf_deriv = sys.wf.gradient_alpha(&sys.particles, 0, 0);
+        let d_wf_deriv = sys.wf.gradient_alpha(&sys.particles)?;
         // The 1.0 inputted below is a placeholder for the omega value. We are testing over
         // different omega values. TODO: Consider storing omega in the System struct instead of
         // passing it through the stack.
@@ -68,7 +68,11 @@ impl Metropolis for BruteForceMetropolis {
             }
             _ => {
                 new_inverse = sys.next_slater_inverse(&new_particles, p)?;
-                sys.next_slater_ratio(p, &new_inverse)
+                if sys.wf.beta == 0. {
+                    sys.next_slater_ratio(p, &new_inverse)
+                } else {
+                    sys.next_slater_ratio(p, &new_inverse) * sys.next_jastrow_ratio(p, &new_particles)
+                }
             }
         };
 
@@ -110,7 +114,11 @@ impl Metropolis for ImportanceMetropolis {
             }
             _ => {
                 new_inverse = sys.next_slater_inverse(&new_particles, p)?;
-                greens_factor * sys.next_slater_ratio(p, &new_inverse)
+                greens_factor * if sys.wf.beta == 0. {
+                    sys.next_slater_ratio(p, &new_inverse)
+                } else {
+                    sys.next_slater_ratio(p, &new_inverse) * sys.next_jastrow_ratio(p, &new_particles)
+                }
             }
         };
 
