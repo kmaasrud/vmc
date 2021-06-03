@@ -185,6 +185,7 @@ impl<const N: usize> System<N> {
         let n = self.particles.len();
         let mut result = 0.;
         for i in 0..n {
+            if i == p { continue }
             // Can safely unwrap these, as we know the particles share the same dimensionality
             let old_distance = self.particles[p].distance_to(&self.particles[0]).unwrap();
             let new_distance = new_particles[p].distance_to(&new_particles[0]).unwrap();
