@@ -21,7 +21,7 @@ $$ \epsilon_{n_x, n_y} = \omega(n_x + n_y + 1) = \omega. $$ {#eq:non-interacting
 The Pauli exclusion principle states that two fermions can not occupy the same quantum state simultaneously. For each state $(n_x, n_y)$ a fermion may have spin up or down, which means it can be occupied by at most two fermions. Using this principle, the ground state energies of the closed-shell configurations $N = 2, 6, 12$ and $20$ can easily be calculated using equation ([@eq:non-interacting-energy]). The energies are given in table [@tbl:energies].
 
 Table: The ground state energy of $N$ non-interacting particles in an isotropic harmonic potential well. $\omega$ is the oscillator frequency. Energies are given in Hartree's atomic units. 
-| **Number of particles $N$** | **$E$ (a.u)**        |
+| **Number of particles $N$** | **$E$ [a.u]**        |
 | ----:                       | ---                  |
 | $2$                         | $2 \omega$           |
 | $6$                         | $10 \omega$          |
