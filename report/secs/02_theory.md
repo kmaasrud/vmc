@@ -99,14 +99,15 @@ Calcutating the trasition probability of the trial wavefunction $\Psi_{old}(\mat
 
 ## Onebody density
 <!-- Write some more here? Find a reference at least - Anna -->
-The one body density is a usefull entety in quantum mechanics, helping visualizing and optimizing the wavefunction as well as calculate exitation energies. It is defined as
+The one body density is a usefull entety in quantum mechanics, helping visualizing and optimizing the wavefunction as well as calculate exitation energies. It describes the probability of finding any of the $N$ electrons in the volume $d \mathbf{r}_1$. The density is defined as [@ref:Hogberget2013]
 
-$$\rho(\mathbf{r_1}) = \int|\psi(\mathbf{r_1, ... , r}_N)|^2 d\mathbf{r_2}...d\mathbf{r}_N $$
+$$\rho(\mathbf{r_1}) = \int_{\mathbf{r}_2} \int_{\mathbf{r}_3} \cdots \int_{\mathbf{r}_N}|\psi(\mathbf{r_1, ... , r}_N)|^2 d\mathbf{r_2}...d\mathbf{r}_N $$
+{#eq:one-body-density}
 
-Notice the integration of the wafefunction, $\psi$, squared is over all but the first coordinate. By the Pauli principle, no electrons can occupy the same state, making the integral a bit simpler. This is accounted for by the repulsion/pertubation term in the Hamiltonian. 
 
-Hence the onebody density is given by the probability of finding a particle within a circle with radius $\mathbf{r}$. 
+Notice the integration of the wafefunction, $\psi$, squared is over all but the first coordinate. It is normalized with the number of particles, not unity. 
 
+By the Pauli principle, no electrons can occupy the same state, making the integral a bit simpler. This is accounted for by the repulsion/pertubation term in the Hamiltonian. 
 
 ## The Virial Theorem
 
