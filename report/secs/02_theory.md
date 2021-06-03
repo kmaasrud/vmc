@@ -97,6 +97,17 @@ The slater determinant is a crucial, time consuming part of the trail wavefuncti
 
 Calcutating the trasition probability of the trial wavefunction $\Psi_{old}(\mathbf{R}) / \Psi_{new}(\mathbf{R})$ requieres a computation of the ratio of the determinants $det(D_{old}(\mathbf{R})) / det(D_{new}(\mathbf{R}))$. Insted of recalculate the whole determinant for each step, the algorithm can be optimized using Sherman-Morrison formula, reducing the computational cost of evaluating the ratio of the determinants with a factor of $N$ of the move is accepted.  
 
+## Onebody density
+<!-- Write some more here? Find a reference at least - Anna -->
+The one body density is a usefull entety in quantum mechanics, helping visualizing and optimizing the wavefunction as well as calculate exitation energies. It is defined as
+
+$$\rho(\mathbf{r_1}) = \int|\psi(\mathbf{r_1, ... , r}_N)|^2 d\mathbf{r_2}...d\mathbf{r}_N $$
+
+Notice the integration of the wafefunction, $\psi$, squared is over all but the first coordinate. By the Pauli principle, no electrons can occupy the same state, making the integral a bit simpler. This is accounted for by the repulsion/pertubation term in the Hamiltonian. 
+
+Hence the onebody density is given by the probability of finding a particle within a circle with radius $\mathbf{r}$. 
+
+
 ## The Virial Theorem
 
 <!-- For comparison later, see exercise f-->
