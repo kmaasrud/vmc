@@ -111,9 +111,8 @@ impl WaveFunction {
 
     /// Returns the Laplacian of the single particle wave function
     /// Works only in two dimensions right now
-    pub fn laplace_spf(&self, particle: Particle, nx: usize, ny: usize) -> Result<f64, String> {
-        let omega = 1.0;
-        let omega_alpha = omega * self.alpha;
+    pub fn laplace_spf(&self, particle: &Particle, nx: usize, ny: usize) -> Result<f64, String> {
+        let omega_alpha = self.omega * self.alpha;
         let omega_alpha_sqrt = omega_alpha.sqrt();
 
         match particle.position {
@@ -138,15 +137,22 @@ impl WaveFunction {
     // --- Gradients ---
     /// Returns the gradient for a particle with regards to the non-interacting part of the
     /// wavefunction
-    fn gradient_spf(&self, particle: &Particle) -> Vector {
+    fn gradient_spf(&self, particle: &Particle, nx: usize, ny: usize) -> Result<Vector, String> {
         let gradient = particle.position.clone();
+        let omega_alpha = self.omega * self.alpha;
+        let omega_alpha_sqrt = omega_alpha.sqrt();
         match gradient {
-            Vector::D1(_) | Vector::D2(_, _) => gradient.scale(-2. * self.alpha),
-            Vector::D3(x, y, z) => Vector::D3(
-                -2. * self.alpha * x,
-                -2. * self.alpha * y,
-                -2. * self.alpha * self.beta * z,
-            ),
+            Vector::D2(x, y) => {
+                let hnx = Hermite::evaluate(omega_alpha_sqrt * x, nx)?;
+                let hny = Hermite::evaluate(omega_alpha_sqrt * y, ny)?;
+                let d_hnx = Hermite::derivative(omega_alpha_sqrt * x, nx)? * omega_alpha_sqrt;
+                let d_hny = Hermite::derivative(omega_alpha_sqrt * y, ny)? * omega_alpha_sqrt;
+                Ok(Vector::D2(
+                    hny * (d_hnx - hnx * omega_alpha * x),
+                    hnx * (d_hny - hny * omega_alpha * y),
+                ).scale((-0.5 * omega_alpha * particle.squared_sum()).exp()))
+            }
+            _ => return Err("gradient_spf only supports two dimensions right now.".to_owned()),
         }
     }
 
@@ -203,7 +209,7 @@ impl WaveFunction {
     // --- Quantum forces ---
     pub fn quantum_force(&self, i: usize, particles: &Vec<Particle>) -> Result<Vector, String> {
         if particles.len() == 2 {
-            let a = 1. / 3.;
+            let a = 1.;
             let r1 = particles[0].position;
             let r2 = particles[1].position;
             let r12 = r1 - r2;
@@ -221,8 +227,8 @@ impl WaveFunction {
     }
 
     /// Calculates the quantum force of a particle not interacting with its surrounding particles
-    pub fn quantum_force_non_interacting(&self, particle: &Particle) -> Vector {
-        self.gradient_spf(particle).scale(2.)
+    pub fn quantum_force_non_interacting(&self, particle: &Particle, nx: usize, ny: usize) -> Result<Vector, String> {
+        Ok(self.gradient_spf(particle, nx, ny)?.scale(2.))
     }
 
     /// Returns the gradient of the wavefunction with regards to x
