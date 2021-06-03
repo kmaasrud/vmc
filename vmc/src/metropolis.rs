@@ -23,7 +23,7 @@ pub trait Metropolis {
     }
 
     fn sample<const N: usize>(sys: &mut System<N>) -> Result<SampledValues, String> {
-        let d_wf_deriv = sys.wf.gradient_alpha(&sys.particles, 0, 0);
+        let d_wf_deriv = sys.wf.gradient_alpha(&sys.particles)?;
         // The 1.0 inputted below is a placeholder for the omega value. We are testing over
         // different omega values. TODO: Consider storing omega in the System struct instead of
         // passing it through the stack.

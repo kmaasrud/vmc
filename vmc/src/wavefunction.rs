@@ -183,27 +183,40 @@ impl WaveFunction {
     }
 
     /// Returns the gradient of the wavefunction with regards to alpha
-    pub fn gradient_alpha(&self, particles: &Vec<Particle>, nx: usize, ny: usize) -> f64 {
-        let r1: f64 = particles[0].squared_sum();
-        let r2: f64 = particles[1].squared_sum();
+    pub fn gradient_alpha(&self, particles: &Vec<Particle>) -> Result<f64, String> {
+        match particles.len() {
+            2 => {
+                Ok(-0.5 * self.omega * (particles[0].squared_sum() + particles[1].squared_sum()))
+            },
+            _ => {
+                let mut result = 0.;
+                let factor = 0.5 * (self.omega / self.alpha).sqrt();
+                let omega_alpha_sqrt = (self.omega * self.alpha).sqrt();
 
-        // Hermitian polynomials
-        // TODO: Find alternative solution to avoid repeated code.
-        let omega_alpha_sqrt = (self.omega * self.alpha).sqrt();
-        let hnx = Hermite::evaluate(omega_alpha_sqrt * r1.powf(0.5), nx).unwrap();
-        let hny = Hermite::evaluate(omega_alpha_sqrt * r2.powf(0.5), ny).unwrap();
+                let n = particles.len();
+                for i in 0..n {
+                    for j in 0..n {
+                        let nx = QUANTUM_NUMBERS[j].0;
+                        let ny = QUANTUM_NUMBERS[j].1;
+                        let (x, y) = match particles[i].position {
+                            Vector::D2(x, y) => (x, y),
+                            _ => return Err("gradient_alpha supports only two dimensions for now.".to_owned())
+                        };
+                        let hnx = Hermite::evaluate(omega_alpha_sqrt * x, nx).unwrap();
+                        let hny = Hermite::evaluate(omega_alpha_sqrt * y, ny).unwrap();
+                        let d_alpha_hnx = Hermite::derivative_alpha(nx, x, self.omega, self.alpha);
+                        let d_alpha_hny = Hermite::derivative_alpha(ny, y, self.omega, self.alpha);
+                        result += factor * x * d_alpha_hnx / hnx + factor * y * d_alpha_hny / hny;
+                    }
+                }
 
-        let _d_alpha_hnx = Hermite::derivative_alpha(nx, r1.powf(0.5), self.omega, self.alpha);
-        let _d_alpha_hny = Hermite::derivative_alpha(ny, r1.powf(0.5), self.omega, self.alpha);
+                Ok(result - n as f64)
+            }
+        }
+    }
 
-        let r = r1 + r2;
-
-        let alpha_gradient = (-0.5 * self.omega * self.alpha * r).exp()
-            * (_d_alpha_hnx * hny + hnx * _d_alpha_hny - 0.5 * self.omega * r * hnx * hny);
-        alpha_gradient
-
-        /* let squared_position_sum_sum: f64 = particles.iter().map(|x| x.squared_sum_scaled_z(self.beta)).sum();
-        - squared_position_sum_sum */
+    pub fn gradient_beta(&self) -> f64 {
+        1.
     }
 
     // --- Quantum forces ---
