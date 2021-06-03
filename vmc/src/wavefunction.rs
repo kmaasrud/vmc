@@ -204,8 +204,8 @@ impl WaveFunction {
                         };
                         let hnx = Hermite::evaluate(omega_alpha_sqrt * x, nx).unwrap();
                         let hny = Hermite::evaluate(omega_alpha_sqrt * y, ny).unwrap();
-                        let d_alpha_hnx = Hermite::derivative_alpha(nx, x, self.omega, self.alpha);
-                        let d_alpha_hny = Hermite::derivative_alpha(ny, y, self.omega, self.alpha);
+                        let d_alpha_hnx = Hermite::derivative_alpha(nx, x, self.omega, self.alpha)?;
+                        let d_alpha_hny = Hermite::derivative_alpha(ny, y, self.omega, self.alpha)?;
                         result += factor * x * d_alpha_hnx / hnx + factor * y * d_alpha_hny / hny;
                     }
                 }
