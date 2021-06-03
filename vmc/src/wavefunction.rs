@@ -74,8 +74,7 @@ impl WaveFunction {
             _ => return Err("spf only supports two dimension right now".to_owned()),
         };
 
-        Ok(result
-            * (-0.5 * self.alpha * self.omega * particle.position.inner(particle.position)?).exp())
+        Ok(result * (-0.5 * self.alpha * self.omega * particle.position.inner(particle.position)?).exp())
     }
 
     // --- Laplacian ---

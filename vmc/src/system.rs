@@ -1,4 +1,4 @@
-use crate::{Hamiltonian, Particle, Vector, WaveFunction};
+use crate::{Hamiltonian, Particle, Vector, WaveFunction, a};
 
 use nalgebra::base::MatrixSlice;
 use nalgebra::base::SMatrix;
@@ -114,7 +114,28 @@ impl<const N: usize> System<N> {
                 } else if n == 2 {
                     self.wf.laplace_spf(self.particles[i], nx, ny)?
                 } else {
-                    self.wf.laplace_spf(self.particles[i], nx, ny)? * self.slater_inverse[(j, i)]
+                    let mut laplace_jastrow = 0.;
+                    let n = self.particles.len();
+                    // This whole mess is from the Jastrow factor (N^3, jesus christ...)
+                    if self.wf.beta != 0. {
+                        for k in 0..n {
+                            for j in 0..n {
+                                if j == k { continue }
+                                let distance = self.particles[k].distance_to(&self.particles[j])?;
+                                let fraction = a(k, j, n) / (1. + self.wf.beta * distance).powi(2);
+                                laplace_jastrow += fraction / distance - 2. * self.wf.beta * fraction / (1. + self.wf.beta * distance);
+                                let diff1 = self.particles[k].position + self.particles[j].position.scale(-1.);
+                                for i in 0..n {
+                                    if i == k { continue }
+                                    let diff2 = self.particles[k].position + self.particles[i].position.scale(-1.);
+                                    let distance2 = self.particles[k].distance_to(&self.particles[i])?;
+                                    let fraction2 = a(k, i, n) / (1. + self.wf.beta * distance2).powi(2);
+                                    laplace_jastrow += diff2.inner(diff1)? / (distance * distance2) * fraction * fraction2;
+                                }
+                            }
+                        }
+                    }
+                    self.wf.laplace_spf(self.particles[i], nx, ny)? * self.slater_inverse[(j, i)] + laplace_jastrow
                 };
             }
         }
