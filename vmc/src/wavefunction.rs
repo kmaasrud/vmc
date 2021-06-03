@@ -215,8 +215,27 @@ impl WaveFunction {
         }
     }
 
-    pub fn gradient_beta(&self) -> f64 {
-        1.
+    pub fn gradient_beta(&self, particles: &Vec<Particle>) -> f64 {
+        match particles.len() {
+            2 => {
+                // Can safely unwrap here, since the particles share dimensionality
+                let distance = particles[0].distance_to(&particles[1]).unwrap();
+                - 1. * distance.powi(2) / (1. + self.beta * distance).powi(2)
+            },
+            _ => {
+                let mut result = 0.;
+                let n = particles.len();
+                for i in 0..n {
+                    for j in 0..n {
+                        if i == j { continue }
+                        // Can safely unwrap here, since the particles share dimensionality
+                        let distance = particles[i].distance_to(&particles[j]).unwrap();
+                        result -= a(i, j, n) * distance.powi(2) / (1. + self.beta * distance).powi(2)
+                    }
+                }
+                result
+            }
+        }
     }
 
     // --- Quantum forces ---

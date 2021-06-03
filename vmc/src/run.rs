@@ -121,11 +121,11 @@ pub fn sgd(interacting: bool) {
                 Some(val) => *val,
                 None => 0.,
             };
-            let wf_deriv = match vals.map.get("wf_deriv") {
+            let wf_deriv = match vals.map.get("wf_deriv_alpha") {
                 Some(val) => *val,
                 None => 0.,
             };
-            let wf_deriv_times_energy = match vals.map.get("wf_deriv_times_energy") {
+            let wf_deriv_times_energy = match vals.map.get("wf_deriv_alpha_times_energy") {
                 Some(val) => *val,
                 None => 0.,
             };

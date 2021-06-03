@@ -23,17 +23,17 @@ pub trait Metropolis {
     }
 
     fn sample<const N: usize>(sys: &mut System<N>) -> Result<SampledValues, String> {
-        let d_wf_deriv = sys.wf.gradient_alpha(&sys.particles)?;
-        // The 1.0 inputted below is a placeholder for the omega value. We are testing over
-        // different omega values. TODO: Consider storing omega in the System struct instead of
-        // passing it through the stack.
-        let d_energy = Hamiltonian::energy(&sys)?;
+        let energy = Hamiltonian::energy(&sys)?;
+        let wf_deriv_alpha = sys.wf.gradient_alpha(&sys.particles)?;
+        let wf_deriv_beta = sys.wf.gradient_beta(&sys.particles);
 
         let mut map = HashMap::new();
-        map.insert("energy".to_string(), d_energy);
-        map.insert("energy_sqrd".to_string(), d_energy.powi(2));
-        map.insert("wf_deriv".to_string(), d_wf_deriv);
-        map.insert("wf_deriv_times_energy".to_string(), d_wf_deriv * d_energy);
+        map.insert("energy".to_string(), energy);
+        map.insert("energy_sqrd".to_string(), energy.powi(2));
+        map.insert("wf_deriv_alpha".to_string(), wf_deriv_alpha);
+        map.insert("wf_deriv_alpha_times_energy".to_string(), wf_deriv_alpha * energy);
+        map.insert("wf_deriv_bet".to_string(), wf_deriv_beta);
+        map.insert("wf_deriv_beta_times_energy".to_string(), wf_deriv_beta * energy);
         Ok(SampledValues { map })
     }
 
