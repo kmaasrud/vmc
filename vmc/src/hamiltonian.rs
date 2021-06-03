@@ -32,7 +32,7 @@ impl Hamiltonian {
     /// Calculates the energy of a system of `particles` described by `wf`.
     /// If `non_interacting` is `true`, will calculate the non-interacting energy (unused for now).
     pub fn energy<const N: usize>(sys: &System<N>) -> Result<f64, String> {
-        if sys.particles.len() == 2 {
+        if sys.particles.len() == 200 {
             let a = 1.; // Hard-coding value of a
             let distance = sys.particles[0].distance_to(&sys.particles[1])?;
             Ok(2. * sys.wf.alpha * sys.wf.omega + 0.5
