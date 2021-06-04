@@ -52,28 +52,6 @@ Table: Optimal variational parameters for the different systems without the Jast
 
 
 
-## Computations for the two-electron system
-
-By using the variational parameters $\alpha = FILL ME$ and $\beta = FILL ME$, the calculation of minimum energy for the system has been compared to Taut's analytical values in table [@tbl:results-calculations]. This table also contains the mean distance between the two electrons and the one-body density. Calculations are done with interaction, purely Harmonic Oscillator wavefunctions and pure HO wavefunctions without the Jastrow factor.
-
-| **Calculation type** | **Minimum energy**| **Taut's analytical energies**| **Mean particle distance** | **One-body Density**|
-|---    | ---: | :--- | :---: | :---: |
-| All included | $FILL$ | $2\omega$ |    $1$  |   $1$  |
-| Purely HO | $FILL$ | $2\omega$ |    $1$  |   $1$  |
-| Purely HO, no Jastrow | $FILL$ | $2\omega$ |    $1$  |   $1$  |{#tbl:results-calculations}
-
-Lastly the expectation value for the kinetic energy and the potential energy is computed using $\omega \in {0.01, 0.05, 0.1, 0.5, 1.0}$. With interaction and the Jastrow factor.
-
-| **$\omega$**| **$\langle E_k \rangle$**| **$\langle E_p \rangle$** |
-| --- | :---: | :---: |
-| $0.01$    | $1$   |    $1$  |
-| $0.05$    | $1$   |    $1$  |
-| $0.1$     | $1$   |    $1$  |
-| $0.5$     | $1$   |    $1$  |
-| $1.0$     | $1$   |    $1$  |{#tbl:results-calculations-omega}
-
-
-
 ## Ground state energies
 
 
