@@ -1,5 +1,5 @@
-use crate::{Hermite, Particle, Spin, System, Vector, a};
-use nalgebra::{SMatrix, linalg::LU};
+use crate::{Hermite, Particle, Spin, Vector, a, det};
+use nalgebra::{SMatrix, base::dimension::DimMin, Const};
 
 // Hard-coding quantum states of up to 20 particles. This is done for speed, an should be
 // generalized if this code is to be used seriously
@@ -61,9 +61,9 @@ impl WaveFunction {
             // This is the general evaluation, using Slater determinants
             n => {
                 // TODO: Of course creating the determinant has to be a hassle... Looking at this tomorrow
-                /* let slater_matrix: SMatrix<f64, N, N> = self.slater_matrix(particles)?;
-                let slater_det = slater_matrix.determinant() */
-                let slater_det = 1.;
+                let slater_matrix: SMatrix<f64, N, N> = self.slater_matrix(particles)?;
+                let slater_det = det(Some(&slater_matrix), None).unwrap();
+                // let slater_det = 1.;
                 let mut jastrow = 1.;
                 for (i, particle) in particles.iter().enumerate() {
                     for (j, other) in particles[i + 1..].iter().enumerate() {
