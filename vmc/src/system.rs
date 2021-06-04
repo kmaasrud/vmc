@@ -89,6 +89,7 @@ impl<const N: usize> System<N> {
     pub fn laplace(&self) -> Result<f64, String> {
         let mut result: f64 = 0.;
         let n = self.particles.len();
+        let mut gradient_prod = 0.;
 
         for i in 0..n {
             for j in 0..n {
@@ -123,9 +124,13 @@ impl<const N: usize> System<N> {
                     self.wf.laplace_spf(&self.particles[i], nx, ny)? * self.slater_inverse[(j, i)] + laplace_jastrow
                 };
             }
+            if !(n == 2 && self.num_laplace) {
+                gradient_prod += self.wf.gradient_slater(i, &self.particles, &self.slater_inverse)?
+                                        .inner(self.wf.gradient_jastrow(i, &self.particles)?)?;
+            }
         }
 
-        Ok(result)
+        Ok(result + 2. * gradient_prod)
     }
 
     pub fn next_slater_inverse(
@@ -211,7 +216,7 @@ impl<const N: usize> System<N> {
         let ny = crate::QUANTUM_NUMBERS[i].1;
 
         self.particles[i].qforce = if self.interacting {
-            self.wf.quantum_force(i, &self.particles)?
+            self.wf.quantum_force(i, &self.particles, &self.slater_inverse)?
         } else {
             self.wf.quantum_force_non_interacting(&self.particles[i], nx, ny)?
         };
@@ -233,9 +238,11 @@ impl<const N: usize> System<N> {
             })
             .scale(qf_step_size.sqrt());
 
+        let new_inverse = self.next_slater_inverse(&new_particles, i)?;
+
         // Calculate quantum force of new state
         new_particles[i].qforce = if self.interacting {
-            self.wf.quantum_force(i, &new_particles)?
+            self.wf.quantum_force(i, &new_particles, &new_inverse)?
         } else {
             self.wf.quantum_force_non_interacting(&new_particles[i], nx, ny)?
         };

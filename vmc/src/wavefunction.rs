@@ -107,7 +107,6 @@ impl WaveFunction {
 
     // --- Laplacian ---
     /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
-    /// Returns laplacian for the wavefunction with hermitian polynomials
     pub fn laplace_numerical<const N: usize>(
         &self,
         particles: &Vec<Particle>,
@@ -163,6 +162,30 @@ impl WaveFunction {
     }
 
     // --- Gradients ---
+    /// Returns the Laplacian of the wavefunction evaluated numerically at state of 'particles'.
+    pub fn gradient_numerical<const N: usize>(&self, particles: &Vec<Particle>) -> Result<f64, String> {
+        let h: f64 = 0.000001; //stepsize
+        let two_h = 2. * h;
+
+        let mut gradient = 0.;
+        let mut particles = particles.clone();
+
+        for i in 0..particles.len() {
+            for dim in 0..particles[i].dim {
+                particles[i].bump_at_dim(dim, 2. * h); // Initial position +h
+                let wf_plus = self.evaluate::<N>(&particles)?;
+
+                particles[i].bump_at_dim(dim, -2. * h); // Initial position -h
+                let wf_minus = self.evaluate::<N>(&particles)?;
+
+                gradient += (wf_plus - wf_minus) / two_h;
+
+                particles[i].bump_at_dim(dim, h); // Reset back to initial position
+            }
+        }
+
+        Ok(gradient)
+    }
     /// Returns the gradient for a particle with regards to the non-interacting part of the
     /// wavefunction
     fn gradient_spf(&self, particle: &Particle, nx: usize, ny: usize) -> Result<Vector, String> {
@@ -184,30 +207,29 @@ impl WaveFunction {
         }
     }
 
-    /// Returns the gradient for a particle with regards to the interaction-part of the
-    /// wavefunction
-    fn gradient_interaction(&self, i: usize, particles: &Vec<Particle>) -> Vector {
-        // Can safely unwrap this. particles[0] has a valid dimensionality, so this will always work
+    pub fn gradient_slater<const N: usize>(&self, p: usize, particles: &Vec<Particle>, slater_inverse: &SMatrix<f64, N, N>) -> Result<Vector, String> {
         let mut gradient = Particle::new(particles[0].dim).unwrap().position;
-        let a: f64 = 0.0043;
-
-        for j in 0..particles.len() {
-            if i == j {
-                continue;
-            }
-
-            // Can safely unwrap distance_to. The dimensions are guaranteed to be equal
-            let distance: f64 = particles[i].distance_to(&particles[j]).unwrap();
-            let factor = a / (distance * (1. + self.beta * distance).powi(2));
-
-            // This actually calculates the derivative devided by the actual wavefunction, so not dPsi itself, but rather dPsi / Psi.
-            gradient += particles[i].position.scale(-self.alpha * self.omega)
-                + (particles[i].position - particles[j].position).scale(factor)
-                - particles[j].position.scale(self.alpha * self.omega)
-                + (particles[j].position - particles[i].position).scale(factor);
+        let mut gradient_jastrow = Particle::new(particles[0].dim).unwrap().position;
+        let n = particles.len();
+        for (i, particle) in particles.iter().enumerate() {
+            let nx = QUANTUM_NUMBERS[i].0;
+            let ny = QUANTUM_NUMBERS[i].1;
+            let d_spf = self.gradient_spf(particle, nx, ny)?;
+            gradient += d_spf.scale(slater_inverse[(i, p)]);
         }
+        Ok(gradient)
+    }
 
-        gradient
+    pub fn gradient_jastrow(&self, p: usize, particles: &Vec<Particle>) -> Result<Vector, String> {
+        let mut gradient = Particle::new(particles[0].dim).unwrap().position;
+        let n = particles.len();
+        for (i, particle) in particles.iter().enumerate() {
+            if i == p { continue }
+            let distance = particles[p].distance_to(&particle)?;
+            let factor = a(p, i, n) / (distance * (1. + self.beta * distance).powi(2));
+            gradient += (particles[p].position + particle.position.scale(-1.)).scale(factor);
+        }
+        Ok(gradient)
     }
 
     /// Returns the gradient of the wavefunction with regards to alpha
@@ -243,6 +265,7 @@ impl WaveFunction {
         }
     }
 
+    /// Returns the gradient of the wavefunction with regards to beta
     pub fn gradient_beta(&self, particles: &Vec<Particle>) -> f64 {
         match particles.len() {
             2 => {
@@ -267,7 +290,7 @@ impl WaveFunction {
     }
 
     // --- Quantum forces ---
-    pub fn quantum_force(&self, i: usize, particles: &Vec<Particle>) -> Result<Vector, String> {
+    pub fn quantum_force<const N: usize>(&self, p: usize, particles: &Vec<Particle>, slater_inverse: &SMatrix<f64, N, N>) -> Result<Vector, String> {
         if particles.len() == 2 {
             let a = 1.;
             let r1 = particles[0].position;
@@ -281,8 +304,10 @@ impl WaveFunction {
 
             Ok(r1.scale(factor1) + r12.scale(factor2) + r2.scale(factor1) + r21.scale(factor2))
         } else {
-            // The gradients need not be devided by the wavefunc since it already has been inside the gradient functions (this cancels terms and easen the computation)
-            Ok(self.gradient_interaction(i, particles).scale(2.))
+            // The gradients need not be divided by the wavefunc since it already has been inside the gradient functions (this cancels terms and easen the computation)
+            let slater_gradient = self.gradient_slater(p, particles, slater_inverse)?;
+            let jastrow_gradient = self.gradient_jastrow(p, particles)?;
+            Ok((slater_gradient + jastrow_gradient).scale(2.))
         }
     }
 
