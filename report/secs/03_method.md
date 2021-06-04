@@ -28,7 +28,7 @@ $$ \mathcal R_D = 1 + \mathbf v_p^T D^{-1}\mathbf e_p,\quad \text{where } \mathb
 
 $\mathbf e_p$ is simply the unit vector with $1$ on the $p$-th entry and zero everywhere else. It serves the purpose of extracting the $p$-th column from $D^{-1}$.
 
-Now, how do we calculate $D^{-1}$ effectively? Once again, Gaussian elimination gives us an $\mathcal O(N^3)$ cost, which is no-go. However, if we do the matrix inversion with Gaussian elimination initially, to aquire $D_0^{-1}$, we can iteratively find the succeeding inversions by using a special case of the *Sherman-Morrison-Woodbury formula*[^smw] [@GolubLoan2013], which states:
+Now, how do we calculate $D^{-1}$ effectively? Once again, Gaussian elimination gives us an $\mathcal O(N^3)$ cost, which is no-go. However, if we do the matrix inversion with Gaussian elimination initially, to acquire $D_0^{-1}$, we can iteratively find the succeeding inversions by using a special case of the *Sherman-Morrison-Woodbury formula*[^smw] [@GolubLoan2013], which states:
 
 $$ \left(D + D^{-1}\mathbf e_p \mathbf v_p^T\right)^{-1} = D^{-1} - \frac{D^{-1}\mathbf e_p \mathbf v_p^T D^{-1}}{1 + \mathbf v_p^T D^{-1}\mathbf e_p}. $$
 
@@ -57,7 +57,7 @@ which scales in the order of $\mathcal O(N-1)$ operations.
 
 Testing in Rust is normally divided in two categories: *unit tests* and *integration tests*. Unit tests are small codes to test specific functions inside the code. These tests are normally written in the same file as the functions themselves, but inside a module annotated with `#[cfg(test)]`.
 
-On the other hand, integration tests are written externally to the library, and is made to test the integration of the functions in the program. These tests are often much larger than unit tests, and are made to make sure that the internal functions work well with each other, from the standpoint of an external user. Therefore, integration tests are normally written in a separate `tests` directory at the same level as the `src` directory.
+On the other hand, integration tests are written externally to the library, and is made to test the integration of the functions in the program. These tests are often much larger than unit tests and are made to make sure that the internal functions work well with each other, from the standpoint of an external user. Therefore, integration tests are normally written in a separate `tests` directory at the same level as the `src` directory.
 
 We will write mainly unit tests in our program, to ensure that our functions return the expected values, and to reduce the mental overhead of debugging when making larger changes to the codebase.
 
@@ -78,14 +78,14 @@ The energy should equal 2.0 atomic units with a variance exactly equal to zero.
 By using the steepest descent method, the best variational parameters, $\alpha$ and $\beta$ are found. The results for this is found in section [@sec:results-variational-params].
 
 
-### Computation of the two electron system
+### Computation of the two-electron system
 
-The minimum energy of the system is computed and compared to Taut's work <!-- [@cite taut] -->. In addition, the mean distance between the two electrons and the onebody density is calculated for the best variational parameters. These results are also compared with the results form the same computations, where only the pure harmonic oscillator wavefunctions are used, and where pure HO wavefunctions are used but without the Jastrow factor.
+The minimum energy of the system is computed and compared to Taut's work <!-- [@cite taut] -->. In addition, the mean distance between the two electrons and the one-body density is calculated for the best variational parameters. These results are also compared with the results form the same computations, where only the pure harmonic oscillator wavefunctions are used, and where pure HO wavefunctions are used but without the Jastrow factor.
 
 Lastly the expectation value for the kinetic energy is calculated with $\omega \in {0.01, 0.05, 0.1, 0.5, 1.0}$.
 
 ## Increasing computational performance 
 
-Beeing able to simulate many-body system at large scale without running out of time is crucial. Hence taking advantage of available tools such as compilation flags (e.g. for vectorization) and parallelization is important. The Rust language provides a great set of such tools - similar to the ones used in C++, but safer.
+Being able to simulate many-body system at large scale without running out of time is crucial. Hence taking advantage of available tools such as compilation flags (e.g., for vectorization) and parallelization is important. The Rust language provides a great set of such tools - like the ones used in C++, but safer.
 
-Since we run many different simulations with unique parameters, we parallelize over these simulations, to keep the logic of our program simple. This allows us to utilize all our cores' computation power, while still not needing to program concurrently. For future work, parallelization should be done further into the "core" of the program, in order to increase performance in single runs. For details on how we do vectorization in Rust, see @Vmc-bosonic2021. 
+Since we run many different simulations with unique parameters, we parallelize over these simulations, to keep the logic of our program simple. This allows us to utilize all our cores' computation power, while still not needing to program concurrently. For future work, parallelization should be done further into the "core" of the program, to increase performance in single runs. For details on how we do vectorization in Rust, see @Vmc-bosonic2021.

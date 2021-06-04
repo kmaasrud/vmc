@@ -1,6 +1,6 @@
 # Theory
 
-We consider a system of electrons situated in an isotropic harmonic oscillator potential. We will use Hartree's atomic units[^hartree] in order to get the idealized Hamiltonian presented below:
+We consider a system of electrons situated in an isotropic harmonic oscillator potential. We will use Hartree's atomic units[^hartree] to get the idealized Hamiltonian presented below:
 
 $$ H = \sum_{i=1}^{N}{\left( -\frac{1}{2}\nabla^2_i + \frac{1}{2}\omega^2 |\mathbf r_i|^2 \right) } + \sum_{i<j}\frac{1}{r_{ij}}. $$ {#eq:hamiltonian}
 
@@ -69,11 +69,11 @@ E_L &= 2 \alpha \omega + \frac{1}{2} + \omega^2 (1 - \alpha^2) (r_1^2 + r_2^2) \
 &- \frac{a}{(1 + \beta r_{12})^2} \left( -\alpha \omega r_{12} + \frac{a}{(1 + \beta r_{12})^2} + \frac{1 - \beta r_{12}}{r_{12}(1 + \beta r_{12})}\right) + \frac{1}{r_{12}}.
 \end{aligned} $$ <!-- Is this correct?. -->
 
-The numerical local (kinetic) energy is calculated using the derivitive of the velocity utilizing the two point approximation of the first derivative
+The numerical local (kinetic) energy is calculated using the derivitive of the velocity utilizing the two-point approximation of the first derivative
 
 $$ \frac{d g(x)}{dx} \approx \frac{g(x + \Delta x) - g ( x - \Delta x)}{2 \Delta x} $$
 
-Second derivative by three point approximation
+Second derivative by three-point approximation
 
 $$ \frac{d^2 g(x)}{dx^2} \approx \frac{g(x + \Delta x) - 2 g(x)  + g ( x - \Delta x) }{ \Delta x^2}  $$
 
@@ -97,9 +97,9 @@ The slater determinant is a crucial, time consuming part of the trail wavefuncti
 
 Calcutating the trasition probability of the trial wavefunction $\Psi_{old}(\mathbf{R}) / \Psi_{new}(\mathbf{R})$ requieres a computation of the ratio of the determinants $det(D_{old}(\mathbf{R})) / det(D_{new}(\mathbf{R}))$. Insted of recalculate the whole determinant for each step, the algorithm can be optimized using Sherman-Morrison formula, reducing the computational cost of evaluating the ratio of the determinants with a factor of $N$ of the move is accepted.  
 
-## Onebody density
+## One-body density
 <!-- Write some more here? Find a reference at least - Anna -->
-The one body density is a usefull entety in quantum mechanics, helping visualizing and optimizing the wavefunction as well as calculate exitation energies. It describes the probability of finding any of the $N$ electrons in the volume $d \mathbf{r}_1$. The density is defined as [@ref:Hogberget2013]
+The one-body density is a usefull entety in quantum mechanics, helping visualizing and optimizing the wavefunction as well as calculate exitation energies. It describes the probability of finding any of the $N$ electrons in the volume $d \mathbf{r}_1$. The density is defined as [@ref:Hogberget2013]
 
 $$\rho(\mathbf{r_1}) = \int_{\mathbf{r}_2} \int_{\mathbf{r}_3} \cdots \int_{\mathbf{r}_N}|\psi(\mathbf{r_1, ... , r}_N)|^2 d\mathbf{r_2}...d\mathbf{r}_N $$
 {#eq:one-body-density}
@@ -112,11 +112,11 @@ By the Pauli principle, no electrons can occupy the same state, making the integ
 ## The Virial Theorem
 
 <!-- For comparison later, see exercise f-->
-The Viral theorem relates the avarage time $\langle T \rangle$ for the total kinetic and potential energy in a system of $N$ particles by the following equation
+The Viral theorem relates the avarage time $\langle T \rangle$ for the total kinetic and potential energy in a system of $N$ particles (or planets) by the following equation
 
 $$ \langle T \rangle  = - \frac{1}{2} \sum_{k=1}^N \langle \mathbf{F_k \cdot r_k} \rangle $$,
 
-where $\mathbf{F_k}$ and $\mathbf{r_k}$ is the is the force on and position of particle $k$ respectivly. The theorem allows for calculations of the avrage total kinetiv energy of complex systems, independent of temperature. 
+where $\mathbf{F_k}$ and $\mathbf{r_k}$ is the is the force on and position of particle $k$ respectivly. The theorem allows for calculations of the avrage total kinetic energy of complex systems, independent of temperature. 
 
 The more relevant quentum mechanical version of the theorem, the potential around the confined particles are concidered istead of the force, hence,
 
