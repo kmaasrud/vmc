@@ -24,6 +24,8 @@ pub fn simple() {
     const NUMERICAL_LAPLACE: bool = true;
 
     fn simulate<T: Metropolis>(numerical_laplace: bool, interacting: bool) {
+        let metro_type = std::any::type_name::<T>().split("::").last().unwrap();
+        println!("Running run::simple() with {}, Numerical laplace: {:?}, Interacting: {:?}", &metro_type, &numerical_laplace, &interacting);
         let mut metro: T = T::new(STEP_SIZE);
 
         let mut path = find_cargo_root().unwrap();
@@ -31,7 +33,6 @@ pub fn simple() {
         path.push("N2");
         create_dir(&path);
 
-        let metro_type = std::any::type_name::<T>().split("::").last().unwrap();
         let interact_str = if interacting { "interacting" } else { "non-interacting" };
         let numerical_str = if numerical_laplace { "numerical" } else { "analytical" };
         path.push(format!("{}_{}_{}.csv", metro_type, interact_str, numerical_str));
@@ -71,7 +72,7 @@ pub fn simple() {
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.join_all();  */
-    simulate::<BruteForceMetropolis>(false, false);
+    simulate::<ImportanceMetropolis>(false, false);
     println!("Total time spent: {:?}", start.elapsed());
 }
 
@@ -89,6 +90,8 @@ pub fn sgd(interacting: bool) {
     const TOLERANCE: f64 = 0.00001;
 
     fn simulate<T: Metropolis>(start_alpha:f64, start_beta:f64, learning_rate: f64, numerical_laplace: bool, interacting: bool) {
+        let metro_type = std::any::type_name::<T>().split("::").last().unwrap();
+        println!("Running run::simple() with {}, Numerical laplace: {:?}, Interacting: {:?}", &metro_type, &numerical_laplace, &interacting);
         let mut alphas:Vec<f64> = vec![];
         alphas.push(start_alpha);
 
