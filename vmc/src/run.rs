@@ -91,7 +91,7 @@ pub fn sgd(interacting: bool) {
 
     fn simulate<T: Metropolis>(start_alpha:f64, start_beta:f64, learning_rate: f64, numerical_laplace: bool, interacting: bool) {
         let metro_type = std::any::type_name::<T>().split("::").last().unwrap();
-        println!("Running run::simple() with {}, Numerical laplace: {:?}, Interacting: {:?}", &metro_type, &numerical_laplace, &interacting);
+        println!("Running run::sgd() with {}, Numerical laplace: {:?}, Interacting: {:?}, Start Alpha: {}, Start Beta: {}, Learning Rate: {}", &metro_type, &numerical_laplace, &interacting, &start_alpha, &start_beta, &learning_rate);
         let mut alphas:Vec<f64> = vec![];
         alphas.push(start_alpha);
 
