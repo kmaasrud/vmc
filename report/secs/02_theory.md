@@ -120,8 +120,10 @@ where $\mathbf{F_k}$ and $\mathbf{r_k}$ is the is the force on and position of p
 
 The more relevant quentum mechanical version of the theorem, the potential around the confined particles are concidered istead of the force, hence,
 
-$$ 2 \langle T \rangle = - \frac{1}{2} \sum_n \langle X_n \frac{dV}{dX_n} \rangle$$
+$$ 2 \langle T \rangle = - \frac{1}{2} \sum_n \langle X_n \frac{dV}{dX_n} \rangle$$. 
 
-where $V$ is the potential. For a Harmonic oscilator $V = \frac{1}{2} k x^2$. 
+For a simple Harmonic oscillator, the potential, $V$, is
+
+$$V = \frac{1}{2} k x^2$$. 
 
 <!-- source: https://en.wikipedia.org/wiki/Virial_theorem -->
