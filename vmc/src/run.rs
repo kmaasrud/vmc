@@ -17,9 +17,9 @@ pub fn simple() {
     const OMEGA: f64 = 1.0;
     const BETA: f64 =  0.0;
     const STEP_SIZE: f64 = 0.01;
-    const MC_CYCLES: usize = 1_000;
+    const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
-    const N: usize = 4;
+    const N: usize = 2;
     const SPREAD: f64 = 0.1;
 
     fn simulate<T: Metropolis>(numerical_laplace: bool, interacting: bool) {
@@ -71,7 +71,7 @@ pub fn simple() {
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.join_all();  */
-    simulate::<ImportanceMetropolis>(true, false);
+    simulate::<BruteForceMetropolis>(false, false);
     println!("Total time spent: {:?}", start.elapsed());
 }
 
