@@ -7,12 +7,12 @@ To validate our algorithm a simulation of the simplest case with two electrons w
 A performance analysis, taking the average time over 10 runs, of the analytical expression for the local energy, numerical derivation of the kinetic energy and the analytical local energy with importance sampling is shown in table[@tbl:results-performance-calc-methods] below.
 
 
-| Sampling method                   | Avarage time [s]     | $\langle E \rangle$|$\langle E_{kinetic} \rangle$  |$\sigma^2$ |$\sigma_{\text{blocking}}$ |
-| ----:                             | ---                  |---                 |---                            |---        |---                        |
-| Analytical w/ Metropolis          | $time$               |                    |                               |           |                           |
-| Analytical w/ Importance Sampling | $time$               |                    |                               |           |                           |
-| Numerical w/ Metropolis           | $time$               |                    |                               |           |                           |
-| Numerical w/ Importance Sampling | $time$               |                    |                               |           |                           |
+| Sampling method                   | Avarage time [s]|$\langle E \rangle$|$\langle E_{kinetic}\rangle$|$\sigma^2$|$\sigma_{\text{blocking}}$|
+| ----:                             | ---             |---                |---                          |---       |---                      |
+| Analytical w/ Metropolis          | 5.25            | 2.000             |1.03                         | 0.0000   | 0.0000                  |
+| Analytical w/ Importance Sampling | 6.13            | 2.000             |1.04                         | 0.0000   | 0.0000                  |
+| Numerical w/ Metropolis           | 5.82            | 1.9999            | 0.99                        | 0.0000   | 0.0000                  |
+| Numerical w/ Importance Sampling  | 6.3             | 1.9999            | 1.02                        | 0.0000   | 0.0000                  |
 Table: Results from computations of the expectation value of the energy using both Importance Sampling and the Metropolis algorithm for both the analytical expression for the local energy(see equation @eq:analytical) and numerical derivation of the kinetic energy. To compare the performance of the different configurations, the algorithms are timed over 10 runs and averaged.   {#tbl:results-performance-calc-methods} 
 
 The **blocking analysis** shows that the optimal standard deviation is $FILL$.
