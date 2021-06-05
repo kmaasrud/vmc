@@ -13,8 +13,8 @@ if not os.path.isdir(save_folder):
 N = 10
 true_val = 15
 
-bruteforce = read_csv(os.path.join(data_folder, "E_vs_MCs_bf.csv"))
-importance = read_csv(os.path.join(data_folder, "E_vs_MCs_im.csv"))
+bruteforce = read_csv(os.path.join(data_folder, "E_vs_MCs_BruteForceMetropolis.csv"))
+importance = read_csv(os.path.join(data_folder, "E_vs_MCs_ImportanceMetropolis.csv"))
 x = [100, 1000, 3000, 5000, 7000, 10000]
 #bruteforce_std = [np.sqrt(block(np.array(vals))[1]) for vals in [bruteforce["energy[au]"][1:up_to] for up_to in x]]
 #importance_std = [np.sqrt(block(np.array(vals))[1]) for vals in [importance["energy[au]"][1:up_to] for up_to in x]]
