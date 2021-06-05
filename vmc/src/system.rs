@@ -91,7 +91,7 @@ impl<const N: usize> System<N> {
         let mut gradient_prod = 0.;
 
         if self.num_laplace {
-            return Ok(self.wf.laplace_numerical::<N>(&self.particles)?);
+            return Ok(self.wf.laplace_numerical::<N>(&self.particles)? / self.wf.evaluate::<N>(&self.particles)?);
         }
 
         for i in 0..n {
