@@ -36,8 +36,8 @@ pub fn simple() {
         let interact_str = if interacting { "interacting" } else { "non-interacting" };
         let numerical_str = if numerical_laplace { "numerical" } else { "analytical" };
         path.push(format!("{}_{}_{}.csv", metro_type, interact_str, numerical_str));
-        // let mut f = create_file(&path);
-        // f.write_all("energy[au],time[s],variance\n".as_bytes()).expect("Unable to write data");
+        let mut f = create_file(&path);
+        f.write_all("energy[au],time[s],variance,acceptance_rate\n".as_bytes()).expect("Unable to write data");
 
         // Run 10 times
         for _ in 0..10 {
@@ -59,24 +59,23 @@ pub fn simple() {
                 None => 0.,
             };
 
-            let data = format!("{},{},{},{}\n", energy, start.elapsed().as_millis() as f64 / 1000., kinetic, energy_sqrd - energy.powi(2));
-            println!("{}", data);
-            // f.write_all(data.as_bytes()).expect("Unable to write data");
+            let acceptance_rate = (vals.accepted_steps as f64) / (MC_CYCLES as f64);
+            let data = format!("{},{},{},{},{}\n", energy, start.elapsed().as_millis() as f64 / 1000., kinetic, energy_sqrd - energy.powi(2), acceptance_rate);
+            f.write_all(data.as_bytes()).expect("Unable to write data");
         }
     }
 
     let start = Instant::now();
-    /* let pool = ThreadPool::new(8);
-    pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
-    pool.execute(move || simulate::<ImportanceMetropolis>(true, true));
+    let pool = ThreadPool::new(8);
+    pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
+    pool.execute(move || simulate::<ImportanceMetropolis>(false, true));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(true, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(true, true));
-    pool.join_all();   */
-    simulate::<ImportanceMetropolis>(true, false);
+    pool.join_all();  
     println!("Total time spent: {:?}", start.elapsed());
 }
 

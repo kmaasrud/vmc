@@ -7,12 +7,14 @@ use std::time::Instant;
 #[derive(Clone, Debug)]
 pub struct SampledValues {
     pub map: HashMap<String, f64>,
+    pub accepted_steps: usize,
 }
 
 impl SampledValues {
     pub fn new() -> Self {
         SampledValues {
             map: HashMap::new(),
+            accepted_steps: 0,
         }
     }
 
@@ -65,6 +67,7 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
         match metro.step(sys)? {
             Some(dvals) => {
                 result.add_to_sum(&dvals);
+                result.accepted_steps += 1;
                 prev_dvals = dvals;
                 
                 //Writing to file
