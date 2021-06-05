@@ -31,6 +31,7 @@ pub struct WaveFunction {
     pub alpha: f64,
     pub beta: f64,
     pub omega: f64,
+    pub jastrow_on: bool,
 }
 
 impl WaveFunction {
@@ -45,7 +46,7 @@ impl WaveFunction {
             2 => {
                 let r1: f64 = particles[0].squared_sum();
                 let r2: f64 = particles[1].squared_sum();
-                let jastrow = self.evaluate_jastrow(particles);
+                let jastrow = if self.jastrow_on { self.evaluate_jastrow(particles) } else { 0. };
 
                 Ok(c * (-0.5 * self.alpha * self.omega * (r1 + r2) + jastrow).exp())
             },
@@ -53,7 +54,7 @@ impl WaveFunction {
             _ => {
                 let slater_matrix: SMatrix<f64, N, N> = self.slater_matrix(particles)?;
                 let slater_det = det(Some(&slater_matrix), None).unwrap();
-                let jastrow = self.evaluate_jastrow(particles);
+                let jastrow = if self.jastrow_on { self.evaluate_jastrow(particles) } else { 0. };
                 Ok(slater_det * jastrow.exp())
             },
         }

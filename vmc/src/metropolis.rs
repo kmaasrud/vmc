@@ -68,7 +68,7 @@ impl Metropolis for BruteForceMetropolis {
             }
             _ => {
                 new_inverse = sys.next_slater_inverse(&new_particles, p)?;
-                if sys.wf.beta == 0. {
+                if sys.wf.jastrow_on {
                     sys.next_slater_ratio(p, &new_inverse)
                 } else {
                     sys.next_slater_ratio(p, &new_inverse) * sys.next_jastrow_ratio(p, &new_particles)
@@ -114,7 +114,7 @@ impl Metropolis for ImportanceMetropolis {
             }
             _ => {
                 new_inverse = sys.next_slater_inverse(&new_particles, p)?;
-                greens_factor * if sys.wf.beta == 0. {
+                greens_factor * if !sys.wf.jastrow_on {
                     sys.next_slater_ratio(p, &new_inverse)
                 } else {
                     sys.next_slater_ratio(p, &new_inverse) * sys.next_jastrow_ratio(p, &new_particles)

@@ -15,7 +15,8 @@ use std::{
 pub fn simple() {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
-    const BETA: f64 =  1.0;
+    const BETA: f64 =  0.0;
+    const JASTROW: bool = true;
     const STEP_SIZE: f64 = 0.5;
     const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
@@ -41,7 +42,7 @@ pub fn simple() {
         // Run 10 times
         for _ in 0..10 {
             let start = Instant::now();
-            let wf = WaveFunction { alpha: ALPHA, beta: BETA, omega: OMEGA }; // Set beta = gamma
+            let wf = WaveFunction { alpha: ALPHA, beta: BETA, omega: OMEGA, jastrow_on: JASTROW }; // Set beta = gamma
             let mut system: System<N> = System::new(N, DIM, wf, interacting, numerical_laplace, SPREAD).unwrap();
             let vals = montecarlo::monte_carlo(MC_CYCLES, &mut system, &mut metro).unwrap();
 
@@ -54,14 +55,14 @@ pub fn simple() {
                 None => 0.,
             };
 
-            let data = format!("{},{},{}\n", energy / N as f64, start.elapsed().as_millis() as f64 / 1000., energy_sqrd - energy.powi(2));
+            let data = format!("{},{},{}\n", energy, start.elapsed().as_millis() as f64 / 1000., energy_sqrd - energy.powi(2));
             println!("{}", data);
             // f.write_all(data.as_bytes()).expect("Unable to write data");
         }
     }
 
     let start = Instant::now();
-    let pool = ThreadPool::new(8);
+    /* let pool = ThreadPool::new(8);
     pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(false, true));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, false));
@@ -70,7 +71,8 @@ pub fn simple() {
     pool.execute(move || simulate::<ImportanceMetropolis>(false, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(true, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(true, true));
-    pool.join_all(); 
+    pool.join_all();  */
+    simulate::<BruteForceMetropolis>(true, true);
     println!("Total time spent: {:?}", start.elapsed());
 }
 
@@ -79,6 +81,7 @@ pub fn sgd(interacting: bool) {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
     const BETA: f64 = 0.;
+    const JASTROW: bool = false;
     const STEP_SIZE: f64 = 0.01;
     const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
@@ -110,7 +113,7 @@ pub fn sgd(interacting: bool) {
         let mut i:usize = 0;
         while !done {
             let start = Instant::now();
-            let wf = WaveFunction { alpha: alphas[i], beta: start_beta, omega: OMEGA }; // Set beta = gamma
+            let wf = WaveFunction { alpha: alphas[i], beta: start_beta, omega: OMEGA, jastrow_on: JASTROW }; // Set beta = gamma
             let mut system: System<N> = System::new(N, DIM, wf, interacting, numerical_laplace, SPREAD).unwrap();
             let vals = montecarlo::monte_carlo(MC_CYCLES, &mut system, &mut metro).unwrap();
 
