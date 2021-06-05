@@ -14,7 +14,7 @@ const N: usize = 2;
 const SPREAD: f64 = 0.1;
 ```
 
-Total time spent: `65.874985369s`
+Total time spent: `63.053085092s`
 
 
 **Parameters with Jastrow**:

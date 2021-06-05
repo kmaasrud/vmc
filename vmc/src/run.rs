@@ -68,7 +68,7 @@ pub fn simple() {
     let start = Instant::now();
     let pool = ThreadPool::new(8);
     pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
-    pool.execute(move || simulate::<ImportanceMetropolis>(false, true));
+    pool.execute(move || simulate::<BruteForceMetropolis>(false, true));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
