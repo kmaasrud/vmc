@@ -40,7 +40,7 @@ mean_distance_5 = df5["distance"].mean()
 mean_distance_6 = df6["distance"].mean()
 mean_distance_7 = df7["distance"].mean()
 mean_distance_8 = df8["distance"].mean()
-
+"""
 
  #kinetic energy:
 kinetic1 = df1["kinetic"].mean()
@@ -53,6 +53,7 @@ kinetic6 = df6["kinetic"].mean()
 kinetic7 = df7["kinetic"].mean()
 kinetic8 = df8["kinetic"].mean()
 
+"""
 #potential energy: 
 potential1 = df1["potential"].mean()
 potential2 = df2["potential"].mean()
@@ -131,15 +132,11 @@ std8 = np.sqrt(var8)
 
 
 
-print('                                 t_avg [s]:  Energy[a.u]:     Var:   block:   distance: ')
-print('BFM_interacting_ana:           {:.4f}        {:.3f}   {:.5f}   {:.6f}    {:.6f} '.format(mean_t_1, mean_e1 ,variance1, var1 ))
-print('BFM_interacting_num:           {:.4f}        {:.3f}   {:.5f}   {:.6f}    {:.6f}'.format(mean_t_2, mean_e2 ,variance2, var2 ))
-print('BFM_non-interacting_ana:       {:.4f}        {:.3f}   {:.5f}   {:.6f}    {:.6f}'.format(mean_t_3, mean_e3, variance3, var3 ))
-print('BFM_non-interacting_num:       {:.4f}        {:.3f}   {:.5f}   {:.6f}    {:.6f}'.format(mean_t_4, mean_e4, variance4, var4 ))
+print('                    t_avg[s]:  Energy[a.u]:   Var:  block:  kinetic: ')
+print('BFM_non-interacting_ana:  {:f}   {:f}   {:f}   {:f}   {:f} '.format(mean_t_3, mean_e3, variance3, var3, kinetic3 ))
+print('BFM_non-interacting_num:  {:f}   {:f}   {:f}   {:f}   {:f} '.format(mean_t_4, mean_e4, variance4, var4 ,kinetic4 ))
 print('')
-print('IS_interacting_ana:            {:.4f}        {:.3f}   {:.5f}   {:.6f}    {:.6f}'.format(mean_t_5, mean_e5 ,variance5, var5 ))
-print('IS_interacting_num:            {:.4f}        {:.3f}   {:.5f}   {:.6f}    {:.6f}'.format(mean_t_6, mean_e6 ,variance6, var6 ))
-print('IS_non-interacting_ana:        {:.4f}        {:.3f}   {:.5f}   {:.6f}    {:.6f}'.format(mean_t_7, mean_e7, variance7, var7 ))
-print('IS_non-interacting_num:        {:.4f}        {:.3f}   {:.5f}   {:.6f}    {:.6f}'.format(mean_t_8, mean_e8, variance8, var8 ))
+print('IS_non-interacting_ana:   {:f}   {:f}   {:f}   {:f}   {:f}'.format(mean_t_7, mean_e7, variance7, var7, kinetic7 ))
+print('IS_non-interacting_num:   {:f}   {:f}   {:f}   {:f}   {:f}'.format(mean_t_8, mean_e8, variance8, var8, kinetic8 ))
 
 
