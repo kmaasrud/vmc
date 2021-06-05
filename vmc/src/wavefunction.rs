@@ -297,6 +297,8 @@ impl WaveFunction {
             let r21 = r2 - r1;
             let distance = particles[0].distance_to(&particles[1])?;
 
+            if distance == 0. { return Ok(Vector::D2(0., 0.)) }
+
             let factor1 = -2. * self.alpha * self.omega;
             let factor2 = 2. * a / (distance * (1. + self.beta * distance));
 

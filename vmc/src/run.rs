@@ -15,7 +15,7 @@ use std::{
 pub fn simple() {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
-    const BETA: f64 =  0.0;
+    const BETA: f64 =  1.0;
     const STEP_SIZE: f64 = 0.01;
     const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
@@ -71,7 +71,7 @@ pub fn simple() {
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.join_all();  */
-    simulate::<BruteForceMetropolis>(true, false);
+    simulate::<ImportanceMetropolis>(true, true);
     println!("Total time spent: {:?}", start.elapsed());
 }
 

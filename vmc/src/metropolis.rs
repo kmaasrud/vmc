@@ -162,7 +162,6 @@ mod tests {
             + (p0.position - pold.position).scale(2. / (r12 * (1. + r12).powf(2.)))
             + pold.position.scale(-2. * 0.5)
             + (pold.position - p0.position).scale(2. / (r12 * (1. + r12).powf(2.)));
-        println!("{:?}", qforce_vec);
         let relpos = pnew.position - pold.position;
         let poldscaled = pold.position.scale(diffusion_coeff * dt);
         let therest = (relpos - poldscaled)
