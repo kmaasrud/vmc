@@ -69,6 +69,7 @@ impl Hermite {
     pub fn derivative_alpha(n: usize, x: f64, omega: f64, alpha: f64) -> Result<f64, String> {
         let sqrt_omega_alpha: f64 = (omega * alpha).powf(0.5);
         Ok(match n {
+            0 => 0.,
             1 => x * (omega / alpha).sqrt(),
             2 => 4. * x * x * omega,
             3 => 12. * x * x * x * omega * sqrt_omega_alpha - 6.0 * (omega / alpha).sqrt(),

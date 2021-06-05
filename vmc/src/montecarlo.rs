@@ -38,16 +38,18 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
     let mut result = SampledValues::new();
 
     // Run a couple of steps to get the system into equilibrium
-    for _ in 0..pre_steps {
+    for i in 0..pre_steps {
         match metro.step(sys)? {
             Some(vals) => result = vals,
             None => {}
         }
+
+        println!("{}", i);
     }
 
     // Store the previous values to add if Metropolis step is rejected
     let mut prev_dvals = result.clone();
-    for _ in 0..n {
+    for i in 0..n {
         match metro.step(sys)? {
             Some(dvals) => {
                 result.add_to_sum(&dvals);
@@ -57,6 +59,7 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
                 result.add_to_sum(&prev_dvals);
             }
         }
+        println!("{}", i);
     }
 
     // Divide all values by n to get the mean

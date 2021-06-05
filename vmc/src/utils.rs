@@ -34,7 +34,7 @@ pub fn det<const N: usize>(mat: Option<&SMatrix<f64, N, N>>, vec: Option<&Vec<Ve
     }
 
     // Recursive determinant calculation
-    match N {
+    match vec_mat.len() {
         1 => Some(vec_mat[0][0]),
         _ => Some(vec_mat[0]
                 .iter()

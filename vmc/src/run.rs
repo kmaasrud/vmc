@@ -17,11 +17,10 @@ pub fn simple() {
     const OMEGA: f64 = 1.0;
     const BETA: f64 =  0.0;
     const STEP_SIZE: f64 = 0.01;
-    const MC_CYCLES: usize = 100_000;
+    const MC_CYCLES: usize = 1_000;
     const DIM: usize = 2;
-    const N: usize = 2;
+    const N: usize = 4;
     const SPREAD: f64 = 0.1;
-    const NUMERICAL_LAPLACE: bool = true;
 
     fn simulate<T: Metropolis>(numerical_laplace: bool, interacting: bool) {
         let metro_type = std::any::type_name::<T>().split("::").last().unwrap();
@@ -62,7 +61,7 @@ pub fn simple() {
     }
 
     let start = Instant::now();
-    let pool = ThreadPool::new(8);
+    // let pool = ThreadPool::new(8);
    /*  pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
@@ -72,7 +71,7 @@ pub fn simple() {
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.join_all();  */
-    simulate::<ImportanceMetropolis>(false, false);
+    simulate::<ImportanceMetropolis>(true, false);
     println!("Total time spent: {:?}", start.elapsed());
 }
 
