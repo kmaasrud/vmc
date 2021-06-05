@@ -1,4 +1,4 @@
-energy[au],time[s],variance,acceptance_rate
+energy[au],time[s],kinetic,variance,acceptance_rate
 2,6.187,0.9725060875061577,0,0.9767
 2,6.189,1.0600139810483082,0,0.97832
 2,6.214,1.0517832333392119,0,0.97799
