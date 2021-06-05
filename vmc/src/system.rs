@@ -90,13 +90,15 @@ impl<const N: usize> System<N> {
         let n = self.particles.len();
         let mut gradient_prod = 0.;
 
+        if self.num_laplace {
+            return Ok(self.wf.laplace_numerical::<N>(&self.particles)?);
+        }
+
         for i in 0..n {
             for j in 0..n {
                 let nx = crate::QUANTUM_NUMBERS[j].0;
                 let ny = crate::QUANTUM_NUMBERS[j].1;
-                result += if self.num_laplace {
-                    self.wf.laplace_numerical::<N>(&self.particles)?
-                } else if n == 2 {
+                result += if n == 2 {
                     let mut laplace_jastrow = 0.;
                     if self.wf.beta != 0. && j != i {
                         let distance = self.particles[i].distance_to(&self.particles[j])?;
@@ -123,7 +125,7 @@ impl<const N: usize> System<N> {
                     self.wf.laplace_spf(&self.particles[i], nx, ny)? * self.slater_inverse[(j, i)] + laplace_jastrow
                 };
             }
-            if !(n == 2 && self.num_laplace) {
+            if n != 2 {
                 gradient_prod += self.wf.gradient_slater(i, &self.particles, &self.slater_inverse)?
                                         .inner(self.wf.gradient_jastrow(i, &self.particles)?)?;
             }
