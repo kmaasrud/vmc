@@ -40,6 +40,7 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
     let mut result = SampledValues::new();
 
     //Save to file
+    /*
     let mut path = utils::find_cargo_root().unwrap();
     path.push("data");
     utils::create_dir(&path);
@@ -48,7 +49,7 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
     let mut f = utils::create_file(&path);
     f.write_all("MCcycle,energy[au],time[s]\n".as_bytes()).expect("Unable to write data");
     let start = Instant::now();
-
+    */
 
     // Run a couple of steps to get the system into equilibrium
     for i in 0..pre_steps {
@@ -68,8 +69,10 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
                 prev_dvals = dvals;
                 
                 //Writing to file
+                /*
                 let data = format!("{},{},{}\n",i, result.map.get("energy").unwrap() / (i as f64), start.elapsed().as_millis() as f64 / 1000.);
                 f.write_all(data.as_bytes()).expect("Unable to write data");
+                */
             }
             None => {
                 result.add_to_sum(&prev_dvals);
