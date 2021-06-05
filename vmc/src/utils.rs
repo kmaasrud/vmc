@@ -1,4 +1,11 @@
-use nalgebra::{SMatrix, DimSub};
+use nalgebra::{SMatrix, DimSub};    
+use std::{
+    env,
+    fs::{create_dir_all, File},
+    io::prelude::*,
+    path::{Path, PathBuf},
+    time::Instant,
+};
 
 #[derive(Debug)]
 pub enum Spin {
@@ -57,4 +64,36 @@ fn sub(mat: &Vec<Vec<f64>>, col: usize) -> Vec<Vec<f64>> {
     }
 
     sub
+}
+
+
+pub fn find_cargo_root() -> Option<PathBuf> {
+    let mut path: PathBuf = env::current_dir().unwrap().into();
+    let file = Path::new("Cargo.toml");
+
+    loop {
+        path.push(file);
+
+        if path.is_file() {
+            path.pop();
+            break Some(path);
+        }
+
+        if !(path.pop() && path.pop()) {
+            break None;
+        }
+    }
+}
+
+pub fn create_dir(path: &PathBuf) {
+    if Path::new(path).exists() == false {
+        create_dir_all(path).expect("Unable to create folder");
+    }
+}
+
+pub fn create_file(filepath: &PathBuf) -> File {
+    match File::create(filepath) {
+        Ok(f) => f,
+        Err(why) => panic!("Unable to create {:?}: {}", filepath, why),
+    }
 }
