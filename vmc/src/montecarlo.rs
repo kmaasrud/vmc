@@ -44,7 +44,7 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
             None => {}
         }
 
-        println!("{}", i);
+        //println!("{}", i);
     }
 
     // Store the previous values to add if Metropolis step is rejected
@@ -59,7 +59,7 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
                 result.add_to_sum(&prev_dvals);
             }
         }
-        println!("{}", i);
+        //println!("{}", i);
     }
 
     // Divide all values by n to get the mean
