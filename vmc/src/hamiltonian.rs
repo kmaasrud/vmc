@@ -15,7 +15,7 @@ impl Hamiltonian {
         let external_potential: f64 = particles.iter().map(|x| x.squared_sum()).sum();
 
         // Repulsive
-        let distance_sum = if interacting {
+        let repulsive = if interacting {
             let mut s = 0.;
             for (i, particle) in particles.iter().enumerate() {
                 for other in particles[i + 1..].iter() {
@@ -23,10 +23,10 @@ impl Hamiltonian {
                     s += particle.distance_to(other).unwrap();
                 }
             }
-            s
-        } else { 1. };
+            1. / s
+        } else { 0. };
 
-        0.5 * omega.powf(2.0) * external_potential + 1. / distance_sum
+        0.5 * omega.powf(2.0) * external_potential + repulsive
     }
 
     /// Calculates the energy of a system of `particles` described by `wf`.
