@@ -260,12 +260,12 @@ impl WaveFunction {
     }
 
     /// Returns the gradient of the wavefunction with regards to beta
-    pub fn gradient_beta(&self, particles: &Vec<Particle>) -> f64 {
+    pub fn gradient_beta(&self, particles: &Vec<Particle>) -> Result<f64, String> {
         match particles.len() {
             2 => {
                 // Can safely unwrap here, since the particles share dimensionality
                 let distance = particles[0].distance_to(&particles[1]).unwrap();
-                - 1. * distance.powi(2) / (1. + self.beta * distance).powi(2)
+                Ok(- 1. * distance.powi(2) / (1. + self.beta * distance).powi(2))
             },
             _ => {
                 let mut result = 0.;
@@ -278,7 +278,7 @@ impl WaveFunction {
                         result -= a(i, j, n) * distance.powi(2) / (1. + self.beta * distance).powi(2)
                     }
                 }
-                result
+                Ok(result - n as f64)
             }
         }
     }

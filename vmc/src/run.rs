@@ -116,7 +116,7 @@ pub fn sgd(interacting: bool) {
         let mut i:usize = 0;
         while !done {
             let start = Instant::now();
-            let wf = WaveFunction { alpha: alphas[i], beta: start_beta, omega: OMEGA, jastrow_on: JASTROW }; // Set beta = gamma
+            let wf = WaveFunction { alpha: alphas[i], beta: betas[i], omega: OMEGA, jastrow_on: JASTROW }; // Set beta = gamma
             let mut system: System<N> = System::new(N, DIM, wf, interacting, numerical_laplace, SPREAD).unwrap();
             let vals = montecarlo::monte_carlo(MC_CYCLES, &mut system, &mut metro).unwrap();
 
@@ -146,17 +146,17 @@ pub fn sgd(interacting: bool) {
             };
 
             let data = format!("{},{},{},{},{}\n",alphas[i], betas[i], energy / N as f64, start.elapsed().as_millis() as f64 / 1000., energy_sqrd - energy.powi(2));
-            println!("{}", data);
+            //println!("{}", data);
             f.write_all(data.as_bytes()).expect("Unable to write data");
             println!("a: {:.8} || b: {:.8} || E: {:.8} || Iter: {}", alphas[i], betas[i], energy / N as f64, i);
 
 
             let energy_deriv = 2.* (wf_deriv_alpha_times_energy-wf_deriv_alpha*energy);
-            let new_alpha: f64 = alphas[i] - learning_rate * energy_deriv;
+            let new_alpha: f64 = alphas[i];// - learning_rate * energy_deriv;
             alphas.push(new_alpha);
 
-            let energy_deriv_b = 2.* (wf_deriv_beta_times_energy-wf_deriv_beta*energy);
-            let new_beta: f64 = betas[i] - learning_rate * energy_deriv_b;
+            let energy_deriv_beta = 2.* (wf_deriv_beta_times_energy-wf_deriv_beta*energy);
+            let new_beta: f64 = betas[i] - learning_rate * energy_deriv_beta;
             betas.push(new_beta);
 
             if energy_deriv.abs() < TOLERANCE {
@@ -174,7 +174,7 @@ pub fn sgd(interacting: bool) {
         
     }
     let start = Instant::now();
-    simulate::<ImportanceMetropolis>(1.0 ,0.2 , 0.1, true, interacting);
+    simulate::<ImportanceMetropolis>(1.0 ,100. , 0.01, true, interacting);
 
     /*
     // Multithreading
@@ -182,9 +182,9 @@ pub fn sgd(interacting: bool) {
     let start_alphas:Vec<f64> = vec![0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8];
     let start_betas: Vec<f64> = vec![0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8];
     let learning_rates:Vec<f64> = vec![0.00005, 0.0001, 0.0002, 0.0004, 0.0008, 0.0016, 0.0032, 0.0064];
-    let start_alpha: f64 = 0.2;
+    let start_alpha: f64 = 0.0;
     let start_beta: f64 = 0.0;
-    let learning_rate: f64 = 0.0004;
+    let learning_rate: f64 = 0.01; //0.0004 was the chosen one for project 1
 
     println!("Spawning threadpool of 8 threads, with {} Monte Carlo cycles on each", &MC_CYCLES);
     
@@ -195,16 +195,16 @@ pub fn sgd(interacting: bool) {
         let pool = ThreadPool::new(8);
         let start = Instant::now();
 
-        for start_beta in start_betas {
-            pool.execute(move || simulate(start_alpha, start_beta, learning_rate, false, interacting)); //Running the simulation on each thread individually
+        for start_beta in start_betas.clone() {
+            pool.execute(move || simulate::<ImportanceMetropolis>(start_alpha, start_beta, learning_rate, true, interacting)); //Running the simulation on each thread individually
         }
-        println!("All threads now executing with different betas and alpha = {.3}, waiting for them to finish...", &start_alpha);
+        println!("All threads now executing with different betas and alpha = {} , waiting for them to finish...", &start_alpha);
         pool.join_all();
-        println!("Time spent on all betas for alpha = {.4}: {:?}", &start_alpha, start.elapsed());
+        println!("Time spent on all betas for alpha = {}: {:?}", &start_alpha, start.elapsed());
     }
-    
     */
-    println!("Time spent: {:?}", start.elapsed());
+    
+    println!("Total time spent: {:?}", start.elapsed());
 }
 
 

@@ -25,7 +25,7 @@ pub trait Metropolis {
     fn sample<const N: usize>(sys: &mut System<N>) -> Result<SampledValues, String> {
         let (energy, kinetic) = Hamiltonian::energy(&sys)?;
         let wf_deriv_alpha = sys.wf.gradient_alpha(&sys.particles)?;
-        let wf_deriv_beta = sys.wf.gradient_beta(&sys.particles);
+        let wf_deriv_beta = sys.wf.gradient_beta(&sys.particles)?;
 
         let mut map = HashMap::new();
         map.insert("energy".to_string(), energy);

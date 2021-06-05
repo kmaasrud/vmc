@@ -72,16 +72,9 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
                 prev_dvals = dvals;
                 
                 //Writing to file
-<<<<<<< HEAD
-                /*
-                let data = format!("{},{},{}\n",i, result.map.get("energy").unwrap() / (i as f64), start.elapsed().as_millis() as f64 / 1000.);
-                f.write_all(data.as_bytes()).expect("Unable to write data");
-                */
-=======
                 /* let data = format!("{},{},{}\n",i, result.map.get("energy").unwrap() / (i as f64), start.elapsed().as_millis() as f64 / 1000.);
                 f.write_all(data.as_bytes()).expect("Unable to write data"); */
->>>>>>> c50a468fa3bb4e4233ea55254e0641995e849cf3
-            }
+            },
             None => {
                 result.add_to_sum(&prev_dvals);
             }
