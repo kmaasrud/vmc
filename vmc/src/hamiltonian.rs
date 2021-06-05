@@ -6,7 +6,7 @@ pub struct Hamiltonian;
 impl Hamiltonian {
     // --- Kinetic energy ---
     fn kinetic<const N: usize>(sys: &System<N>) -> Result<f64, String> {
-        Ok(-0.5 * sys.laplace()? / sys.wf.evaluate::<N>(&sys.particles)?)
+        Ok(-0.5 * sys.laplace()?)
     }
 
     // --- Potential energy ---
