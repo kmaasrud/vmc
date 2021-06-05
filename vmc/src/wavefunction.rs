@@ -41,39 +41,34 @@ impl WaveFunction {
         let c: f64 = 1.0; //normalization constant - dont know value
 
         match particles.len() {
-            // In the case of two particles, evaluating the wavefunction is a bit simpler.
+            // In the case of two particles, evaluating the wavefunction is straight forward.
             2 => {
-                let mut exp_sum = 0.;
-                for (i, particle) in particles.iter().enumerate() {
-                    for (j, other) in particles[i + 1..].iter().enumerate() {
-                        let fermion_distance: f64 = particle.distance_to(other)?;
-                        exp_sum += a(i, j, 2) * fermion_distance / (1. + self.beta * fermion_distance);
-                    }
-                }
-
                 let r1: f64 = particles[0].squared_sum();
                 let r2: f64 = particles[1].squared_sum();
+                let jastrow = self.evaluate_jastrow(particles);
 
-                let result: f64 = c * (-0.5 * self.alpha * self.omega * (r1 + r2) + exp_sum).exp();
-
-                Ok(result)
-            }
+                Ok(c * (-0.5 * self.alpha * self.omega * (r1 + r2) + jastrow).exp())
+            },
             // This is the general evaluation, using Slater determinants
-            n => {
-                // TODO: Of course creating the determinant has to be a hassle... Looking at this tomorrow
+            _ => {
                 let slater_matrix: SMatrix<f64, N, N> = self.slater_matrix(particles)?;
                 let slater_det = det(Some(&slater_matrix), None).unwrap();
-                // let slater_det = 1.;
-                let mut jastrow = 1.;
-                for (i, particle) in particles.iter().enumerate() {
-                    for (j, other) in particles[i + 1..].iter().enumerate() {
-                        let distance = particle.distance_to(&other).unwrap();
-                        jastrow += a(i, j, n) * distance / (1. + self.beta * distance)
-                    }
-                }
+                let jastrow = self.evaluate_jastrow(particles);
                 Ok(slater_det * jastrow.exp())
             },
         }
+    }
+
+    fn evaluate_jastrow(&self, particles: &Vec<Particle>) -> f64 {
+        let mut jastrow = 1.;
+        let n = particles.len();
+        for (i, particle) in particles.iter().enumerate() {
+            for (j, other) in particles[i + 1..].iter().enumerate() {
+                let distance = particle.distance_to(&other).unwrap();
+                jastrow += a(i, j, n) * distance / (1. + self.beta * distance)
+            }
+        }
+        jastrow
     }
 
     pub fn slater_matrix<const N: usize>(&self, particles: &Vec<Particle>) -> Result<SMatrix<f64, N, N>, String> {
