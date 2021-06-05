@@ -13,7 +13,7 @@ use std::{
 
 #[allow(dead_code)]
 pub fn simple() {
-    const ALPHA: f64 = 2.0;
+    const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
     const BETA: f64 =  0.0;
     const STEP_SIZE: f64 = 0.01;
