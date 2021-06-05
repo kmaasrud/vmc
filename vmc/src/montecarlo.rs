@@ -43,9 +43,10 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
     let mut path = utils::find_cargo_root().unwrap();
     path.push("data");
     utils::create_dir(&path);
-    path.push("E_vs_MCs.csv");
+    let metro_type = std::any::type_name::<T>().split("::").last().unwrap();
+    path.push(format!("E_vs_MCs_{}.csv", metro_type));
     let mut f = utils::create_file(&path);
-    f.write_all("MCcycle,energy[au],time[s],variance\n".as_bytes()).expect("Unable to write data");
+    f.write_all("MCcycle,energy[au],time[s]\n".as_bytes()).expect("Unable to write data");
     let start = Instant::now();
 
 
