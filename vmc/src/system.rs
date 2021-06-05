@@ -53,13 +53,12 @@ impl<const N: usize> System<N> {
                 particles[i].position = new_particle.position.scale(spread);
             }
 
-            let slater_matrix: SMatrix<f64, N, N> = wf.slater_matrix(&particles)?;
-
             // Slater matrix is not invertible when N = 2, so set it to a 0-matrix in that case.
             if N == 2 {
                 slater_inverse = SMatrix::<f64, N, N>::repeat(0.);
                 break;
             } else {
+                let slater_matrix: SMatrix<f64, N, N> = wf.slater_matrix(&particles)?;
                 match slater_matrix.try_inverse() {
                     Some(inv) => {
                         slater_inverse = inv;
