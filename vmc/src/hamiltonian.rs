@@ -6,7 +6,7 @@ pub struct Hamiltonian;
 impl Hamiltonian {
     // --- Kinetic energy ---
     fn kinetic<const N: usize>(sys: &System<N>) -> Result<f64, String> {
-        Ok(-0.5 * sys.laplace()?)
+        Ok(-0.5 * sys.laplace()? / sys.wf.evaluate::<N>(&sys.particles)?)
     }
 
     // --- Potential energy ---
@@ -31,18 +31,20 @@ impl Hamiltonian {
 
     /// Calculates the energy of a system of `particles` described by `wf`.
     /// If `non_interacting` is `true`, will calculate the non-interacting energy (unused for now).
-    pub fn energy<const N: usize>(sys: &System<N>) -> Result<f64, String> {
-        if N == 200 {
+    pub fn energy<const N: usize>(sys: &System<N>) -> Result<(f64, f64), String> {
+        if N == 200 && !sys.num_laplace {
             let a = 1.; // Hard-coding value of a
             let distance = sys.particles[0].distance_to(&sys.particles[1])?;
-            Ok(2. * sys.wf.alpha * sys.wf.omega + 0.5
+            let energy = 2. * sys.wf.alpha * sys.wf.omega + 0.5
                   + sys.wf.omega.powi(2) * (1. - sys.wf.alpha.powi(2)) * (sys.particles[0].squared_sum() + sys.particles[1].squared_sum())
                   - a / (1. + sys.wf.beta * distance).powi(2) * (- sys.wf.alpha * sys.wf.omega * distance
                                                                  + a / (1. + sys.wf.beta * distance).powi(2)
                                                                  + (1. - sys.wf.beta * distance) / (distance * (1. + sys.wf.beta * distance)))
-                  + 1. / distance)
+                  + 1. / distance;
+            Ok((energy, 1.))
         } else {
-            Ok(Self::kinetic(sys)? + Self::potential(sys))
+            let kinetic = Self::kinetic(sys)?;
+            Ok((kinetic + Self::potential(sys), kinetic))
         }
     }
 }

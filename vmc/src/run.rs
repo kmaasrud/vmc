@@ -54,8 +54,12 @@ pub fn simple() {
                 Some(val) => *val,
                 None => 0.,
             };
+            let kinetic = match vals.map.get("kinetic") {
+                Some(val) => *val,
+                None => 0.,
+            };
 
-            let data = format!("{},{},{}\n", energy, start.elapsed().as_millis() as f64 / 1000., energy_sqrd - energy.powi(2));
+            let data = format!("{},{},{},{}\n", energy, start.elapsed().as_millis() as f64 / 1000., kinetic, energy_sqrd - energy.powi(2));
             println!("{}", data);
             // f.write_all(data.as_bytes()).expect("Unable to write data");
         }
