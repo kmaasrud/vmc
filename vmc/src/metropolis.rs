@@ -35,7 +35,7 @@ pub trait Metropolis {
         map.insert("wf_deriv_alpha_times_energy".to_string(), wf_deriv_alpha * energy);
         map.insert("wf_deriv_beta".to_string(), wf_deriv_beta);
         map.insert("wf_deriv_beta_times_energy".to_string(), wf_deriv_beta * energy);
-        Ok(SampledValues { map })
+        Ok(SampledValues { map, accepted_steps: 0 })
     }
 
     fn greens(x: &Particle, y: &Particle) -> Result<f64, String> {

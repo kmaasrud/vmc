@@ -1,4 +1,4 @@
-use crate::{Particle, System};
+use crate::System;
 
 #[derive(Clone)]
 pub struct Hamiltonian;
@@ -32,7 +32,13 @@ impl Hamiltonian {
     /// Calculates the energy of a system of `particles` described by `wf`.
     /// If `non_interacting` is `true`, will calculate the non-interacting energy (unused for now).
     pub fn energy<const N: usize>(sys: &System<N>) -> Result<(f64, f64), String> {
-        if N == 200 && !sys.num_laplace {
+        if N == 200 && !sys.num_laplace && !sys.wf.jastrow_on {
+            let distance = sys.particles[0].distance_to(&sys.particles[1])?;
+            let r1 = sys.particles[0].squared_sum();
+            let r2 = sys.particles[1].squared_sum();
+            Ok((2. * sys.wf.alpha * sys.wf.omega + 1. / distance
+               + 0.5 * sys.wf.omega.powi(2) * (1. - sys.wf.alpha.powi(2)) * (r1 + r2), 1.))
+        } else if N == 200 && !sys.num_laplace {
             let a = 1.; // Hard-coding value of a
             let distance = sys.particles[0].distance_to(&sys.particles[1])?;
             let energy = 2. * sys.wf.alpha * sys.wf.omega + 0.5

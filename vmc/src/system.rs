@@ -94,6 +94,14 @@ impl<const N: usize> System<N> {
             return Ok(self.wf.laplace_numerical::<N>(&self.particles)? / self.wf.evaluate::<N>(&self.particles)?);
         }
 
+        if n == 2 && !self.wf.jastrow_on {
+            let r1 = self.particles[0].squared_sum();
+            let r2 = self.particles[1].squared_sum();
+            let alpha_omega = self.wf.alpha * self.wf.omega;
+            let laplace = alpha_omega.powi(2) * (r1 + r2) - 4. * alpha_omega;
+            return Ok(laplace);
+        }
+
         for i in 0..n {
             for j in 0..n {
                 let nx = crate::QUANTUM_NUMBERS[j].0;
@@ -127,10 +135,8 @@ impl<const N: usize> System<N> {
                     // self.wf.laplace_spf(&self.particles[i], nx, ny)? * self.slater_inverse[(j, i)] + laplace_jastrow
                 };
             }
-            if n != 2 {
-                gradient_prod += self.wf.gradient_slater(i, &self.particles, &self.slater_inverse)?
-                                        .inner(self.wf.gradient_jastrow(i, &self.particles)?)?;
-            }
+            gradient_prod += self.wf.gradient_slater(i, &self.particles, &self.slater_inverse)?
+                                    .inner(self.wf.gradient_jastrow(i, &self.particles)?)?;
         }
 
         Ok(result + 2. * gradient_prod)

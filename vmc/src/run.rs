@@ -15,10 +15,10 @@ use std::{
 pub fn simple() {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
-    const BETA: f64 =  1.0;
+    const BETA: f64 =  0.0;
     const JASTROW: bool = false;
     const STEP_SIZE: f64 = 0.1;
-    const MC_CYCLES: usize = 1_000_000;
+    const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
     const N: usize = 2;
     const SPREAD: f64 = 0.1;
@@ -36,11 +36,11 @@ pub fn simple() {
         let interact_str = if interacting { "interacting" } else { "non-interacting" };
         let numerical_str = if numerical_laplace { "numerical" } else { "analytical" };
         path.push(format!("{}_{}_{}.csv", metro_type, interact_str, numerical_str));
-        // let mut f = create_file(&path);
-        // f.write_all("energy[au],time[s],variance\n".as_bytes()).expect("Unable to write data");
+        let mut f = create_file(&path);
+        f.write_all("energy[au],time[s],kinetic,variance,acceptance_rate\n".as_bytes()).expect("Unable to write data");
 
         // Run 10 times
-        for _ in 0..1 {
+        for _ in 0..10 {
             let start = Instant::now();
             let wf = WaveFunction { alpha: ALPHA, beta: BETA, omega: OMEGA, jastrow_on: JASTROW }; // Set beta = gamma
             let mut system: System<N> = System::new(N, DIM, wf, interacting, numerical_laplace, SPREAD).unwrap();
@@ -59,25 +59,23 @@ pub fn simple() {
                 None => 0.,
             };
 
-            let data = format!("{},{},{},{}\n", energy, start.elapsed().as_millis() as f64 / 1000., kinetic, energy_sqrd - energy.powi(2));
-            println!("{}", data);
-            // f.write_all(data.as_bytes()).expect("Unable to write data");
+            let acceptance_rate = (vals.accepted_steps as f64) / (MC_CYCLES as f64);
+            let data = format!("{},{},{},{},{}\n", energy, start.elapsed().as_millis() as f64 / 1000., kinetic, energy_sqrd - energy.powi(2), acceptance_rate);
+            f.write_all(data.as_bytes()).expect("Unable to write data");
         }
     }
 
     let start = Instant::now();
     let pool = ThreadPool::new(8);
-    pool.execute(move || simulate::<BruteForceMetropolis>(true, false));
-    pool.execute(move || simulate::<ImportanceMetropolis>(true, false));
-    /*
+    pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
+    pool.execute(move || simulate::<BruteForceMetropolis>(false, true));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(true, false));
-    pool.execute(move || simulate::<ImportanceMetropolis>(true, true)); */
+    pool.execute(move || simulate::<ImportanceMetropolis>(true, true));
     pool.join_all();  
-    //simulate::<BruteForceMetropolis>(true, true);
     println!("Total time spent: {:?}", start.elapsed());
 }
 
