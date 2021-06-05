@@ -16,7 +16,7 @@ pub fn simple() {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
     const BETA: f64 =  1.0;
-    const JASTROW: bool = true;
+    const JASTROW: bool = false;
     const STEP_SIZE: f64 = 0.1;
     const MC_CYCLES: usize = 1_000_000;
     const DIM: usize = 2;
@@ -67,8 +67,8 @@ pub fn simple() {
 
     let start = Instant::now();
     let pool = ThreadPool::new(8);
-    pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
-    pool.execute(move || simulate::<ImportanceMetropolis>(true, true));
+    pool.execute(move || simulate::<BruteForceMetropolis>(true, false));
+    pool.execute(move || simulate::<ImportanceMetropolis>(true, false));
     /*
     pool.execute(move || simulate::<BruteForceMetropolis>(true, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
