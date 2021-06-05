@@ -151,15 +151,15 @@ pub fn sgd(interacting: bool) {
             println!("a: {:.8} || b: {:.8} || E: {:.8} || Iter: {}", alphas[i], betas[i], energy / N as f64, i);
 
 
-            let energy_deriv = 2.* (wf_deriv_alpha_times_energy-wf_deriv_alpha*energy);
-            let new_alpha: f64 = alphas[i];// - learning_rate * energy_deriv;
+            let energy_deriv_alpha = 2.* (wf_deriv_alpha_times_energy-wf_deriv_alpha*energy);
+            let new_alpha: f64 = alphas[i];// - learning_rate * energy_deriv_alpha;
             alphas.push(new_alpha);
 
             let energy_deriv_beta = 2.* (wf_deriv_beta_times_energy-wf_deriv_beta*energy);
             let new_beta: f64 = betas[i] - learning_rate * energy_deriv_beta;
             betas.push(new_beta);
 
-            if energy_deriv.abs() < TOLERANCE {
+            if energy_deriv_alpha.abs() < TOLERANCE && energy_deriv_beta.abs() < TOLERANCE {
                 println!("Tolerance is met, exiting.");
                 done = true;
             } else if i > 500 {
