@@ -22,7 +22,6 @@ pub use vector::Vector;
 pub use wavefunction::{WaveFunction, QUANTUM_NUMBERS};
 
 fn main() {
-    println!("Hello from VMC!");
     println!("Running run::simple()"); run::simple(); 
     // println!("Running run::sgd()"); run::sgd(false);
 }
