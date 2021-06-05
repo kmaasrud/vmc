@@ -13,7 +13,7 @@ use std::{
 
 #[allow(dead_code)]
 pub fn simple() {
-    const ALPHA: f64 = 2.0;
+    const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
     const BETA: f64 =  0.0;
     const STEP_SIZE: f64 = 0.01;
@@ -55,7 +55,7 @@ pub fn simple() {
             };
 
             let data = format!("{},{},{}\n", energy / N as f64, start.elapsed().as_millis() as f64 / 1000., energy_sqrd - energy.powi(2));
-            println!("{}", data);
+            println!("Total energy: {}", energy);
             f.write_all(data.as_bytes()).expect("Unable to write data");
         }
     }
@@ -71,7 +71,7 @@ pub fn simple() {
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.join_all();  */
-    simulate::<BruteForceMetropolis>(false, false);
+    simulate::<BruteForceMetropolis>(true, false);
     println!("Total time spent: {:?}", start.elapsed());
 }
 
