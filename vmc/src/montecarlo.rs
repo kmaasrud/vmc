@@ -51,7 +51,7 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
 
 
     // Run a couple of steps to get the system into equilibrium
-    for i in 0..pre_steps {
+    for _ in 0..pre_steps {
         match metro.step(sys)? {
             Some(vals) => result = vals,
             None => {}
@@ -68,8 +68,8 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
                 prev_dvals = dvals;
                 
                 //Writing to file
-                let data = format!("{},{},{}\n",i, result.map.get("energy").unwrap() / (i as f64), start.elapsed().as_millis() as f64 / 1000.);
-                f.write_all(data.as_bytes()).expect("Unable to write data");
+                /* let data = format!("{},{},{}\n",i, result.map.get("energy").unwrap() / (i as f64), start.elapsed().as_millis() as f64 / 1000.);
+                f.write_all(data.as_bytes()).expect("Unable to write data"); */
             }
             None => {
                 result.add_to_sum(&prev_dvals);
@@ -78,6 +78,6 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
     }
 
     // Divide all values by n to get the mean
-    result.divide_f64(n as f64);
+    result.divide_f64((n + 1) as f64);
     Ok(result)
 }

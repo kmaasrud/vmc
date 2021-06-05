@@ -15,10 +15,10 @@ use std::{
 pub fn simple() {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
-    const BETA: f64 =  1.0;
-    const JASTROW: bool = true;
+    const BETA: f64 =  0.0;
+    const JASTROW: bool = false;
     const STEP_SIZE: f64 = 0.1;
-    const MC_CYCLES: usize = 1_000_000;
+    const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
     const N: usize = 2;
     const SPREAD: f64 = 0.1;
@@ -40,7 +40,7 @@ pub fn simple() {
         // f.write_all("energy[au],time[s],variance\n".as_bytes()).expect("Unable to write data");
 
         // Run 10 times
-        for _ in 0..1 {
+        for _ in 0..10 {
             let start = Instant::now();
             let wf = WaveFunction { alpha: ALPHA, beta: BETA, omega: OMEGA, jastrow_on: JASTROW }; // Set beta = gamma
             let mut system: System<N> = System::new(N, DIM, wf, interacting, numerical_laplace, SPREAD).unwrap();
@@ -66,18 +66,17 @@ pub fn simple() {
     }
 
     let start = Instant::now();
-    let pool = ThreadPool::new(8);
+    /* let pool = ThreadPool::new(8);
     pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(true, true));
-    /*
     pool.execute(move || simulate::<BruteForceMetropolis>(true, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(true, false));
-    pool.execute(move || simulate::<ImportanceMetropolis>(true, true)); */
-    pool.join_all();  
-    //simulate::<BruteForceMetropolis>(true, true);
+    pool.execute(move || simulate::<ImportanceMetropolis>(true, true));
+    pool.join_all();   */
+    simulate::<ImportanceMetropolis>(true, false);
     println!("Total time spent: {:?}", start.elapsed());
 }
 
