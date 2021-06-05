@@ -112,18 +112,19 @@ impl<const N: usize> System<N> {
                         let distance = self.particles[i].distance_to(&self.particles[j])?;
                         let fraction = a(i, j, n) / (1. + self.wf.beta * distance).powi(2);
                         let mut result = fraction / distance - 2. * self.wf.beta * fraction / (1. + self.wf.beta * distance);
-                        let diff1 = self.particles[i].position + self.particles[j].position.scale(-1.);
+                        let rij = self.particles[i].position + self.particles[j].position.scale(-1.);
                         for k in 0..n {
                             if k == i { continue }
-                            let diff2 = self.particles[i].position + self.particles[k].position.scale(-1.);
+                            let rik = self.particles[i].position + self.particles[k].position.scale(-1.);
                             let distance2 = self.particles[i].distance_to(&self.particles[k])?;
                             let fraction2 = a(i, k, n) / (1. + self.wf.beta * distance2).powi(2);
-                            result += diff2.inner(diff1)? / (distance * distance2) * fraction * fraction2;
+                            result += rik.inner(rij)? / (distance * distance2) * fraction * fraction2;
                         }
                         result
                     } else { 0. };
 
-                    self.wf.laplace_spf(&self.particles[i], nx, ny)? * self.slater_inverse[(j, i)] + laplace_jastrow
+                    self.wf.laplace_spf(&self.particles[i], nx, ny)? + laplace_jastrow
+                    // self.wf.laplace_spf(&self.particles[i], nx, ny)? * self.slater_inverse[(j, i)] + laplace_jastrow
                 };
             }
             if n != 2 {

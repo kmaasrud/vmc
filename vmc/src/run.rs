@@ -16,7 +16,7 @@ pub fn simple() {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
     const BETA: f64 =  0.0;
-    const JASTROW: bool = true;
+    const JASTROW: bool = false;
     const STEP_SIZE: f64 = 0.5;
     const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
@@ -54,8 +54,12 @@ pub fn simple() {
                 Some(val) => *val,
                 None => 0.,
             };
+            let kinetic = match vals.map.get("kinetic") {
+                Some(val) => *val,
+                None => 0.,
+            };
 
-            let data = format!("{},{},{}\n", energy, start.elapsed().as_millis() as f64 / 1000., energy_sqrd - energy.powi(2));
+            let data = format!("{},{},{},{}\n", energy, start.elapsed().as_millis() as f64 / 1000., kinetic, energy_sqrd - energy.powi(2));
             println!("{}", data);
             // f.write_all(data.as_bytes()).expect("Unable to write data");
         }
@@ -72,7 +76,7 @@ pub fn simple() {
     pool.execute(move || simulate::<ImportanceMetropolis>(true, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(true, true));
     pool.join_all();  */
-    simulate::<BruteForceMetropolis>(true, true);
+    simulate::<BruteForceMetropolis>(true, false);
     println!("Total time spent: {:?}", start.elapsed());
 }
 
