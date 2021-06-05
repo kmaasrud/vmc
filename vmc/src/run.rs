@@ -84,7 +84,7 @@ pub fn sgd(interacting: bool) {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
     const BETA: f64 = 0.;
-    const JASTROW: bool = false;
+    const JASTROW: bool = true;
     const STEP_SIZE: f64 = 0.01;
     const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
@@ -98,6 +98,8 @@ pub fn sgd(interacting: bool) {
         println!("Running run::sgd() with {}, Numerical laplace: {:?}, Interacting: {:?}, Start Alpha: {}, Start Beta: {}, Learning Rate: {}", &metro_type, &numerical_laplace, &interacting, &start_alpha, &start_beta, &learning_rate);
         let mut alphas:Vec<f64> = vec![];
         alphas.push(start_alpha);
+        let mut betas:Vec<f64> = vec![];
+        betas.push(start_beta);
 
         let mut metro: T = T::new(STEP_SIZE);
 
@@ -105,13 +107,11 @@ pub fn sgd(interacting: bool) {
         let mut energies:Vec<f64> = vec![];
 
         let mut path = find_cargo_root().unwrap();
-        //path.push("data"); path.push("sgd_noninteracting"); path.push("start-alpha");
-        path.push("data"); path.push("sgd"); path.push("learning-rate");
+        path.push("data"); path.push("sgd"); path.push("start_params");
         create_dir(&path);
-        //path.push(format!("start-alpha_{}.csv", start_alpha));
-        path.push(format!("learning-rate_{}.csv", learning_rate));
+        path.push(format!("a-{}_b-{}.csv", start_alpha, start_beta));
         let mut f = create_file(&path);
-        f.write_all("alpha,energy-per-particle[au],time[s],variance\n".as_bytes()).expect("Unable to write data");
+        f.write_all("alpha,beta,energy-per-particle[au],time[s],variance\n".as_bytes()).expect("Unable to write data");
 
         let mut i:usize = 0;
         while !done {
@@ -128,30 +128,42 @@ pub fn sgd(interacting: bool) {
                 Some(val) => *val,
                 None => 0.,
             };
-            let wf_deriv = match vals.map.get("wf_deriv_alpha") {
+            let wf_deriv_alpha = match vals.map.get("wf_deriv_alpha") {
                 Some(val) => *val,
                 None => 0.,
             };
-            let wf_deriv_times_energy = match vals.map.get("wf_deriv_alpha_times_energy") {
+            let wf_deriv_alpha_times_energy = match vals.map.get("wf_deriv_alpha_times_energy") {
+                Some(val) => *val,
+                None => 0.,
+            };
+            let wf_deriv_beta = match vals.map.get("wf_deriv_beta") {
+                Some(val) => *val,
+                None => 0.,
+            };
+            let wf_deriv_beta_times_energy = match vals.map.get("wf_deriv_beta_times_energy") {
                 Some(val) => *val,
                 None => 0.,
             };
 
-            let data = format!("{},{},{},{}\n",alphas[i], energy / N as f64, start.elapsed().as_millis() as f64 / 1000., energy_sqrd - energy.powi(2));
+            let data = format!("{},{},{},{},{}\n",alphas[i], betas[i], energy / N as f64, start.elapsed().as_millis() as f64 / 1000., energy_sqrd - energy.powi(2));
             println!("{}", data);
             f.write_all(data.as_bytes()).expect("Unable to write data");
-            println!("Alpha: {:.16} --- Learning Rate: {:.2} --- Energy: {:.16} --- Iteration: {}", alphas[i], learning_rate, energy / N as f64, i);
+            println!("a: {:.8} || b: {:.8} || E: {:.8} || Iter: {}", alphas[i], betas[i], energy / N as f64, i);
 
 
-            let energy_deriv = 2.* (wf_deriv_times_energy-wf_deriv*energy);
+            let energy_deriv = 2.* (wf_deriv_alpha_times_energy-wf_deriv_alpha*energy);
             let new_alpha: f64 = alphas[i] - learning_rate * energy_deriv;
             alphas.push(new_alpha);
+
+            let energy_deriv_b = 2.* (wf_deriv_beta_times_energy-wf_deriv_beta*energy);
+            let new_beta: f64 = betas[i] - learning_rate * energy_deriv_b;
+            betas.push(new_beta);
 
             if energy_deriv.abs() < TOLERANCE {
                 println!("Tolerance is met, exiting.");
                 done = true;
-            } else if i > 150 {
-                println!("Max lim met, exiting.");
+            } else if i > 500 {
+                println!("Max iter lim met, exiting.");
                 done = true;
             }
             //if (energies[i]-energies[i-1]).abs() < tolerance {
@@ -162,7 +174,7 @@ pub fn sgd(interacting: bool) {
         
     }
     let start = Instant::now();
-    simulate::<BruteForceMetropolis>(0.2 ,1. , 0.1, false, interacting);
+    simulate::<ImportanceMetropolis>(1.0 ,0.2 , 0.1, true, interacting);
 
     /*
     // Multithreading

@@ -33,7 +33,7 @@ pub trait Metropolis {
         map.insert("energy_sqrd".to_string(), energy.powi(2));
         map.insert("wf_deriv_alpha".to_string(), wf_deriv_alpha);
         map.insert("wf_deriv_alpha_times_energy".to_string(), wf_deriv_alpha * energy);
-        map.insert("wf_deriv_bet".to_string(), wf_deriv_beta);
+        map.insert("wf_deriv_beta".to_string(), wf_deriv_beta);
         map.insert("wf_deriv_beta_times_energy".to_string(), wf_deriv_beta * energy);
         Ok(SampledValues { map, accepted_steps: 0 })
     }
