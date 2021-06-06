@@ -67,52 +67,7 @@ Table: Frequency dependent calculations of the kinetic and potential energies. {
 
 ## Larger systems
 
-### Evaluating the variational parameters{#sec:results-variational-params-larger-sys}
-
-| N  	| $\omega$ 	| $E_{\text{analytical}}$ 	| $E_{\text{min}}$ 	| $E_{\text{min,without Jastrow}}$ 	| $r_{12}$ 	| $r_{12, without Jastrow}$ 	|
-|----	|----------	|-------------------------	|------------------	|----------------------------------	|----------	|----------------------------	|
-| 6  	| $1.0$    	|                         	|                  	|                                  	|          	|                            	|
-|    	| $0.5$    	|                         	|                  	|                                  	|          	|                            	|
-|    	| $0.1$    	|                         	|                  	|                                  	|          	|                            	|
-|    	| $0.05$   	|                         	|                  	|                                  	|          	|                            	|
-|    	| $0.01$   	|                         	|                  	|                                  	|          	|                            	|
-| 12 	| $1.0$    	|                         	|                  	|                                  	|          	|                            	|
-|    	| $0.5$    	|                         	|                  	|                                  	|          	|                            	|
-|    	| $0.1$    	|                         	|                  	|                                  	|          	|                            	|
-|    	| $0.05$   	|                         	|                  	|                                  	|          	|                            	|
-|    	| $0.01$   	|                         	|                  	|                                  	|          	|                            	|
-
-Table: Optimal variational parameters for $N = 6 \text{ and } 12$ electrons for a set of frequencies obtained with the steepest gradient decent method. {#tbl:results-variational-parameters-larger-sys}
-
-
-
-### One body densities
-
-The one body density is computed for 2 and 6 particles with the optimal parameters obtained from the previous calculations. The calculations are executed with and without the Jastrow factor for comparison and analysis of its influence. 
-
-The one-body densities are calculated with and without the Jastrow factor for six and twelve electrons. The results are shown in figure [@fig:one-body-densities-larger-sys] below
-
-![One Body densities for 6 and 6 fermions with and without the Jastrow factor. The computations are done with $\alpha = FILL$, $\beta = FILL$ and $\omega = 1$](FILENAME.png){#fig:one-body-densities-larger-sys width=300px}
-
-
-### Freqeuncy dependency
-
-The expectation value of the kinetic and potential energy using a set of frequencies are listed in Table [@tbl:freq-dep-energies-larger-sys]
-
-| N  	| $\omega$ 	| $E_{\text{kinetic}}$ 	| $E_{\text{potential}}$ 	|
-|----	|----------	|----------------------	|------------------------	|
-| 6  	| $1.0$    	|                      	|                        	|
-|    	| $0.5$    	|                      	|                        	|
-|    	| $0.1$    	|                      	|                        	|
-|    	| $0.05$   	|                      	|                        	|
-|    	| $0.01$   	|                      	|                        	|
-| 12 	| $1.0$    	|                      	|                        	|
-|    	| $0.5$    	|                      	|                        	|
-|    	| $0.1$    	|                      	|                        	|
-|    	| $0.05$   	|                      	|                        	|
-|    	| $0.01$   	|                      	|                        	|
-
-Table: Frequency dependent calculations of the kinetic and potential energies for $N = 6 \text{ and } 12$ electrons. {#tbl:freq-dep-energies-larger-sys}
+Our code 
 
 ## Performance analysis
 
