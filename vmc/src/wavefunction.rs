@@ -278,7 +278,7 @@ impl WaveFunction {
                         result -= a(i, j, n) * distance.powi(2) / (1. + self.beta * distance).powi(2)
                     }
                 }
-                Ok(result - n as f64)
+                Ok(result)
             }
         }
     }

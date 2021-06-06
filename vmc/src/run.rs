@@ -243,7 +243,7 @@ pub fn sgd(interacting: bool) {
         
     }
     let start = Instant::now();
-    simulate::<ImportanceMetropolis>(1.0 ,8. , 0.1, true, interacting);
+    simulate::<ImportanceMetropolis>(1.0 ,1. , 0.1, true, interacting);
 
     /*
     // Multithreading
