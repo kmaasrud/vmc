@@ -70,7 +70,7 @@ impl<const N: usize> System<N> {
         }
 
         Ok(System {
-            particles: vec![Particle::new(dim)?; n_particles],
+            particles,
             dim,
             wf,
             interacting,
@@ -107,7 +107,7 @@ impl<const N: usize> System<N> {
                 let nx = crate::QUANTUM_NUMBERS[j].0;
                 let ny = crate::QUANTUM_NUMBERS[j].1;
                 result += if n == 2 {
-                    let laplace_jastrow = if self.wf.jastrow_on && j != i {
+                    let laplace_jastrow = if j != i {
                         let distance = self.particles[i].distance_to(&self.particles[j])?;
                         let fraction = a(i, j, n) / (1. + self.wf.beta * distance).powi(2);
                         fraction / distance - 2. * self.wf.beta * fraction / (1. + self.wf.beta * distance)
@@ -151,18 +151,31 @@ impl<const N: usize> System<N> {
         for i in 0..N {
             let ny = crate::QUANTUM_NUMBERS[i].1;
             let nx = crate::QUANTUM_NUMBERS[i].0;
-            self.v[i] =
-                self.wf.spf(&new_particles[p], nx, ny)? - self.wf.spf(&self.particles[p], nx, ny)?
+            // let spf_old = self.wf.spf(&self.particles[p], nx, ny)?;
+            let spf_new = self.wf.spf(&new_particles[p], nx, ny)?; 
+            self.v[i] = spf_new // - spf_old
         }
 
         let mut new_inverse: SMatrix<f64, N, N> = SMatrix::repeat(0.);
-        let identity: SMatrix<f64, N, N> = SMatrix::identity();
+        // let identity: SMatrix<f64, N, N> = SMatrix::identity();
+        let factor = 1. / self.slater_ratio;
         // NOTE: Double for-loop, so the complexity is O(n^2), contary to what we mention in Method...
         for i in 0..N {
+            // i'th column
+            let mut s = 0.;
+            for l in 0..N {
+                s += self.v[l] * self.slater_inverse[(l, i)]
+            }
             for j in 0..N {
-                new_inverse[(i, j)] = (identity[(i, j)]
+                // j'th row
+                new_inverse[(j, i)] = if i == p {
+                    factor * self.slater_inverse[(j, p)]
+                } else {
+                    self.slater_inverse[(j, i)] - s * factor * self.slater_inverse[(j, p)]
+                }
+                /* new_inverse[(i, j)] = (identity[(i, j)]
                     - self.slater_inverse[(i, p)] * self.v[i] / self.slater_ratio)
-                    * self.slater_inverse[(i, j)];
+                    * self.slater_inverse[(i, j)]; */
             }
         }
 
@@ -172,9 +185,8 @@ impl<const N: usize> System<N> {
     /// Returns the new Slater ratio
     pub fn next_slater_ratio(&self, p: usize, new_inverse: &SMatrix<f64, N, N>) -> f64 {
         let mut result = 0.;
-        let u = new_inverse.column(p);
         for i in 0..N {
-            result += self.v[i] * u[i];
+            result += self.v[i] * new_inverse[(i, p)];
         }
         1. + result
     }

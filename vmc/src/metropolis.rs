@@ -38,10 +38,16 @@ pub trait Metropolis {
         Ok(SampledValues { map, accepted_steps: 0 })
     }
 
-    fn greens(x: &Particle, y: &Particle) -> Result<f64, String> {
+    fn greens(x: &Particle, y: &Particle, n: usize) -> Result<f64, String> {
+        let diffusion = 0.5;
+        let time_step = 0.001;
+        let factor = 1. / (4. * diffusion * time_step);
+        let yx = y.position - x.position - x.qforce.scale(diffusion * time_step);
+        let xy = x.position - y.position - y.qforce.scale(diffusion * time_step);
         let vec_sum = x.position - y.position - y.qforce.scale(0.0025);
         // Ignoring denominator of Greens since it cancels later
-        Ok((-vec_sum.inner(vec_sum)? / 0.01).exp())
+        // Ok(((- xy.inner(xy)? + yx.inner(yx)?) * factor + n as f64 - 1.).exp())
+        Ok((-vec_sum.inner(vec_sum)? * factor).exp())
     }
 }
 
@@ -103,10 +109,12 @@ impl Metropolis for ImportanceMetropolis {
 
         // Make a step
         let (new_particles, p) = sys.quantum_force_particle_change()?;
+        let n = sys.particles.len();
 
         // Calculate the acceptance factor
-        let greens_factor = Self::greens(&sys.particles[p], &new_particles[p])?
-            / Self::greens(&new_particles[p], &sys.particles[p])?;
+        let greens_factor = Self::greens(&sys.particles[p], &new_particles[p], n)?
+            / Self::greens(&new_particles[p], &sys.particles[p], n)?;
+
         let acceptance_factor = match N {
             2 => {
                 let wf_old = sys.wf.evaluate::<N>(&sys.particles)?;
@@ -122,6 +130,7 @@ impl Metropolis for ImportanceMetropolis {
                 }
             }
         };
+        println!("{}", acceptance_factor);
 
         if Self::hastings_check(acceptance_factor) {
             sys.particles = new_particles;
