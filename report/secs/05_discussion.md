@@ -29,18 +29,12 @@ Before doing the big run, different learning rates for the SGD was performed, an
 
 The results from the energy minima calculations using the optimal variational parameters are also listed in Table [@tbl:results-min-energy-particle-distance-2N-with] and [@tbl:results-min-energy-particle-distance-2N-without], for calculations with and without the Jastrow factor, respectivly. For the largest frequency, $\omega = 1$ we can from Taut's article [@Taut1993] expect an energy of 3 au when computing both with the Jastrow factor and with particle interaction. Our results in this mentioned case shows an energy of 3.07, which is fairly close. 
 
-The variance is however a great deal larger than what we aimed for, especially for the larger frequencies. There could be many possible explenations for this. **FILL**. 
-
-<!-- Mean distance between two electrons. Should be dependent on omega(frequency). Is there any dependence on the energy, e.g., higher energy allows for a shorter distance?? -->
-
 The obtained mean distance between two fermions shows to be strongly dependent on the frequency, $\omega$, as shown in Table [@tbl:results-min-energy-particle-distance-2N-with] and [@tbl:results-min-energy-particle-distance-2N-without]. A decrease in frequency of a factor 100 increases the distance with a factor of approximatly 10. Higher frequencies induces higher energies and particles then tends to be closer togheter. Studying the effect of the Jastrow factor, which are shown in the abovemention tables, it is clearly that the Jastrow factor keeps the particles further apart. 
 
-The same dependecies is natrurally reflected in the kinetic and potential energies calculated for different frequencies, listed in Table [@tbl:freq-dep-energies-2N]. 
-The Jastrow factor, in generall, gives a calculated energy closer to the one expected from Taut's article [@Taut1993]. Calculating the energy for two electrons with interaction and without the Jastrow factor gives a energy of 3.24, while adding the Jastrow factor gives an energy of 3.07. Hence one sees the importance of adding the factor for a more accurate result. 
+The same dependecies are naturally reflected in the kinetic and potential energies calculated for different frequencies as well - which are listed in Table [@tbl:freq-dep-energies-2N]. The Jastrow factor, in general, gives a calculated energy closer to the one expected from Taut's article [@Taut1993]. Calculating the energy for two electrons with interaction and without the Jastrow factor gives an energy of $3.24$, while adding the Jastrow factor gives an energy of $3.07$. Hence, one sees the importance of adding the factor for a more accurate result. 
 
 
 ## One Body density{#sec:one-body-dens-discussion}
-<!-- Two particle system-->
 
 The results from the one body density calculations utilizing optimal parameters are shown in Figure [@fig:one-body-densities]. For both the calculations with and without the Jastrow factor, there is a peak density at $|\mathbf{r}| \approx 1$, which hence is where the particles are most likely located. For $|\mathbf{r}|$ approximatly less  than one,  the calculations without the Jastrow factor has a higher density, while for larger $|\mathbf{r}|$, the density is greater when the Jastrow factor is on. 
 
@@ -58,9 +52,9 @@ According to the Virial theorem for a Harmonic occilator, the mean potential ene
 We experienced a lot of trouble with getting the larger systems ($N > 2$) to work. The issue was that the Greens factor evaluated to $0$ with every step, leaving us with no results to do anything with. We suspect the issue is with our evaluation of the Slater gradient, and subsequently with how our quantum force is found, in order to do a step. We were not, however, able to locate this issue in due time, which left us in the awkward situation of not having anything to present.
 
 ## Performance analysis
+
 Table [@tbl:results-performance-analysis] gives an overview of the performance analysis of running our algorithm with and without vectorization and parallelization for $N = 2$ electrons. As seen, there is a immense speedup utilizing vectorization. This results shows the importance of utilizing the tools available, especially for increased sized systems. 
 
-<!-- Write something about how we use parallelization (running one experiment on core??) and if/how it gives a speed-up when running our algorithm. Maybe something about how it can be improved in the future.--> 
-Our code is parallelized in a way where different experiments are ran at seperate cores. Hence, it is not a proper parallized code and therefore a seperate performance analysis only utilizing parallelization is not conducted. 
+Our code is parallelized in a way where different experiments are ran at seperate cores. This leads to a drastic speedup for our use case (simulating many different systems simultaneously), but does not qualify as a proper parallellization of the VMC method. Therefore, a seperate performance analysis on the performance increase parallelization is not conducted, as this obviously scales with the number of threads you run simulations in.
 
 

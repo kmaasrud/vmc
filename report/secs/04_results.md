@@ -19,13 +19,13 @@ Table: Results from computations of the expectation value of the energy using bo
 
 ### Evaluating the variational parameters{#sec:results-variational-params}
 
-To obtain the optimal variational parameters for the ground state energy, the steepest gradient decent method is implemented in the Variational Monte Carlo calculations. To avoid being caught in a false energy minima with the wrong variational parameters, a total of $64$ different start-values for $\alpha$ and $\beta$ was used with the SGD. Specifically, whis was all combinations of $\alpha$ and $\beta$ with the values $\{0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8\}$. The two runs yielding the lowest end energy has been chosen to represent the variational results. Before starting the big run, different learning rates was also tested, where a rate of $0.05$ was found to be sufficient.
+To obtain the optimal variational parameters for the ground state energy, the steepest gradient decent method is implemented in the variational Monte Carlo calculations. To avoid being caught in a false energy minima with the wrong variational parameters, a total of $64$ different start-values for $\alpha$ and $\beta$ was used with the SGD. More specifically, this corresponds to all the combinations of $\alpha$ and $\beta$ with the values $\{0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8\}$. The two runs yielding the lowest end energy have been chosen to represent the variational results. Before starting the big run, different learning rates were also tested, where a rate of $0.05$ was found to be sufficient.
 
-When testing this out we realized the $\beta$ variable did not converge properly. After days of debugging we decided to accept the fault and move on. This led to SGD plots of the variational parameters and alpha, like shown in figure [@fig:results-sgd]. In addition, the big simulation showed that regardless of the start value for the variables, the energies ended up the same, with the same variable values (within the error margin).
+When testing this out, we realized the $\beta$ variable did not converge properly. After days of debugging we decided to accept the fault and move on. This led to SGD plots of the variational parameters and alpha, like shown in figure [@fig:results-sgd]. In addition, the big simulation showed that regardless of the start value for the variables, the energies ended up the same, with the same variable values (within the error margin).
 
 ![The two runs yielding the lowest energy, with the SGD history of $\alpha$, $\beta$ and the Energy.](sgd.png){#fig:results-sgd width=300px}
 
-On the basis of the result that showed that the starting values of the variables was not important, variable starting values of $0.5$ was chosen for the test with the different $\omega$ values. How the variational parameters turned out for the different $\omega$'s is shown in table [@tbl:results-variational-parameters-2N].
+On the basis of the result that showed that the starting values of the variables were not important, variable starting values of $0.5$ were chosen for the test with the different $\omega$ values. How the variational parameters turned out for the different $\omega$'s is shown in table [@tbl:results-variational-parameters-2N].
 
 | $\omega$ 	| $\alpha$ 	| $\beta$ 	| Energy [au] 	|
 |----------	|----------	|---------	|------------	|
@@ -39,6 +39,7 @@ Table: Optimal variational parameters for $N = 2$ electrons obtained with the st
 
 
 ### Minimum energy and particle distance
+
 The energies and particle distance is calculated for a set of frequencies using the optimal variatonal parameters listed in Table [@tbl:results-variational-parameters-2N]. The result from the calculation with the Jastrow factor is found in Table [@tbl:results-min-energy-particle-distance-2N-with], and for the results without the Jastrow factor is listed in Table [@tbl:results-min-energy-particle-distance-2N-without] below. 
 
 | $\omega$ 	| $E_{\text{min}}$ 	| $\sigma_{\text{blocking}}$ 	| $r_{12}$ 	| Acceptance ratio 	|
@@ -49,7 +50,7 @@ The energies and particle distance is calculated for a set of frequencies using 
 | $0.05$   	| 0.344            	| 0.012                      	| 6.66     	| 0.995            	|
 | $0.01$   	| 0.103            	| 0.031                      	| 16.6     	| 0.998            	|
 
-Table: Energy minimum computed and avarage particle distance computed for $N = 2$ electrons *with* the Jastrow factor. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N]. {#tbl:results-min-energy-particle-distance-2N-with}
+Table: Energy minimum computed and avarage particle distance computed for $N = 2$ electrons *with* the Jastrow factor. All entities were calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N]. {#tbl:results-min-energy-particle-distance-2N-with}
 
 
 | $\omega$ 	| $E_{\text{min, wo/Jastrow}}$ 	| $\sigma_{\text{blocking}}$ 	| $r_{12, wo/Jastrow}$ 	| Acceptance ratio 	|
@@ -59,6 +60,7 @@ Table: Energy minimum computed and avarage particle distance computed for $N = 2
 | $0.1$    	| 0.617                        	| 0.602                      	| 3.943                	| 0.967            	|
 | $0.05$   	| 0.400                        	| 0.447                      	| 5.366                	| 0.977            	|
 | $0.01$   	| 0.148                        	| 0.058                      	| 12.365               	| 0.990            	|
+
 Table: Energy minimum computed and avarage particle distance computed for $N = 2$ electrons *without* the Jastrow factor. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N]. {#tbl:results-min-energy-particle-distance-2N-without}
 
 ### One-body density
@@ -81,13 +83,15 @@ The expectation value of the kinetic and potential energy using a set of frequen
 
 Table: Frequency dependent calculations of the kinetic and potential energies. {#tbl:freq-dep-energies-2N}
 
+We see the energy decreasing almost proportionally with $\omega$, which is behavior as expected.
+
 ## Larger systems
 
 Our code has a bug that leads to the steps in systems with $N > 2$ not being accepted. This leads to us not having any results to show for said systems. We were not able to fix this in time for the delivery.
 
 ## Performance analysis
 
-Lastly a analysis of the algorithms are given for $N = 2$ electrons, 1 000 000 Monte Carlo cycles, optimal variational parameters $\omega = 1$ and with the Jastrow factor included. The analysis is done by comparing the average time used for a calculation with and without vectorization. All quantities were calculated, and no writing to file was done (we timed only the Monte Carlo integration). The results are presented in table [@tbl:results-performance-analysis].
+Lastly an analysis of the algorithms are given for $N = 2$ electrons, 1 000 000 Monte Carlo cycles, optimal variational parameters $\omega = 1$ and with the Jastrow factor included. The analysis is done by comparing the average time used for a calculation with and without vectorization. All quantities were calculated, and no writing to file was done (we timed only the Monte Carlo integration). The results are presented in table [@tbl:results-performance-analysis].
 
 | Optimization               	| $t$ [s] |
 |---                        	|---            |
