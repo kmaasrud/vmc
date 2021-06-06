@@ -35,6 +35,10 @@ pub trait Metropolis {
         map.insert("wf_deriv_alpha_times_energy".to_string(), wf_deriv_alpha * energy);
         map.insert("wf_deriv_beta".to_string(), wf_deriv_beta);
         map.insert("wf_deriv_beta_times_energy".to_string(), wf_deriv_beta * energy);
+        if sys.particles.len() == 2 {
+            let distance = sys.particles[0].distance_to(&sys.particles[1])?;
+            map.insert("distance".to_string(), distance);
+        }
         Ok(SampledValues { map, accepted_steps: 0 })
     }
 
