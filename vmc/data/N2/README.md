@@ -22,7 +22,7 @@ Total time spent: `63.053085092s`
 ```rust
 const ALPHA: f64 = 1.0;
 const OMEGA: f64 = 1.0;
-const BETA: f64 =  0.0;
+const BETA: f64 =  1.0;
 const JASTROW: bool = true;
 const STEP_SIZE: f64 = 0.1;
 const MC_CYCLES: usize = 100_000;
