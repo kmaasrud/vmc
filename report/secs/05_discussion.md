@@ -19,7 +19,7 @@ The variational parameters were obtained using the steepest gradient decent meth
 <!--Higher number of particles: Comment if something was done differently compared to two particle system - e.g., using grid of alphas/betas instead of steepest gradient descent-->
 
 
-## Minimun energy and particle distance
+## Minimum energy and particle distance
 <!-- Two particle system-->
 
 <!-- Compare values to Taut's article. E.g. for omega = 1, the energy should be 3 au. Then maybe give a deviation \% from Taut’s (2 omega). Also compare with and without the Jastrow factor and with and without interaction (Hamiltonian)-->
@@ -55,7 +55,11 @@ The results from the one body density calculations utilizing optimal parameters 
 
 ## Frequency dependent energy calculations
 
-As seen in table [@tbl:freq-dep-energies-2N] and [@tbl:freq-dep-energies-larger-sys] the expecation value of the kinetic and potential energy **increases/decreases** with increasing frequency. <!-- Is it the same for N = 2, 6 and 12? -->.  <!-- How does it behvave compared to the Virial theorem?-->
+As seen in table [@tbl:freq-dep-energies-2N] the expecation value of the kinetic and potential energy **increases/decreases** with increasing frequency. <!-- Is it the same for N = 2, 6 and 12? -->.  <!-- How does it behvave compared to the Virial theorem?-->
+
+## Larger systems and bugs in the code
+
+We experienced a lot of trouble with getting the larger systems ($N > 2$) to work. The issue was that the Greens factor evaluated to $0$ with every step, leaving us with no results to do anything with. We suspect the issue is with our evaluation of the Slater gradient, and subsequently with how our quantum force is found, in order to do a step. We were not, however, able to locate this issue in due time, which left us in the awkward situation of not having anything to present.
 
 ## Performance analysis
 Table [@tbl:results-performence-analysis] gives an overview of the performance analysis of running our algorithm with and without vectorization and parallelization for $N = 6$ electrons. 

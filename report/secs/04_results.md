@@ -61,7 +61,7 @@ The One-body density for the two electron system with optimal set of variational
 
 ![One Body densities for 2 fermions with and without the Jastrow factor. The computations are done with $\alpha = 0.98$, $\beta = 0.43$ and $\omega = 1$](onebodydens-2N.png){#fig:one-body-densities-2N width=300px}
 
-### Freqeuncy dependency
+### Frequency dependency
 
 The expectation value of the kinetic and potential energy using a set of frequencies are listed in Table [@tbl:freq-dep-energies-2N]
 
@@ -81,20 +81,14 @@ Our code has a bug that leads to the steps in systems with $N > 2$ not being acc
 
 ## Performance analysis
 
-Lastly a analysis of the algorithms are given for $N = 6$ electrons, $FILL IN$ Monte Carlo cycles, optimal variational parameters $\omega = 1$ and without the Jastrow factor. The analysis is done by comparing the average time used for a calculation with and without vectorization. The procedure is repeated with parallelization, expecting approximately a 100% speedup.  The quantities which are calculated are **FILL INN**. The most time-consuming part is the **FILL INN**, and hence the clock is started here. The results are presented in table [@tbl:results-performence-analysis]. **ADD SOME MORE DESCRIPTION OF HOW HERE**
+Lastly a analysis of the algorithms are given for $N = 2$ electrons, 1 000 000 Monte Carlo cycles, optimal variational parameters $\omega = 1$ and with the Jastrow factor included. The analysis is done by comparing the average time used for a calculation with and without vectorization. All quantities were calculated, and no writing to file was done (we timed only the Monte Carlo integration). The results are presented in table [@tbl:results-performance-analysis].
 
-Table: Results from performance analysis with and without vectorization and compile flags. The time is averaged over 10 runs with **FILL INN** MC cycles. The sampling method is the **Brute Force Metropolis OR Importance sampling**
-
-| Optimization/compile flags 	| $\bar{t}$ [s] |
+| Optimization               	| $t$ [s] |
 |---                        	|---            |
-| **With vectorization**        |               |
-| Flag 1                        |               |
-| Flag 2                        |               |
-| Flag 2                        |               |
-| **Without Vectorization**  	|               |
-| **Parallelization**           |               | {#tbl:results-performence-analysis}
+| **Without vectorization**		| 39.61s |
+| **With vectorization**        | 1.78s  |
 
-
+Table: Results from performance analysis with and without vectorization. The time is averaged over 10 runs with 1 000 000 MC cycles. The sampling method used is the brute force Metropolis method. {#tbl:results-performance-analysis}
 
 
 
