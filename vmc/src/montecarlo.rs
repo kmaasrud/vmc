@@ -59,7 +59,6 @@ pub fn monte_carlo<T: Metropolis, const N: usize>(
             Some(vals) => result = vals,
             None => {}
         }
-
     }
 
     // Store the previous values to add if Metropolis step is rejected
