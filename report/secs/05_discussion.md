@@ -2,7 +2,7 @@
 
 ## Verification/ Two electrons
 
-As a validation test for our algorithm, we calculated the energy without the Jastrow factor for $N = 2$ electrons, expecting a energy of $2.0$ a.u. and a variance of zero. Running this system with the brute force Metropolis algorithm (as well as with importance sampling), returned an energy of $1.999$ ($1.999$) and a variance of $0$ ($0$). Together with the energy and statistical calculations, the performance analysis showed only a small difference in time consumed by the analytical and numerical approach. The analytical algorithm used $5.3$ ($6.1) seconds, while the numerical approach used $5.8$ ($6.3$) seconds. Comparing the two sampling methods in question, the Metropolis sampling was faster than the Importance sampling method for this particular system. 
+As a validation test for our algorithm, we calculated the energy without the Jastrow factor for $N = 2$ electrons, expecting a energy of $2.0$ a.u. and a variance of zero. Running this system with the brute force Metropolis algorithm (as well as with importance sampling), returned an energy of $1.999$ ($1.999$) and a variance of $0$ ($0$). Together with the energy and statistical calculations, the performance analysis showed only a small difference in time consumed by the analytical and numerical approach. The analytical algorithm used $5.3$ ($6.1$) seconds, while the numerical approach used $5.8$ ($6.3$) seconds. Comparing the two sampling methods in question, the Metropolis sampling was faster than the Importance sampling method for this particular system. 
 
 As shown in our previous work [@Vmc-bosonic2021], importance sampling generally used more time, and this is once again shown here.
 
