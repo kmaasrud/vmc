@@ -119,6 +119,7 @@ impl Metropolis for ImportanceMetropolis {
             2 => {
                 let wf_old = sys.wf.evaluate::<N>(&sys.particles)?;
                 let wf_new = sys.wf.evaluate::<N>(&new_particles)?;
+                //println!("GF: {:.16} || wfN: {:.16} || wfO: {:.16}", greens_factor, wf_new, wf_old);
                 greens_factor * wf_new.powi(2) / wf_old.powi(2)
             }
             _ => {

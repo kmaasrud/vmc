@@ -47,7 +47,7 @@ impl WaveFunction {
                 let r1: f64 = particles[0].squared_sum();
                 let r2: f64 = particles[1].squared_sum();
                 let jastrow = if self.jastrow_on { self.evaluate_jastrow(particles) } else { 0. };
-
+                //println!("a: {:.16} || o: {:.16} || r1: {:.16} || r2: {:.16} || jast: {:.16}", self.alpha, self.omega, r1, r2, jastrow);
                 Ok(c * (-0.5 * self.alpha * self.omega * (r1 + r2) + jastrow).exp())
             },
             // This is the general evaluation, using Slater determinants
@@ -254,7 +254,7 @@ impl WaveFunction {
                     }
                 }
 
-                Ok(result - n as f64)
+                Ok(result) //  - n as f64
             }
         }
     }
@@ -278,7 +278,7 @@ impl WaveFunction {
                         result -= a(i, j, n) * distance.powi(2) / (1. + self.beta * distance).powi(2)
                     }
                 }
-                Ok(result)
+                Ok(result) //- n as f64
             }
         }
     }

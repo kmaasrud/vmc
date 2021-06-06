@@ -243,9 +243,9 @@ pub fn sgd(interacting: bool) {
         
     }
     let start = Instant::now();
-    simulate::<ImportanceMetropolis>(1.0 ,1. , 0.1, true, interacting);
+    //simulate::<ImportanceMetropolis>(1.0 ,1. , 0.1, true, interacting);
 
-    /*
+    
     // Multithreading
     println!("Running simulations using BruteForceMetropolis algorithm...");
     let start_alphas:Vec<f64> = vec![0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8];
@@ -253,7 +253,7 @@ pub fn sgd(interacting: bool) {
     let learning_rates:Vec<f64> = vec![0.00005, 0.0001, 0.0002, 0.0004, 0.0008, 0.0016, 0.0032, 0.0064];
     let start_alpha: f64 = 0.0;
     let start_beta: f64 = 0.0;
-    let learning_rate: f64 = 0.01; //0.0004 was the chosen one for project 1
+    let learning_rate: f64 = 0.02; //0.0004 was the chosen one for project 1
 
     println!("Spawning threadpool of 8 threads, with {} Monte Carlo cycles on each", &MC_CYCLES);
     
@@ -271,7 +271,7 @@ pub fn sgd(interacting: bool) {
         pool.join_all();
         println!("Time spent on all betas for alpha = {}: {:?}", &start_alpha, start.elapsed());
     }
-    */
+    
     
     println!("Total time spent: {:?}", start.elapsed());
 }
