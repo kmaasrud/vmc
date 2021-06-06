@@ -25,7 +25,7 @@ The variational parameters were obtained using the steepest gradient decent meth
 
 <!-- Compare values to Taut's article. E.g. for omega = 1, the energy should be 3 au. Then maybe give a deviation \% from Taut’s (2 omega). Also compare with and without the Jastrow factor and with and without interaction (Hamiltonian)-->
 
-The results from the energy minima calculations using the optimal variational parameters are also listed in Table [@tbl:results-min-energy-particle-distance-2N-with] and [@tbl:results-min-energy-particle-distance-2N-without], for calculations with and without the Jastrow factor, respectivly. For the largest frequency, $\omega = 1$ we can from Taut's article expect an energy of 3 au when computing both with the Jastrow factor and with particle interaction. Our results in this mentioned case shows an energy of 3.07, which is fairly close. 
+The results from the energy minima calculations using the optimal variational parameters are also listed in Table [@tbl:results-min-energy-particle-distance-2N-with] and [@tbl:results-min-energy-particle-distance-2N-without], for calculations with and without the Jastrow factor, respectivly. For the largest frequency, $\omega = 1$ we can from Taut's article [@Taut1993] expect an energy of 3 au when computing both with the Jastrow factor and with particle interaction. Our results in this mentioned case shows an energy of 3.07, which is fairly close. 
 
 The variance is however a great deal larger than what we aimed for, especially for the larger frequencies. There could be many possible explenations for this. **FILL**. 
 
@@ -34,7 +34,7 @@ The variance is however a great deal larger than what we aimed for, especially f
 The obtained mean distance between two fermions shows to be strongly dependent on the frequency, $\omega$, as shown in Table [@tbl:results-min-energy-particle-distance-2N-with] and [@tbl:results-min-energy-particle-distance-2N-without]. A decrease in frequency of a factor 100 increases the distance with a factor of approximatly 10. Higher frequencies induces higher energies and particles then tends to be closer togheter. Studying the effect of the Jastrow factor, which are shown in the abovemention tables, it is clearly that the Jastrow factor keeps the particles further apart. 
 
 The same dependecies is natrurally reflected in the kinetic and potential energies calculated for different frequencies, listed in Table [@tbl:freq-dep-energies-2N]. 
-The Jastrow factor, in generall, gives a calculated energy closer to the one expected from Taut's article. Calculating the energy for two electrons with interaction and without the Jastrow factor gives a energy of 3.24, while adding the Jastrow factor gives an energy of 3.07. Hence one sees the importance of adding the factor for a more accurate result. 
+The Jastrow factor, in generall, gives a calculated energy closer to the one expected from Taut's article [@Taut1993]. Calculating the energy for two electrons with interaction and without the Jastrow factor gives a energy of 3.24, while adding the Jastrow factor gives an energy of 3.07. Hence one sees the importance of adding the factor for a more accurate result. 
 
 
 ## One Body density{#sec:one-body-dens-discussion}
