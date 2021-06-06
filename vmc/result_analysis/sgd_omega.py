@@ -45,18 +45,18 @@ filenames = []
 for o in omegas:
     filename = f"o-{o}.csv"
     print(filename)
-    DATA_DIR = "./data/sgd/start_params/"+filename
+    DATA_DIR = "./data/sgd/omega/"+filename
 
     df = pd.read_csv(DATA_DIR)
 
     alpha = df["alpha"]
     beta = df["beta"]
     energy = df["energy-per-particle[au]"]
-    x = range(len(o))
+    x = range(len(beta))
     c = color.give()
-    plt.plot(x, beta, label  = r"$\omega$: %.2f, $\mathbf{\beta}$" %o, linewidth = 2, c = c)
-    plt.plot(x, alpha, label =  r"$\omega$: %.2f, $\mathbf{\alpha}$" %o, linewidth = 2, c = c, alpha = 0.6)
-    plt.plot(x, energy, label =  r"$\omega$: %.2f, $\mathbf{Energy}$" %o, linewidth = 2, c = c, alpha = 0.3)
+    plt.plot(x, beta, label  = r"$\omega$: %.2f, $\mathbf{\beta}$" %float(o), linewidth = 2, c = c)
+    plt.plot(x, alpha, label =  r"$\omega$: %.2f, $\mathbf{\alpha}$" %float(o), linewidth = 2, c = c, alpha = 0.6)
+    plt.plot(x, energy, label =  r"$\omega$: %.2f, $\mathbf{Energy}$" %float(o), linewidth = 2, c = c, alpha = 0.3)
 
 
 #df = pd.read_csv("data/sgd/start_params/" + mine_name)
@@ -65,7 +65,7 @@ for o in omegas:
 #plt.plot(range(len(energy)), energy, label = "Energy")
 plt.title(r"SGD: $\alpha$ and $\beta$ for different $\omega$")
 
-plt.legend()
+plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
 plt.draw()
 plt.show()
 #plt.save_fig(PLOT_DIR + "SGD_start-alpha.png")

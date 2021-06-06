@@ -308,7 +308,7 @@ pub fn sgd_omega(interacting: bool) {
         let mut i:usize = 0;
         while !done {
             let start = Instant::now();
-            let wf = WaveFunction { alpha: alphas[i], beta: betas[i], omega: OMEGA, jastrow_on: JASTROW }; // Set beta = gamma
+            let wf = WaveFunction { alpha: alphas[i], beta: betas[i], omega: omega, jastrow_on: JASTROW }; // Set beta = gamma
             let mut system: System<N> = System::new(N, DIM, wf, interacting, numerical_laplace, SPREAD).unwrap();
             let vals = montecarlo::monte_carlo(MC_CYCLES, &mut system, &mut metro).unwrap();
 
@@ -381,7 +381,7 @@ pub fn sgd_omega(interacting: bool) {
     for omega in omegas {
         pool.execute(move || simulate::<BruteForceMetropolis>( omega,ALPHA, BETA, learning_rate, true, interacting)); //Running the simulation on each thread individually
     }
-    
+
     println!("All threads now executing with different omegas, waiting for them to finish...");
     pool.join_all();
     
