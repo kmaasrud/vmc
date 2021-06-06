@@ -9,12 +9,12 @@ A performance analysis, taking the average time over 10 runs, of the analytical 
 
 | Sampling method                   | Avarage time [s]|$\langle E \rangle$|$\langle E_{kinetic}\rangle$|$\sigma^2$|$\sigma_{\text{blocking}}$|
 | ----:                             | ---             |---                |---                          |---       |---                      |
-| Analytical w/ Metropolis          | 5.25            | 2.000             |1.03                         | 0.0000   | 0.0000                  |
+| Analytical w/ Brute Force         | 5.25            | 2.000             |1.03                         | 0.0000   | 0.0000                  |
 | Analytical w/ Importance Sampling | 6.13            | 2.000             |1.04                         | 0.0000   | 0.0000                  |
-| Numerical w/ Metropolis           | 5.82            | 1.9999            | 0.99                        | 0.0000   | 0.0000                  |
+| Numerical w/ Brute Force          | 5.82            | 1.9999            | 0.99                        | 0.0000   | 0.0000                  |
 | Numerical w/ Importance Sampling  | 6.3             | 1.9999            | 1.02                        | 0.0000   | 0.0000                  |
 
-Table: Results from computations of the expectation value of the energy using both Importance Sampling and the Metropolis algorithm for both the analytical expression for the local energy(see equation @eq:analytical) and numerical derivation of the kinetic energy. To compare the performance of the different configurations, the algorithms are timed over 10 runs and averaged. Statistical results from a blocking and a variance analysis is listed in the column $\sigma_\text{blocking}$ and $\sigma$, respectivly. {#tbl:results-performance-calc-methods} 
+Table: Results from computations of the expectation value of the energy using both Importance Sampling- and the Brute Force-Metropolis algorithm for both the analytical expression for the local energy(see equation @eq:analytical) and numerical derivation of the kinetic energy. To compare the performance of the different configurations, the algorithms are timed over 10 runs and averaged. Statistical results from a blocking and a variance analysis is listed in the column $\sigma_\text{blocking}$ and $\sigma$, respectivly. {#tbl:results-performance-calc-methods} 
 
 
 ### Evaluating the variational parameters{#sec:results-variational-params}

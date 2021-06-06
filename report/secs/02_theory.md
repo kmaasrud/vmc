@@ -37,7 +37,7 @@ These energies serve as great values to benchmark our program against.
 
 Single harmonic oscillators are solvable analytically, but introducing the repulsive perturbation forces us to tackle the problem differently. We choose a variational Monte Carlo approach, and use the Slater-Jastrow type of trial wave function, namely
 
-$$ \Psi_T(\mathbf R, \alpha, \beta) = \Psi_D \Psi_J = \det(D(\mathbf R, \alpha))\exp(J(\mathbf R, \beta)), $$
+$$ \Psi_T(\mathbf R, \alpha, \beta) = \Psi_D \Psi_J = \det(D(\mathbf R, \alpha))\exp(J(\mathbf R, \beta)), $$ 
 
 where $D(\mathbf R)$ is a Slater matrix and $J(\mathbf R)$ is a Padé-Jastrow correlation function. $\mathbf R$ here represents the set of all the individual particle's positions, and $\alpha$ and $\beta$ are the variational parameters. Following @Project2, our ansatz for the factors of this trial wave function is:
 
@@ -54,7 +54,7 @@ $\phi_j(\mathbf r_i)$ is the single particle wave function for the $i$-th fermio
 
 Expanding the ansatz ([@eq:trial-ansatz]) for a system of two fermions, the trial wave function is reduced to:
 
-$$ \Psi_T (\mathbf r_1, \mathbf r_2 ) = C \exp \left(- \frac{\alpha\omega \left(|\mathbf r_1|^2 + |\mathbf r_2|^2\right)}{2}\right) \exp\left(\frac{ar_{12}}{1 + \beta r_{12}}\right). $$
+$$ \Psi_T (\mathbf r_1, \mathbf r_2 ) = C \exp \left(- \frac{\alpha\omega \left(|\mathbf r_1|^2 + |\mathbf r_2|^2\right)}{2}\right) \exp\left(\frac{ar_{12}}{1 + \beta r_{12}}\right). $$ {#eq:analytical}
 
 The total spin in the ground state of this system is simply zero as the two fermions are paired with opposite spins.
 

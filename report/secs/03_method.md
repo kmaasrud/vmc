@@ -93,7 +93,7 @@ By using the steepest descent method, the best variational parameters, $\alpha$ 
 
 The minimum energy of the system is computed and compared our expectations. In addition, the mean distance between the two electrons and the one-body density is calculated for the best variational parameters. These results are also compared with the results from the same computations, where only the pure harmonic oscillator wavefunctions are used, both with and without the Jastrow factor.
 
-Lastly the expectation value for the kinetic energy is calculated with $\omega \in {0.01, 0.05, 0.1, 0.5, 1.0}$.
+Lastly the expectation value for the kinetic energy is calculated with $\omega \in \{0.01, 0.05, 0.1, 0.5, 1.0\}$.
 
 ## Increasing computational performance 
 
