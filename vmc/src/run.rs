@@ -92,9 +92,9 @@ pub fn multiple() {
     const SPREAD: f64 = 0.5;
 
     fn simulate<const N: usize>(omega: f64, alpha: f64, beta: f64) {
-        let metro_type = "ImportanceMetropolis";
+        let metro_type = "BruteForceMetropolis";
         println!("Running run::simple() with {}, Numerical laplace: {:?}, Interacting: {:?}", &metro_type, NUMERICAL_LAPLACE, INTERACTING);
-        let mut metro = ImportanceMetropolis::new(STEP_SIZE);
+        let mut metro = BruteForceMetropolis::new(STEP_SIZE);
 
         let mut path = find_cargo_root().unwrap();
         path.push("data");
@@ -134,7 +134,12 @@ pub fn multiple() {
 
     let start = Instant::now();
     let pool = ThreadPool::new(10);
-    pool.execute(move || simulate::<6>(0.01, 0.9, 0.05));
+    pool.execute(move || simulate::<2>(0.01, 0.93, 0.16));
+    pool.execute(move || simulate::<2>(0.05, 0.98, 0.24));
+    pool.execute(move || simulate::<2>(0.1, 0.97, 0.35));
+    pool.execute(move || simulate::<2>(0.5, 0.97, 0.38));
+    pool.execute(move || simulate::<2>(1.0, 0.98, 0.43));
+    /* pool.execute(move || simulate::<6>(0.01, 0.9, 0.05));
     pool.execute(move || simulate::<6>(0.05, 0.8, 0.15));
     pool.execute(move || simulate::<6>(0.1, 0.85, 0.2));
     pool.execute(move || simulate::<6>(0.5, 1.05, 0.25));
@@ -143,7 +148,7 @@ pub fn multiple() {
     pool.execute(move || simulate::<12>(0.05, 0.7, 0.15));
     pool.execute(move || simulate::<12>(0.1, 0.8, 0.2));
     pool.execute(move || simulate::<12>(0.5, 1.1, 0.5));
-    pool.execute(move || simulate::<12>(1.0, 1.2, 0.4));
+    pool.execute(move || simulate::<12>(1.0, 1.2, 0.4)); */
     pool.join_all();  
     println!("Total time spent: {:?}", start.elapsed());
 }
