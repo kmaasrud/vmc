@@ -1,6 +1,6 @@
 # Results
 
-## Two fermions
+## Two fermions {#sec:two-fermions}
 
 To validate our algorithm a simulation of the simplest case with two electrons without the Jastrow factor and perturbation was done, expecting an energy-output of exactly 2 au and a variance of 0. The results, together with a performance analysis (see below), is listed in Table [@tbl:results-performance-calc-methods]. 
 
@@ -14,10 +14,10 @@ A performance analysis, taking the average time over 10 runs, of the analytical 
 | Numerical w/ Metropolis           | 5.82            | 1.9999            | 0.99                        | 0.0000   | 0.0000                  |
 | Numerical w/ Importance Sampling  | 6.3             | 1.9999            | 1.02                        | 0.0000   | 0.0000                  |
 
-Table: Results from computations of the expectation value of the energy using both Importance Sampling and the Metropolis algorithm for both the analytical expression for the local energy(see equation @eq:analytical) and numerical derivation of the kinetic energy. To compare the performance of the different configurations, the algorithms are timed over 10 runs and averaged. Statistical results from a blocking and a variance analysis is listed in the column $\sigma_\text{blocking}$ and $\sigma$, respectivly.{#tbl:results-performance-calc-methods} 
+Table: Results from computations of the expectation value of the energy using both Importance Sampling and the Metropolis algorithm for both the analytical expression for the local energy(see equation @eq:analytical) and numerical derivation of the kinetic energy. To compare the performance of the different configurations, the algorithms are timed over 10 runs and averaged. Statistical results from a blocking and a variance analysis is listed in the column $\sigma_\text{blocking}$ and $\sigma$, respectivly. {#tbl:results-performance-calc-methods} 
 
 
-### Evaluating the variational parameters{#sec:results-variational-params-2N}
+### Evaluating the variational parameters{#sec:results-variational-params}
 
 To obtain the optimal variational parameters for the ground state energy, the steepest gradient decent method is implemented in the Variational Monte Carlo calculations. The result are shown in Table [@tbl:results-variational-parameters-2N].
 
@@ -29,12 +29,12 @@ To obtain the optimal variational parameters for the ground state energy, the st
 | $0.05$   	|          	|         	|            	|
 | $0.01$   	|          	|         	|            	|
 
-Table: Optimal variational parameters for $N = 2$ electrons obtained with the steepest gradient decent method.{#tbl:results-variational-parameters-2N}
+Table: Optimal variational parameters for $N = 2$ electrons obtained with the steepest gradient decent method. {#tbl:results-variational-parameters-2N}
 
 
 ### Minimum energy and particle distance
 
-| $\omega$ 	| $E_{\text{analytical}}$ 	| $E_{\text{min}}$ 	| $\sigma_{\text{blocking}}$ 	| $E_{\text{min,without Jastrow}}$ 	| $\sigma_{\text{blocking,without Jastrow}}$ 	| $r_{12}$ 	| $r_{12, without Jastrow}$ 	|
+| $\omega$ 	| $E_{\text{analytical}}$ 	| $E_{\text{min}}$ 	| $\sigma_{\text{blocking}}$ 	| $E_{\text{min,no Jastrow}}$ 	| $\sigma_{\text{blocking,no Jastrow}}$ 	| $r_{12}$ 	| $r_{12,\text{ no Jastrow}}$ 	|
 |----------	|-------------------------	|------------------	|----------------------------	|----------------------------------	|--------------------------------------------	|----------	|----------------------------	|
 | $1.0$    	|                         	|                  	|                            	|                                  	|                                            	|          	|                            	|
 | $0.5$    	|                         	|                  	|                            	|                                  	|                                            	|          	|                            	|
@@ -63,7 +63,7 @@ The expectation value of the kinetic and potential energy using a set of frequen
 | $0.05$   	|                      	|                        	|
 | $0.01$   	|                      	|                        	|
 
-Table: Frequency dependent calculations of the kinetic and potential energies.{#tbl:freq-dep-energies-2N}
+Table: Frequency dependent calculations of the kinetic and potential energies. {#tbl:freq-dep-energies-2N}
 
 ## Larger systems
 
@@ -82,7 +82,7 @@ Table: Frequency dependent calculations of the kinetic and potential energies.{#
 |    	| $0.05$   	|                         	|                  	|                                  	|          	|                            	|
 |    	| $0.01$   	|                         	|                  	|                                  	|          	|                            	|
 
-Table: Optimal variational parameters for $N = 6 \text{ and } 12$ electrons for a set of frequencies obtained with the steepest gradient decent method.{#tbl:results-variational-parameters-larger-sys}
+Table: Optimal variational parameters for $N = 6 \text{ and } 12$ electrons for a set of frequencies obtained with the steepest gradient decent method. {#tbl:results-variational-parameters-larger-sys}
 
 
 
@@ -112,10 +112,10 @@ The expectation value of the kinetic and potential energy using a set of frequen
 |    	| $0.05$   	|                      	|                        	|
 |    	| $0.01$   	|                      	|                        	|
 
-Table: Frequency dependent calculations of the kinetic and potential energies for $N = 6 \text{ and } 12$ electrons.{#tbl:freq-dep-energies-larger-sys}
+Table: Frequency dependent calculations of the kinetic and potential energies for $N = 6 \text{ and } 12$ electrons. {#tbl:freq-dep-energies-larger-sys}
 
 ## Performance analysis
-<!--  -->
+
 Lastly a analysis of the algorithms are given for $N = 6$ electrons, $FILL IN$ Monte Carlo cycles, optimal variational parameters $\omega = 1$ and without the Jastrow factor. The analysis is done by comparing the average time used for a calculation with and without vectorization. The procedure is repeated with parallelization, expecting approximately a 100% speedup.  The quantities which are calculated are **FILL INN**. The most time-consuming part is the **FILL INN**, and hence the clock is started here. The results are presented in table [@tbl:results-performence-analysis]. **ADD SOME MORE DESCRIPTION OF HOW HERE**
 
 Table: Results from performance analysis with and without vectorization and compile flags. The time is averaged over 10 runs with **FILL INN** MC cycles. The sampling method is the **Brute Force Metropolis OR Importance sampling**
@@ -127,7 +127,7 @@ Table: Results from performance analysis with and without vectorization and comp
 | Flag 2                        |               |
 | Flag 2                        |               |
 | **Without Vectorization**  	|               |
-| **Parallelization**           |               |{#tbl:results-performence-analysis}
+| **Parallelization**           |               | {#tbl:results-performence-analysis}
 
 
 

@@ -2,17 +2,16 @@
 
 ## Verification/ Two electrons
 
-As a validation test for our algorithm, we calculated the energy without the Jastrow factor for $N = 2$ electrons, expecting a energy of $2.0 $ au and a variance of zero. Running this system with the Metropolis (and Importance sampling) method returned a energy of $1.999$ ($1.999$) and a variance of $0$ ($0$). Together with the energy and statistical calculations, a performance analysis showed an intermediate difference in time consumption. The analytical algorithm used $5.3$ ($6.1) seconds, while the numerical approach used $5.8$ ($6.3$) seconds. Comparing the two sampling methods in question, the Metropolis sampling was faster than the Importance sampling method for this particular system. 
+As a validation test for our algorithm, we calculated the energy without the Jastrow factor for $N = 2$ electrons, expecting a energy of $2.0$ a.u. and a variance of zero. Running this system with the brute force Metropolis algorithm (as well as with importance sampling), returned an energy of $1.999$ ($1.999$) and a variance of $0$ ($0$). Together with the energy and statistical calculations, the performance analysis showed only a small difference in time consumed by the analytical and numerical approach. The analytical algorithm used $5.3$ ($6.1) seconds, while the numerical approach used $5.8$ ($6.3$) seconds. Comparing the two sampling methods in question, the Metropolis sampling was faster than the Importance sampling method for this particular system. 
 
-<!-- Reference to our last project where we preformed performance analysis for different number of particles. Can maybe write something like: This is a two-particle system, where we found in our last project Importance/Metropolis is faster, while for larger system Importance/Metropolis will dominate in performance -->
-
+As shown in our previous work [@Vmc-bosonic2021], importance sampling generally used more time, and this is once again shown here.
 
 <!-- The effect of blocking on the results Metropolis vs Importance-->
 
 ## Variational parameters
 <!-- Two particle system-->
 
-The variational parameters were obtained using the Steepest Gradient Decent method both with and without the Jastrow factor. The results for the two electron system are to be found in Table [@tbl:results-variational-parameters-2N], while calculations of $6$ and $12$ electrons are listed in Table [@tbl:results-variational-parameters-larger-sys]. Without the Jastrow factor our calculations returned $\alpha = FILL$, with the expectation of $\alpha = 1$. With the Jastrow factor, there is an additional variational parameter, $\beta$. 
+The variational parameters were obtained using the steepest gradient decent method both with and without the Jastrow factor. The results for the two electron system are to be found in Table [@tbl:results-variational-parameters-2N], while calculations of $6$ and $12$ electrons are listed in Table [@tbl:results-variational-parameters-larger-sys]. Without the Jastrow factor our calculations returned $\alpha = FILL$, with the expectation of $\alpha = 1$. With the Jastrow factor, there is an additional variational parameter, $\beta$. 
 
 <!-- Maybe write something about the influence of the step size, how it influences the steepest decent method performance - smaller step size = higher accuracy and more likely to hit the lowest energy, while a higher step size gives a higher performance/uses less time, but is less likely to hit bottom of the energy -->
 
