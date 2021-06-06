@@ -49,7 +49,7 @@ The energies and particle distance is calculated for a set of frequencies using 
 | $0.05$   	| 0.344            	| 0.012                      	| 6.66     	| 0.995            	|
 | $0.01$   	| 0.103            	| 0.031                      	| 16.6     	| 0.998            	|
 
-Table: Energy minimum computed and avarage particle distance computed for $N = 2$ electrons *with* the Jastrow factor. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N].{#tbl:results-min-energy-particle-distance-2N-with}
+Table: Energy minimum computed and avarage particle distance computed for $N = 2$ electrons *with* the Jastrow factor. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N]. {#tbl:results-min-energy-particle-distance-2N-with}
 
 
 | $\omega$ 	| $E_{\text{min, wo/Jastrow}}$ 	| $\sigma_{\text{blocking}}$ 	| $r_{12, wo/Jastrow}$ 	| Acceptance ratio 	|
@@ -59,7 +59,7 @@ Table: Energy minimum computed and avarage particle distance computed for $N = 2
 | $0.1$    	| 0.617                        	| 0.602                      	| 3.943                	| 0.967            	|
 | $0.05$   	| 0.400                        	| 0.447                      	| 5.366                	| 0.977            	|
 | $0.01$   	| 0.148                        	| 0.058                      	| 12.365               	| 0.990            	|
-Table: Energy minimum computed and avarage particle distance computed for $N = 2$ electrons *without* the Jastrow factor. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N].{#tbl:results-min-energy-particle-distance-2N-without}
+Table: Energy minimum computed and avarage particle distance computed for $N = 2$ electrons *without* the Jastrow factor. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N]. {#tbl:results-min-energy-particle-distance-2N-without}
 
 ### One-body density
 
