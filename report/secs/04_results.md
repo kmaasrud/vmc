@@ -33,15 +33,24 @@ Table: Optimal variational parameters for $N = 2$ electrons obtained with the st
 
 ### Minimum energy and particle distance
 
-| $\omega$ 	| $E_{\text{min}}$ 	| $\sigma_{\text{blocking}}$ 	| $r_{12}$ 	| Acceptance ratio 	|
-|----------	|------------------	|----------------------------	|----------	|------------------	|
-| $1.0$    	|   3.05           	|   1.509                     	|          	|     0.979        	|
-| $0.5$    	|   1.72           	|   0.551                     	|          	|     0.985        	|
-| $0.1$    	|   0.48          	|   0.057                     	|          	|     0.992        	|
-| $0.05$   	|   0.31           	|   0.012                      	|          	|     0.995        	|
-| $0.01$   	|   0.17           	|   0.031                     	|          	|     0.998       	|
-Table: Energy minimum compared with the analytical energies from Taut's work **reference**. The particle distance. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N]. {#tbl:results-min-energy-particle-distance-2N}
+| $\omega$ 	| $E_{\text{min}}$ 	| $\sigma_{\text{blocking}}$  |$E_{\text{kinetic}}$	| $r_{12}$ 	| Acceptance ratio 	|
+|----------	|------------------	|---------------------------- | ------------------  |----------	|------------------	|
+| $1.0$    	|   3.05           	|   1.509                     |	                    |          	|     0.979        	|
+| $0.5$    	|   1.72           	|   0.551                     |	                    |          	|     0.985        	|
+| $0.1$    	|   0.48          	|   0.057                     |	                    |          	|     0.992        	|
+| $0.05$   	|   0.31           	|   0.012                     | 	                |          	|     0.995        	|
+| $0.01$   	|   0.17           	|   0.031                     |  	                |          	|     0.998       	|
+Table: Energy minimum computed and avarage particle distance computed for $N = 2$ electrons *with* the Jastrow factor. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N].{#tbl:results-min-energy-particle-distance-2N}
 
+
+| $\omega$ 	| $E_{\text{min, wo/Jastrow}}$ 	| $\sigma_{\text{blocking}}$  | $E_{\text{kinetic}}$    | $r_{12, wo/Jastrow}$ 	| Acceptance ratio 	|
+|----------	|------------------------------	|---------------------------- | ----------------------  |----------------------	|------------------	|
+| $1.0$    	|  3.24                       	|   10.1                      |	0.983                   | 1.267                	|  0.892          	|
+| $0.5$    	|  1.86                        	|   2.433                     |	0.502                   | 1.768                	|  0.925           	|
+| $0.1$    	|  0.617                      	|   0.602                     | 0.102                   | 3.943                	|  0.967           	|
+| $0.05$   	|  0.400                       	|   0.447                     | 0.053                   | 5.366                	|  0.977           	|
+| $0.01$   	|  0.148                       	|   0.058                     | 0.010                   | 12.365               	|  0.990           	|
+Table: Energy minimum computed and avarage particle distance computed for $N = 2$ electrons *without* the Jastrow factor. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N].{#tbl:results-min-energy-particle-distance-2N}
 
 ### One-body density
 
