@@ -376,15 +376,14 @@ pub fn sgd_omega(interacting: bool) {
 
     println!("Spawning threadpool of 5 threads, with {} Monte Carlo cycles on each", &MC_CYCLES);
     
-    for omega in omegas {
-        let pool = ThreadPool::new(5);
+    let pool = ThreadPool::new(5);
 
+    for omega in omegas {
         pool.execute(move || simulate::<BruteForceMetropolis>( omega,ALPHA, BETA, learning_rate, true, interacting)); //Running the simulation on each thread individually
-        
-        println!("All threads now executing with different omegas, waiting for them to finish...");
-        pool.join_all();
     }
     
+    println!("All threads now executing with different omegas, waiting for them to finish...");
+    pool.join_all();
     
     println!("Total time spent: {:?}", start.elapsed());
 }
