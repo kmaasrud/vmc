@@ -31,12 +31,13 @@ The variance is however a great deal larger than what we aimed for, especially f
 
 <!-- Mean distance between two electrons. Should be dependent on omega(frequency). Is there any dependence on the energy, e.g., higher energy allows for a shorter distance?? -->
 
-The obtained mean distance between two fermions shows to be strongly dependent on the frequency, $\omega$, as shown in Table [@tbl:results-min-energy-particle-distance-2N-with] and [@tbl:results-min-energy-particle-distance-2N-without]. A decrease in frequency of a factor 100 increases the distance with a factor of approximatly 10. Higher frequencies induces higher energies and particles then tends to be closer togheter. The same dependecies is natrurally reflected in the kinetic and potential energies calculated for different frequencies, listed in Table [@tbl:freq-dep-energies-2N]. 
+The obtained mean distance between two fermions shows to be strongly dependent on the frequency, $\omega$, as shown in Table [@tbl:results-min-energy-particle-distance-2N-with] and [@tbl:results-min-energy-particle-distance-2N-without]. A decrease in frequency of a factor 100 increases the distance with a factor of approximatly 10. Higher frequencies induces higher energies and particles then tends to be closer togheter. Studying the effect of the Jastrow factor, which are shown in the abovemention tables, it is clearly that the Jastrow factor keeps the particles further apart. 
 
+The same dependecies is natrurally reflected in the kinetic and potential energies calculated for different frequencies, listed in Table [@tbl:freq-dep-energies-2N]. 
 The Jastrow factor, in generall, gives a calculated energy closer to the one expected from Taut's article. Calculating the energy for two electrons with interaction and without the Jastrow factor gives a energy of 3.24, while adding the Jastrow factor gives an energy of 3.07. Hence one sees the importance of adding the factor for a more accurate result. 
 
 
-## One Body density
+## One Body density{#sec:one-body-dens-discussion}
 <!-- Two particle system-->
 
 The results from the one body density calculations utilizing optimal parameters are shown in Figure [@fig:one-body-densities]. For both the calculations with and without the Jastrow factor, there is a peak density at $|\mathbf{r}| \approx 1$, which hence is where the particles are most likely located. For $|\mathbf{r}|$ approximatly less  than one,  the calculations without the Jastrow factor has a higher density, while for larger $|\mathbf{r}|$, the density is greater when the Jastrow factor is on. 
