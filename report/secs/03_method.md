@@ -36,7 +36,7 @@ We introduce the index $k$, referring to an arbitrary Monte Carlo step. Recogniz
 
 $$ D_{k+1}^{-1} = \left(\mathbf I - \frac{D_k^{-1}\mathbf e_p \mathbf v_p^T}{\mathcal R_{D, k}}\right)D_k^{-1}. $$
 
-This has an operation complexity of $\mathcal O(N)$.
+This has an operation complexity of $\mathcal O(N^2)$.
 
 [^smw]: Which, confusingly, is just called the *Sherman-Morrison formula*.
 
@@ -52,6 +52,18 @@ $$ \mathcal R_J = \prod_{i\ne p}^N \frac{\exp(J(r_{pi}', \beta))}{\exp(J(r_{pi},
 
 which scales in the order of $\mathcal O(N-1)$ operations.
 
+
+## Numerical derivatives
+
+For gradients, we utilize the two-point approximation of the first derivative:
+
+$$ \frac{d g(x)}{dx} \approx \frac{g(x + \Delta x) - g ( x - \Delta x)}{2 \Delta x}. $$
+
+Similarly, we also calculate the Laplacians numerically by using the three-point approximation, as follows:
+
+$$ \frac{d^2 g(x)}{dx^2} \approx \frac{g(x + \Delta x) - 2 g(x)  + g ( x - \Delta x) }{ \Delta x^2}  $$
+
+We let the step size $\Delta x$ run towards $0$ and have found $10^{-5}$ to be sufficiently small. The error here goes as $\mathcal O(\delta x^2)$.
 
 ## Testing
 
