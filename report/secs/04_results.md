@@ -19,7 +19,13 @@ Table: Results from computations of the expectation value of the energy using bo
 
 ### Evaluating the variational parameters{#sec:results-variational-params}
 
-To obtain the optimal variational parameters for the ground state energy, the steepest gradient decent method is implemented in the Variational Monte Carlo calculations. The result are shown in Table [@tbl:results-variational-parameters-2N].
+To obtain the optimal variational parameters for the ground state energy, the steepest gradient decent method is implemented in the Variational Monte Carlo calculations. To avoid being caught in a false energy minima with the wrong variational parameters, a total of $64$ different start-values for $\alpha$ and $\beta$ was used with the SGD. Specifically, whis was all combinations of $\alpha$ and $\beta$ with the values $\{0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8\}$. The two runs yielding the lowest end energy has been chosen to represent the variational results. Before starting the big run, different learning rates was also tested, where a rate of $0.05$ was found to be sufficient.
+
+When testing this out we realized the $\beta$ variable did not converge properly. After days of debugging we decided to accept the fault and move on. This led to SGD plots of the variational parameters and alpha, like shown in figure [@fig:results-sgd]. In addition, the big simulation showed that regardless of the start value for the variables, the energies ended up the same, with the same variable values (within the error margin).
+
+![The two runs yielding the lowest energy, with the SGD history of $\alpha$, $\beta$ and the Energy.](sgd.png){#fig:results-sgd width=300px}
+
+On the basis of the result that showed that the starting values of the variables was not important, variable starting values of $0.5$ was chosen for the test with the different $\omega$ values. How the variational parameters turned out for the different $\omega$'s is shown in table [@tbl:results-variational-parameters-2N].
 
 | $\omega$ 	| $\alpha$ 	| $\beta$ 	| Energy [au] 	|
 |----------	|----------	|---------	|------------	|
