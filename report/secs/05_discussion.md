@@ -58,7 +58,7 @@ According to the Virial theorem for a Harmonic occilator, the mean potential ene
 We experienced a lot of trouble with getting the larger systems ($N > 2$) to work. The issue was that the Greens factor evaluated to $0$ with every step, leaving us with no results to do anything with. We suspect the issue is with our evaluation of the Slater gradient, and subsequently with how our quantum force is found, in order to do a step. We were not, however, able to locate this issue in due time, which left us in the awkward situation of not having anything to present.
 
 ## Performance analysis
-Table [@tbl:results-performence-analysis] gives an overview of the performance analysis of running our algorithm with and without vectorization and parallelization for $N = 2$ electrons. As seen, there is a immense speedup utulizing vectorization. This results shows the importance of utilizing the tools available, especially for increased sized systems. 
+Table [@tbl:results-performance-analysis] gives an overview of the performance analysis of running our algorithm with and without vectorization and parallelization for $N = 2$ electrons. As seen, there is a immense speedup utilizing vectorization. This results shows the importance of utilizing the tools available, especially for increased sized systems. 
 
 <!-- Write something about how we use parallelization (running one experiment on core??) and if/how it gives a speed-up when running our algorithm. Maybe something about how it can be improved in the future.--> 
 Our code is parallelized in a way where different experiments are ran at seperate cores. Hence, it is not a proper parallized code and therefore a seperate performance analysis only utilizing parallelization is not conducted. 
