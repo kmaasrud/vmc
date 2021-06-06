@@ -25,15 +25,15 @@ When testing this out, we realized the $\beta$ variable did not converge properl
 
 ![The two runs yielding the lowest energy, with the SGD history of $\alpha$, $\beta$ and the Energy.](sgd.png){#fig:results-sgd width=300px}
 
-On the basis of the result that showed that the starting values of the variables were not important, variable starting values of $0.5$ were chosen for the test with the different $\omega$ values. How the variational parameters turned out for the different $\omega$'s is shown in table [@tbl:results-variational-parameters-2N].
+On the basis of the result that showed that the starting values of the variables were not important, variable starting values of $0.5$ were chosen for the test with the different $\omega$ values. How the variational parameters turned out for the different $\omega$'s is shown in table [@tbl:results-variational-parameters-2N]. 
 
 | $\omega$ 	| $\alpha$ 	| $\beta$ 	| Energy [au] 	|
 |----------	|----------	|---------	|------------	|
-| $1.0$    	|          	|         	|            	|
-| $0.5$    	|          	|         	|            	|
-| $0.1$    	|          	|         	|            	|
-| $0.05$   	|          	|         	|            	|
-| $0.01$   	|          	|         	|            	|
+| $1.0$    	|   0.983   |     0.0   |      1.513   	|
+| $0.5$    	|   0.950  	|     0.0 	|      0.837 	|
+| $0.1$    	|   0.729  	|     0.0 	|      0.231 	|
+| $0.05$   	|   0.591  	|     0.0 	|      0.145 	|
+| $0.01$   	|   0.394  	|     0.0 	|      0.070 	|
 
 Table: Optimal variational parameters for $N = 2$ electrons obtained with the steepest gradient decent method. {#tbl:results-variational-parameters-2N}
 
