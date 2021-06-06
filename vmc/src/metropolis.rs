@@ -130,7 +130,6 @@ impl Metropolis for ImportanceMetropolis {
                 }
             }
         };
-        println!("{}", acceptance_factor);
 
         if Self::hastings_check(acceptance_factor) {
             sys.particles = new_particles;
