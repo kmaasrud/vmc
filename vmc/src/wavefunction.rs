@@ -61,7 +61,7 @@ impl WaveFunction {
     }
 
     fn evaluate_jastrow(&self, particles: &Vec<Particle>) -> f64 {
-        let mut jastrow = 1.;
+        let mut jastrow = 0.;
         let n = particles.len();
         for (i, particle) in particles.iter().enumerate() {
             for (j, other) in particles[i + 1..].iter().enumerate() {
