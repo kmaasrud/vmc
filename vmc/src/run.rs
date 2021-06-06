@@ -1,6 +1,6 @@
 use crate::{
     montecarlo, BruteForceMetropolis, Hamiltonian, ImportanceMetropolis, Metropolis, System,
-    ThreadPool, WaveFunction,
+    ThreadPool, WaveFunction, Particle, Vector
 };
 
 use std::{
@@ -268,6 +268,58 @@ pub fn sgd(interacting: bool) {
     }
     
     
+    println!("Total time spent: {:?}", start.elapsed());
+}
+
+
+#[allow(dead_code)]
+pub fn onebody() {
+    const ALPHA: f64 = 0.98;
+    const OMEGA: f64 = 1.0;
+    const BETA: f64 =  0.43;
+    const STEP_SIZE: f64 = 0.1;
+    const MC_CYCLES: usize = 100_000;
+    const DIM: usize = 2;
+    const N: usize = 2;
+    const SPREAD: f64 = 0.1;
+
+    fn simulate<T: Metropolis>(jastrow: bool) {
+        let metro_type = std::any::type_name::<T>().split("::").last().unwrap();
+        let mut metro: T = T::new(STEP_SIZE);
+
+        let mut path = find_cargo_root().unwrap();
+        path.push("data");
+        path.push("N2");
+        create_dir(&path);
+
+        let jastrow_str = if jastrow { "with-jastro" } else { "without-jastro" };
+        path.push(format!("onebody_{}.csv", jastrow_str));
+        let mut f = create_file(&path);
+        f.write_all("distance,wf_squared\n".as_bytes()).expect("Unable to write data");
+
+        let wf = WaveFunction { alpha: ALPHA, beta: BETA, omega: OMEGA, jastrow_on: jastrow };
+        let system: System<N> = System::new(N, DIM, wf, true, true, SPREAD).unwrap();
+        // Run 10 times
+        for i in 0..100 {
+            let distance = 2. / 100. * (i as f64 + 1.);
+            let particles = vec![
+                Particle::from_vector(Vector::D2((distance / 2.).sqrt(), (distance / 2.).sqrt())),
+                Particle::from_vector(Vector::D2(-(distance / 2.).sqrt(), -(distance / 2.).sqrt())),
+            ];
+
+            let wf_squared = system.wf.evaluate::<N>(&particles).unwrap();
+
+            let data = format!("{},{}\n", distance, wf_squared);
+            f.write_all(data.as_bytes()).expect("Unable to write data");
+            println!("{}", data);
+        }
+    }
+
+    let start = Instant::now();
+    let pool = ThreadPool::new(2);
+    pool.execute(move || simulate::<BruteForceMetropolis>(false));
+    pool.execute(move || simulate::<BruteForceMetropolis>(true));
+    pool.join_all();  
     println!("Total time spent: {:?}", start.elapsed());
 }
 
