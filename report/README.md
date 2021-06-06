@@ -1,0 +1,1 @@
+This is a [Doctor](https://kmaasrud.com/doctor) document, written in Pandoc's flavor of Markdown. It can be built by downloading Doctor from [this repo](https://github.com/kmaasrud/doctor/) and running `doctor build`. `report.pdf` is a precompiled version of this document.
