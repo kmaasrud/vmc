@@ -163,31 +163,12 @@ mod tests {
 
     #[test]
     fn test_greens() {
-        // Special greens variables
-        let diffusion_coeff: f64 = 0.5;
-        let dt: f64 = 0.005;
-
-        let p0 = Particle::from_vector(Vector::D2(0., 0.));
         let pold = Particle::from_vector(Vector::D2(0.01, 0.01));
         let mut pnew = Particle::from_vector(Vector::D2(0.011, 0.011));
         pnew.qforce += Vector::D2(0.2, 0.2);
 
-        // a = 1, alpha = 0.5 omega = 1, beta = 1
-        let r12: f64 = p0.distance_to(&pold).unwrap();
-        let qforce_vec = p0.position.scale(-2. * 0.5)
-            + (p0.position - pold.position).scale(2. / (r12 * (1. + r12).powf(2.)))
-            + pold.position.scale(-2. * 0.5)
-            + (pold.position - p0.position).scale(2. / (r12 * (1. + r12).powf(2.)));
-        let relpos = pnew.position - pold.position;
-        let poldscaled = pold.position.scale(diffusion_coeff * dt);
-        let therest = (relpos - poldscaled)
-            .scale(-1.)
-            .scale(1. / (4. * diffusion_coeff * dt)); //Fuck me for doing this ugly shit
-        let analytical: f64 = therest.inner(therest).unwrap();
+        let want = 0.999000499833375;
 
-        //Assertation
-        let tol: f64 = 1E-12;
-        assert_eq!(BruteForceMetropolis::greens(&pnew, &pold).unwrap(), analytical);
-        // assert!((BruteForceMetropolis::greens(&pnew, &pold).unwrap() - analytical) < tol);
+        assert_eq!(BruteForceMetropolis::greens(&pnew, &pold, 2).unwrap(), want);
     }
 }
