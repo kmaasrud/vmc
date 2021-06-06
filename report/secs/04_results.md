@@ -28,20 +28,18 @@ To obtain the optimal variational parameters for the ground state energy, the st
 | $0.1$    	|          	|         	|            	|
 | $0.05$   	|          	|         	|            	|
 | $0.01$   	|          	|         	|            	|
-
 Table: Optimal variational parameters for $N = 2$ electrons obtained with the steepest gradient decent method. {#tbl:results-variational-parameters-2N}
 
 
 ### Minimum energy and particle distance
 
-| $\omega$ 	| $E_{\text{analytical}}$ 	| $E_{\text{min}}$ 	| $\sigma_{\text{blocking}}$ 	| $E_{\text{min,no Jastrow}}$ 	| $\sigma_{\text{blocking,no Jastrow}}$ 	| $r_{12}$ 	| $r_{12,\text{ no Jastrow}}$ 	|
-|----------	|-------------------------	|------------------	|----------------------------	|----------------------------------	|--------------------------------------------	|----------	|----------------------------	|
-| $1.0$    	|                         	|                  	|                            	|                                  	|                                            	|          	|                            	|
-| $0.5$    	|                         	|                  	|                            	|                                  	|                                            	|          	|                            	|
-| $0.1$    	|                         	|                  	|                            	|                                  	|                                            	|          	|                            	|
-| $0.05$   	|                         	|                  	|                            	|                                  	|                                            	|          	|                            	|
-| $0.01$   	|                         	|                  	|                            	|                                  	|                                            	|          	|                            	|
-
+| $\omega$ 	| $E_{\text{min}}$ 	| $\sigma_{\text{blocking}}$ 	| $r_{12}$ 	| Acceptance ratio 	|
+|----------	|------------------	|----------------------------	|----------	|------------------	|
+| $1.0$    	|   3.05           	|   1.509                     	|          	|     0.979        	|
+| $0.5$    	|   1.72           	|   0.551                     	|          	|     0.985        	|
+| $0.1$    	|   0.48          	|   0.057                     	|          	|     0.992        	|
+| $0.05$   	|   0.31           	|   0.012                      	|          	|     0.995        	|
+| $0.01$   	|   0.17           	|   0.031                     	|          	|     0.998       	|
 Table: Energy minimum compared with the analytical energies from Taut's work **reference**. The particle distance. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N]. {#tbl:results-min-energy-particle-distance-2N}
 
 
