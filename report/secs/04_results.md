@@ -13,7 +13,8 @@ A performance analysis, taking the average time over 10 runs, of the analytical 
 | Analytical w/ Importance Sampling | 6.13            | 2.000             |1.04                         | 0.0000   | 0.0000                  |
 | Numerical w/ Metropolis           | 5.82            | 1.9999            | 0.99                        | 0.0000   | 0.0000                  |
 | Numerical w/ Importance Sampling  | 6.3             | 1.9999            | 1.02                        | 0.0000   | 0.0000                  |
-Table: Results from computations of the expectation value of the energy using both Importance Sampling and the Metropolis algorithm for both the analytical expression for the local energy(see equation @eq:analytical) and numerical derivation of the kinetic energy. To compare the performance of the different configurations, the algorithms are timed over 10 runs and averaged. Statistical results from a blocking and a variance analysis is listed in the column $\sigma_\text{blocking}}$ and $\sigma$, respectivly.{#tbl:results-performance-calc-methods} 
+
+Table: Results from computations of the expectation value of the energy using both Importance Sampling and the Metropolis algorithm for both the analytical expression for the local energy(see equation @eq:analytical) and numerical derivation of the kinetic energy. To compare the performance of the different configurations, the algorithms are timed over 10 runs and averaged. Statistical results from a blocking and a variance analysis is listed in the column $\sigma_\text{blocking}$ and $\sigma$, respectivly.{#tbl:results-performance-calc-methods} 
 
 
 ### Evaluating the variational parameters{#sec:results-variational-params-2N}
@@ -27,19 +28,21 @@ To obtain the optimal variational parameters for the ground state energy, the st
 | $0.1$    	|          	|         	|            	|
 | $0.05$   	|          	|         	|            	|
 | $0.01$   	|          	|         	|            	|
+
 Table: Optimal variational parameters for $N = 2$ electrons obtained with the steepest gradient decent method.{#tbl:results-variational-parameters-2N}
 
 
 ### Minimum energy and particle distance
 
-| $\omega$ 	| $E_{\text{analytical}}$ 	| $E_{\text{min}}$ 	| $\sigma_{\text{blocking}}$ 	| $E_{\text{min,without Jastrow}}$ 	| $\sigma_{\text{blocking,without Jastrow}}$ 	| $r_{12}$ 	| $\r_{12, without Jastrow}$ 	|
+| $\omega$ 	| $E_{\text{analytical}}$ 	| $E_{\text{min}}$ 	| $\sigma_{\text{blocking}}$ 	| $E_{\text{min,without Jastrow}}$ 	| $\sigma_{\text{blocking,without Jastrow}}$ 	| $r_{12}$ 	| $r_{12, without Jastrow}$ 	|
 |----------	|-------------------------	|------------------	|----------------------------	|----------------------------------	|--------------------------------------------	|----------	|----------------------------	|
 | $1.0$    	|                         	|                  	|                            	|                                  	|                                            	|          	|                            	|
 | $0.5$    	|                         	|                  	|                            	|                                  	|                                            	|          	|                            	|
 | $0.1$    	|                         	|                  	|                            	|                                  	|                                            	|          	|                            	|
 | $0.05$   	|                         	|                  	|                            	|                                  	|                                            	|          	|                            	|
 | $0.01$   	|                         	|                  	|                            	|                                  	|                                            	|          	|                            	|
-Table: Energy minimum compared with the analytical energies from Taut's work **reference**. The particle distance. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N.{#tbl:results-min-energy-particle-distance-2N}
+
+Table: Energy minimum compared with the analytical energies from Taut's work **reference**. The particle distance. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N]. {#tbl:results-min-energy-particle-distance-2N}
 
 
 ### One-body density
@@ -49,6 +52,7 @@ The One-body density for the two electron system with optimal set of variational
 ![One Body densities for 2 fermions with and without the Jastrow factor. The computations are done with $\alpha = FILL$, $\beta = FILL$ and $\omega = 1$](onebodydens-2N.png){#fig:one-body-densities-2N width=300px}
 
 ### Freqeuncy dependency
+
 The expectation value of the kinetic and potential energy using a set of frequencies are listed in Table [@tbl:freq-dep-energies-2N]
 
 | $\omega$ 	| $E_{\text{kinetic}}$ 	| $E_{\text{potential}}$ 	|
@@ -58,13 +62,14 @@ The expectation value of the kinetic and potential energy using a set of frequen
 | $0.1$    	|                      	|                        	|
 | $0.05$   	|                      	|                        	|
 | $0.01$   	|                      	|                        	|
+
 Table: Frequency dependent calculations of the kinetic and potential energies.{#tbl:freq-dep-energies-2N}
 
 ## Larger systems
 
 ### Evaluating the variational parameters{#sec:results-variational-params-larger-sys}
 
-| N  	| $\omega$ 	| $E_{\text{analytical}}$ 	| $E_{\text{min}}$ 	| $E_{\text{min,without Jastrow}}$ 	| $r_{12}$ 	| $\r_{12, without Jastrow}$ 	|
+| N  	| $\omega$ 	| $E_{\text{analytical}}$ 	| $E_{\text{min}}$ 	| $E_{\text{min,without Jastrow}}$ 	| $r_{12}$ 	| $r_{12, without Jastrow}$ 	|
 |----	|----------	|-------------------------	|------------------	|----------------------------------	|----------	|----------------------------	|
 | 6  	| $1.0$    	|                         	|                  	|                                  	|          	|                            	|
 |    	| $0.5$    	|                         	|                  	|                                  	|          	|                            	|
@@ -76,11 +81,13 @@ Table: Frequency dependent calculations of the kinetic and potential energies.{#
 |    	| $0.1$    	|                         	|                  	|                                  	|          	|                            	|
 |    	| $0.05$   	|                         	|                  	|                                  	|          	|                            	|
 |    	| $0.01$   	|                         	|                  	|                                  	|          	|                            	|
+
 Table: Optimal variational parameters for $N = 6 \text{ and } 12$ electrons for a set of frequencies obtained with the steepest gradient decent method.{#tbl:results-variational-parameters-larger-sys}
 
 
 
 ### One body densities
+
 The one body density is computed for 2 and 6 particles with the optimal parameters obtained from the previous calculations. The calculations are executed with and without the Jastrow factor for comparison and analysis of its influence. 
 
 The one-body densities are calculated with and without the Jastrow factor for six and twelve electrons. The results are shown in figure [@fig:one-body-densities-larger-sys] below
@@ -89,6 +96,7 @@ The one-body densities are calculated with and without the Jastrow factor for si
 
 
 ### Freqeuncy dependency
+
 The expectation value of the kinetic and potential energy using a set of frequencies are listed in Table [@tbl:freq-dep-energies-larger-sys]
 
 | N  	| $\omega$ 	| $E_{\text{kinetic}}$ 	| $E_{\text{potential}}$ 	|
@@ -103,6 +111,7 @@ The expectation value of the kinetic and potential energy using a set of frequen
 |    	| $0.1$    	|                      	|                        	|
 |    	| $0.05$   	|                      	|                        	|
 |    	| $0.01$   	|                      	|                        	|
+
 Table: Frequency dependent calculations of the kinetic and potential energies for $N = 6 \text{ and } 12$ electrons.{#tbl:freq-dep-energies-larger-sys}
 
 ## Performance analysis
