@@ -22,6 +22,6 @@ pub use vector::Vector;
 pub use wavefunction::{WaveFunction, QUANTUM_NUMBERS};
 
 fn main() {
-    //println!("Running run::simple()"); run::simple(); 
-    run::sgd(false);
+    //run::simple(); 
+    run::sgd(true);
 }

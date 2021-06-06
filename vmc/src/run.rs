@@ -15,8 +15,8 @@ use std::{
 pub fn simple() {
     const ALPHA: f64 = 1.0;
     const OMEGA: f64 = 1.0;
-    const BETA: f64 =  0.0;
-    const JASTROW: bool = false;
+    const BETA: f64 =  0.4;
+    const JASTROW: bool = true;
     const STEP_SIZE: f64 = 0.1;
     const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
@@ -62,89 +62,21 @@ pub fn simple() {
             let acceptance_rate = (vals.accepted_steps as f64) / (MC_CYCLES as f64);
             let data = format!("{},{},{},{},{}\n", energy, start.elapsed().as_millis() as f64 / 1000., kinetic, energy_sqrd - energy.powi(2), acceptance_rate);
             f.write_all(data.as_bytes()).expect("Unable to write data");
+            println!("{}", data);
         }
     }
 
     let start = Instant::now();
-    let pool = ThreadPool::new(8);
-    pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
+    let pool = ThreadPool::new(2);
+    /*pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(false, true));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, true));
-    pool.execute(move || simulate::<ImportanceMetropolis>(true, false));
+    */
+    pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(true, true));
-    pool.join_all();  
-    println!("Total time spent: {:?}", start.elapsed());
-}
-
-#[allow(dead_code)]
-pub fn multiple() {
-    const ALPHA: f64 = 1.0;
-    const BETA: f64 =  0.0;
-    const JASTROW: bool = false;
-    const NUMERICAL_LAPLACE: bool = true;
-    const INTERACTING: bool = true;
-    const STEP_SIZE: f64 = 0.1;
-    const MC_CYCLES: usize = 100_000;
-    const DIM: usize = 2;
-    const SPREAD: f64 = 0.1;
-
-    fn simulate<const N: usize>(omega: f64) {
-        let metro_type = "ImportanceMetropolis";
-        println!("Running run::simple() with {}, Numerical laplace: {:?}, Interacting: {:?}", &metro_type, NUMERICAL_LAPLACE, INTERACTING);
-        let mut metro = ImportanceMetropolis::new(STEP_SIZE);
-
-        let mut path = find_cargo_root().unwrap();
-        path.push("data");
-        path.push(format!("N{}", N));
-        create_dir(&path);
-
-        let interact_str = if INTERACTING { "interacting" } else { "non-interacting" };
-        let numerical_str = if NUMERICAL_LAPLACE { "numerical" } else { "analytical" };
-        path.push(format!("omega_{}.csv", omega));
-        let mut f = create_file(&path);
-        f.write_all("energy[au],time[s],kinetic,variance,acceptance_rate\n".as_bytes()).expect("Unable to write data");
-
-        // Run 10 times
-        for _ in 0..10 {
-            let start = Instant::now();
-            let wf = WaveFunction { alpha: ALPHA, beta: BETA, omega, jastrow_on: JASTROW }; // Set beta = gamma
-            let mut system: System<N> = System::new(N, DIM, wf, INTERACTING, NUMERICAL_LAPLACE, SPREAD).unwrap();
-            let vals = montecarlo::monte_carlo(MC_CYCLES, &mut system, &mut metro).unwrap();
-
-            let energy = match vals.map.get("energy") {
-                Some(val) => *val,
-                None => 0.,
-            };
-            let energy_sqrd = match vals.map.get("energy_sqrd") {
-                Some(val) => *val,
-                None => 0.,
-            };
-            let kinetic = match vals.map.get("kinetic") {
-                Some(val) => *val,
-                None => 0.,
-            };
-
-            let acceptance_rate = (vals.accepted_steps as f64) / (MC_CYCLES as f64);
-            let data = format!("{},{},{},{},{}\n", energy, start.elapsed().as_millis() as f64 / 1000., kinetic, energy_sqrd - energy.powi(2), acceptance_rate);
-            f.write_all(data.as_bytes()).expect("Unable to write data");
-        }
-    }
-
-    let start = Instant::now();
-    let pool = ThreadPool::new(10);
-    pool.execute(move || simulate::<6>(0.01));
-    pool.execute(move || simulate::<6>(0.05));
-    pool.execute(move || simulate::<6>(0.1));
-    pool.execute(move || simulate::<6>(0.5));
-    pool.execute(move || simulate::<6>(1.0));
-    pool.execute(move || simulate::<12>(0.01));
-    pool.execute(move || simulate::<12>(0.05));
-    pool.execute(move || simulate::<12>(0.1));
-    pool.execute(move || simulate::<12>(0.5));
-    pool.execute(move || simulate::<12>(1.0));
     pool.join_all();  
     println!("Total time spent: {:?}", start.elapsed());
 }
@@ -155,7 +87,7 @@ pub fn sgd(interacting: bool) {
     const OMEGA: f64 = 1.0;
     const BETA: f64 = 0.;
     const JASTROW: bool = true;
-    const STEP_SIZE: f64 = 0.01;
+    const STEP_SIZE: f64 = 0.1;
     const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
     const N: usize = 2;
@@ -244,7 +176,7 @@ pub fn sgd(interacting: bool) {
         
     }
     let start = Instant::now();
-    simulate::<ImportanceMetropolis>(1.0 ,100. , 0.01, true, interacting);
+    simulate::<ImportanceMetropolis>(1.0 ,8. , 0.1, true, interacting);
 
     /*
     // Multithreading
