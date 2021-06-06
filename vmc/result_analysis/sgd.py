@@ -13,10 +13,17 @@ DATA_DIR = "../data"
 FILENAME_PLOT = 'SGD_alphas'
 PLOT_DIR = "./"
 
+class color():
+    colors = ["tab:blue", "tab:orange", "tab:green", "tab:red", "tab:purple", "tab:brown", "tab:pink", "tab:gray", "tab:olive", "tab:cyan"]
+
+    def give(self):
+        c = self.colors[0]
+        self.colors = self.colors[1:]
+        return c
 
 #figure size and resolution
 fig = plt.figure()
-plt.style.use("seaborn")
+#plt.style.use("seaborn")
 #colour, linewith, linestyle
 #boundaries
 #plt.xlim(min(x)*1.1, max(x)*1.1)
@@ -27,34 +34,71 @@ plt.rc('font', size=10)
 plt.rc('axes', titlesize=12)
 plt.xlabel("Iterations")
 #plt.ylabel(r"$\alpha$")
-plt.title(r"SGD: Start $\alpha$")
+
+color = color()
 
 
 
 
-start_alphas = ["0.2","0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9"]
-"""
-for start_alpha in start_alphas:
-    dim = 3
+start_betas = ["0.4", "0.6", "0.8", "1", "1.2", "1.4", "1.6", "1.8"]
+start_alphas= ["0.4", "0.6", "0.8", "1", "1.2", "1.4", "1.6", "1.8"]
 
-    DATA_DIR = f"../data/sgd_noninteracting/start-alpha/start-alpha_{start_alpha}.csv"
+
+Energies = []
+filenames = []
+for start_beta in start_betas:
+    for start_alpha in start_alphas[0:5]:
+        filename = f"a-{start_alpha}_b-{start_beta}.csv"
+        print(filename)
+        DATA_DIR = "./data/sgd/start_params/"+filename
+
+        df = pd.read_csv(DATA_DIR)
+
+        alpha = df["alpha"]
+        beta = df["beta"]
+        energy = df["energy-per-particle[au]"]
+        Energies.append(energy.iloc[-1])
+        filenames.append(filename)
+
+mine_name = []
+
+mine = min(Energies)
+indx = Energies.index(mine)
+Energies[indx] = 100
+mine_name.append(filenames[indx])
+print(Energies)
+mine = min(Energies)
+indx = Energies.index(mine)
+Energies[indx] = 100
+mine_name.append(filenames[indx])
+
+start_alpha = "0.4"
+
+for name in mine_name:
+
+    DATA_DIR = f"./data/sgd/start_params/" + name
 
     df = pd.read_csv(DATA_DIR)
 
-    energy = df["Energy"]
-    
-    alpha = df["Alpha"]
-    x = np.linspace(0, len(alpha), len(alpha))
-    plt.plot(x, alpha, label  = start_alpha, linewidth = 2)
-"""
-df = pd.read_csv("data/sgd/start_params/a-0.4_b-1.2.csv")
-alpha = df["alpha"]
-beta = df["beta"]
-energy = df["energy-per-particle[au]"]
+    alpha = df["alpha"]
+    beta = df["beta"]
+    energy = df["energy-per-particle[au]"]
+    x = range(len(alpha))
+    c = color.give()
+    print(name[2:5])
+    a = float(name[2:5])
+    b = float(name[8:11])
+    print(name)
+    plt.plot(x, beta, label  = r"$\alpha_i$: %.1f, $\beta_i$: %.1f, $\mathbf{\beta}$" %(a,b), linewidth = 2, c = c)
+    plt.plot(x, alpha, label =  r"$\alpha_i$: %.1f, $\beta_i$: %.1f, $\mathbf{\alpha}$" %(a,b), linewidth = 2, c = c, alpha = 0.6)
+    plt.plot(x, energy, label =  r"$\alpha_i$: %.1f, $\beta_i$: %.1f, $\mathbf{Energy}$" %(a,b), linewidth = 2, c = c, alpha = 0.3)
 
-plt.plot(range(len(alpha)), alpha, label = r"$\alpha$")
-plt.plot(range(len(beta)), beta, label = r"$\beta$")
-plt.plot(range(len(energy)), energy, label = "Energy")
+
+#df = pd.read_csv("data/sgd/start_params/" + mine_name)
+#plt.plot(range(len(alpha)), alpha, label = r"$\alpha$")
+#plt.plot(range(len(beta)), beta, label = r"$\beta$")
+#plt.plot(range(len(energy)), energy, label = "Energy")
+plt.title(r"SGD: Two lowest Energy simulations")
 
 plt.legend()
 plt.draw()
