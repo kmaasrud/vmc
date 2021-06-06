@@ -324,6 +324,31 @@ pub fn onebody() {
 }
 
 
+#[allow(dead_code)]
+pub fn performance() {
+    const ALPHA: f64 = 0.98;
+    const OMEGA: f64 = 1.0;
+    const BETA: f64 =  0.43;
+    const JASTROW: bool = true;
+    const STEP_SIZE: f64 = 0.1;
+    const MC_CYCLES: usize = 1_000_000;
+    const DIM: usize = 2;
+    const N: usize = 2;
+    const SPREAD: f64 = 0.1;
+
+    fn simulate<T: Metropolis>(numerical_laplace: bool, interacting: bool) {
+        let mut metro: T = T::new(STEP_SIZE);
+        let wf = WaveFunction { alpha: ALPHA, beta: BETA, omega: OMEGA, jastrow_on: JASTROW }; // Set beta = gamma
+        let mut system: System<N> = System::new(N, DIM, wf, interacting, numerical_laplace, SPREAD).unwrap();
+        let _ = montecarlo::monte_carlo(MC_CYCLES, &mut system, &mut metro).unwrap();
+    }
+
+    let start = Instant::now();
+    simulate::<BruteForceMetropolis>(true, true);
+    println!("Total time spent: {:?}", start.elapsed());
+}
+
+
 
 fn find_cargo_root() -> Option<PathBuf> {
     let mut path: PathBuf = env::current_dir().unwrap().into();

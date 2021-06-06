@@ -24,6 +24,7 @@ pub use wavefunction::{WaveFunction, QUANTUM_NUMBERS};
 fn main() {
     // run::simple(); 
     // run::sgd(true);
-    run::multiple();
+    // run::multiple();
     // run::onebody();
+    run::performance();
 }
