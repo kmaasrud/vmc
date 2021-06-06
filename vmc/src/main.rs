@@ -22,7 +22,7 @@ pub use vector::Vector;
 pub use wavefunction::{WaveFunction, QUANTUM_NUMBERS};
 
 fn main() {
-    // println!("Running run::simple()"); run::simple(); 
+    //run::simple(); 
     run::sgd(true);
-    // run::multiple();
+    //run::multiple();
 }

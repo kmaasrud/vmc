@@ -62,18 +62,20 @@ pub fn simple() {
             let acceptance_rate = (vals.accepted_steps as f64) / (MC_CYCLES as f64);
             let data = format!("{},{},{},{},{}\n", energy, start.elapsed().as_millis() as f64 / 1000., kinetic, energy_sqrd - energy.powi(2), acceptance_rate);
             f.write_all(data.as_bytes()).expect("Unable to write data");
+            println!("{}", data);
         }
     }
 
     let start = Instant::now();
-    let pool = ThreadPool::new(8);
-    pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
+    let pool = ThreadPool::new(2);
+    /*pool.execute(move || simulate::<BruteForceMetropolis>(false, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(false, true));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, false));
     pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, false));
     pool.execute(move || simulate::<ImportanceMetropolis>(false, true));
-    pool.execute(move || simulate::<ImportanceMetropolis>(true, false));
+    */
+    pool.execute(move || simulate::<BruteForceMetropolis>(true, true));
     pool.execute(move || simulate::<ImportanceMetropolis>(true, true));
     pool.join_all();  
     println!("Total time spent: {:?}", start.elapsed());
@@ -152,7 +154,7 @@ pub fn sgd(interacting: bool) {
     const OMEGA: f64 = 1.0;
     const BETA: f64 = 0.;
     const JASTROW: bool = true;
-    const STEP_SIZE: f64 = 0.01;
+    const STEP_SIZE: f64 = 0.1;
     const MC_CYCLES: usize = 100_000;
     const DIM: usize = 2;
     const N: usize = 2;
@@ -241,7 +243,7 @@ pub fn sgd(interacting: bool) {
         
     }
     let start = Instant::now();
-    simulate::<ImportanceMetropolis>(1.0 ,100. , 0.01, true, interacting);
+    simulate::<ImportanceMetropolis>(1.0 ,8. , 0.1, true, interacting);
 
     /*
     // Multithreading
