@@ -47,7 +47,7 @@ for start_alpha in start_alphas:
     x = np.linspace(0, len(alpha), len(alpha))
     plt.plot(x, alpha, label  = start_alpha, linewidth = 2)
 """
-df = pd.read_csv("data/sgd/start_params/a-1_b-0.2.csv")
+df = pd.read_csv("data/sgd/start_params/a-0.4_b-1.2.csv")
 alpha = df["alpha"]
 beta = df["beta"]
 energy = df["energy-per-particle[au]"]

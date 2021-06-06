@@ -155,7 +155,7 @@ pub fn sgd(interacting: bool) {
     const BETA: f64 = 0.;
     const JASTROW: bool = true;
     const STEP_SIZE: f64 = 0.1;
-    const MC_CYCLES: usize = 100_000;
+    const MC_CYCLES: usize = 200_000;
     const DIM: usize = 2;
     const N: usize = 2;
     const SPREAD: f64 = 0.1;
@@ -221,7 +221,7 @@ pub fn sgd(interacting: bool) {
 
 
             let energy_deriv_alpha = 2.* (wf_deriv_alpha_times_energy-wf_deriv_alpha*energy);
-            let new_alpha: f64 = alphas[i];// - learning_rate * energy_deriv_alpha;
+            let new_alpha: f64 = alphas[i] - learning_rate * energy_deriv_alpha;
             alphas.push(new_alpha);
 
             let energy_deriv_beta = 2.* (wf_deriv_beta_times_energy-wf_deriv_beta*energy);
@@ -231,7 +231,7 @@ pub fn sgd(interacting: bool) {
             if energy_deriv_alpha.abs() < TOLERANCE && energy_deriv_beta.abs() < TOLERANCE {
                 println!("Tolerance is met, exiting.");
                 done = true;
-            } else if i > 500 {
+            } else if i > 150 {
                 println!("Max iter lim met, exiting.");
                 done = true;
             }
@@ -243,7 +243,7 @@ pub fn sgd(interacting: bool) {
         
     }
     let start = Instant::now();
-    //simulate::<ImportanceMetropolis>(1.0 ,1. , 0.1, true, interacting);
+    //simulate::<BruteForceMetropolis>(0.5 ,1. , 0.05, true, interacting);
 
     
     // Multithreading
@@ -253,7 +253,7 @@ pub fn sgd(interacting: bool) {
     let learning_rates:Vec<f64> = vec![0.00005, 0.0001, 0.0002, 0.0004, 0.0008, 0.0016, 0.0032, 0.0064];
     let start_alpha: f64 = 0.0;
     let start_beta: f64 = 0.0;
-    let learning_rate: f64 = 0.02; //0.0004 was the chosen one for project 1
+    let learning_rate: f64 = 0.05; //0.0004 was the chosen one for project 1
 
     println!("Spawning threadpool of 8 threads, with {} Monte Carlo cycles on each", &MC_CYCLES);
     
@@ -265,7 +265,7 @@ pub fn sgd(interacting: bool) {
         let start = Instant::now();
 
         for start_beta in start_betas.clone() {
-            pool.execute(move || simulate::<ImportanceMetropolis>(start_alpha, start_beta, learning_rate, true, interacting)); //Running the simulation on each thread individually
+            pool.execute(move || simulate::<BruteForceMetropolis>(start_alpha, start_beta, learning_rate, true, interacting)); //Running the simulation on each thread individually
         }
         println!("All threads now executing with different betas and alpha = {} , waiting for them to finish...", &start_alpha);
         pool.join_all();
