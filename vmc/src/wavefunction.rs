@@ -77,11 +77,11 @@ impl WaveFunction {
         let mut slater_matrix: SMatrix<f64, N, N> = SMatrix::repeat(0.);
         for i in 0..n {
             for j in 0..n {
-                let nx = crate::QUANTUM_NUMBERS.get(j)
+                let nx = crate::QUANTUM_NUMBERS.get(i)
                     .ok_or("System can not have more than 20 particles.")?.0;
-                let ny = crate::QUANTUM_NUMBERS.get(j)
+                let ny = crate::QUANTUM_NUMBERS.get(i)
                     .ok_or("System can not have more than 20 particles.")?.1;
-                slater_matrix[(i, j)] = self.spf(&particles[i], nx, ny).unwrap();
+                slater_matrix[(i, j)] = self.spf(&particles[j], nx, ny).unwrap();
             }
         }
         Ok(slater_matrix)
@@ -205,10 +205,10 @@ impl WaveFunction {
 
     pub fn gradient_slater<const N: usize>(&self, p: usize, particles: &Vec<Particle>, slater_inverse: &SMatrix<f64, N, N>) -> Result<Vector, String> {
         let mut gradient = Particle::new(particles[0].dim).unwrap().position;
-        for (i, particle) in particles.iter().enumerate() {
+        for i in 0..N {
             let nx = QUANTUM_NUMBERS[i].0;
             let ny = QUANTUM_NUMBERS[i].1;
-            let d_spf = self.gradient_spf(particle, nx, ny)?;
+            let d_spf = self.gradient_spf(&particles[p], nx, ny)?;
             gradient += d_spf.scale(slater_inverse[(i, p)]);
         }
         Ok(gradient)
@@ -221,7 +221,7 @@ impl WaveFunction {
             if i == p { continue }
             let distance = particles[p].distance_to(&particle)?;
             let factor = a(p, i, n) / (distance * (1. + self.beta * distance).powi(2));
-            gradient += (particles[p].position + particle.position.scale(-1.)).scale(factor);
+            gradient += (particles[p].position - particle.position).scale(factor);
         }
         Ok(gradient)
     }
@@ -300,7 +300,6 @@ impl WaveFunction {
 
             Ok(r1.scale(factor1) + r12.scale(factor2) + r2.scale(factor1) + r21.scale(factor2))
         } else {
-            // The gradients need not be divided by the wavefunc since it already has been inside the gradient functions (this cancels terms and easen the computation)
             let slater_gradient = self.gradient_slater(p, particles, slater_inverse)?;
             let jastrow_gradient = self.gradient_jastrow(p, particles)?;
             Ok((slater_gradient + jastrow_gradient).scale(2.))
