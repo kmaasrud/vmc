@@ -81,18 +81,17 @@ The first performance evaluations are done for a case with two electrons in a qu
 
 ###  Performance evaluation of different energy calculation methods
 
-The performance of the analytical expression for the local energy is compared to the performance of the numerical derivation of the kinetic energy in results section [@sec:results-performance-calc-methods].  This test is performed without importance sampling and the Jastrow factor. Following this, importance sampling is added and tested only with the analytical expression for the local energy. Lastly, a blocking analysis is performed in order to obtain the optimal standard deviation.
+The performance of the analytical expression for the local energy is compared to the performance of the numerical derivation of the kinetic energy in results section [@sec:two-fermions]. This test is performed without importance sampling and the Jastrow factor. Following this, importance sampling is added and tested only with the analytical expression for the local energy. Lastly, a blocking analysis is performed in order to obtain the optimal standard deviation.
 
-The energy should equal 2.0 atomic units with a variance exactly equal to zero.
+The expect the energy to be equal to $2$ a.u. with a variance exactly equal to $0$.
 
 ### Evaluating the variational parameters
 
 By using the steepest descent method, the best variational parameters, $\alpha$ and $\beta$ are found. The results for this is found in section [@sec:results-variational-params].
 
-
 ### Computation of the two-electron system
 
-The minimum energy of the system is computed and compared to Taut's work <!-- [@cite taut] -->. In addition, the mean distance between the two electrons and the one-body density is calculated for the best variational parameters. These results are also compared with the results form the same computations, where only the pure harmonic oscillator wavefunctions are used, and where pure HO wavefunctions are used but without the Jastrow factor.
+The minimum energy of the system is computed and compared our expectations. In addition, the mean distance between the two electrons and the one-body density is calculated for the best variational parameters. These results are also compared with the results from the same computations, where only the pure harmonic oscillator wavefunctions are used, both with and without the Jastrow factor.
 
 Lastly the expectation value for the kinetic energy is calculated with $\omega \in {0.01, 0.05, 0.1, 0.5, 1.0}$.
 
