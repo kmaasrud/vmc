@@ -4,7 +4,7 @@
 
 To validate our algorithm a simulation of the simplest case with two electrons without the Jastrow factor and perturbation was done, expecting an energy-output of exactly 2 au and a variance of 0. The results, together with a performance analysis (see below), is listed in Table [@tbl:results-performance-calc-methods]. 
 
-A performance analysis, taking the average time over 10 runs, of the analytical expression for the local energy, numerical derivation of the kinetic energy and the analytical local energy with importance sampling is shown in table[@tbl:results-performance-calc-methods] below.
+A performance analysis, taking the average time over 10 runs, of the analytical expression for the local energy, numerical derivation of the kinetic energy and the analytical local energy with importance sampling is shown in table [@tbl:results-performance-calc-methods] below.
 
 
 | Sampling method                   | Avarage time [s]|$\langle E \rangle$|$\langle E_{kinetic}\rangle$|$\sigma^2$|$\sigma_{\text{blocking}}$|
