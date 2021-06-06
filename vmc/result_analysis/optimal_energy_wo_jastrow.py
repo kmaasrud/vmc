@@ -3,11 +3,11 @@ import numpy as np
 
 from lib.blocking import block
 
-df1 = pd.read_csv('../data/N2/omega1_alpha0.98_beta0.43_without-jastrow.csv')
-df2 = pd.read_csv('../data/N2/omega0.5_alpha0.97_beta0.38_without-jastrow.csv')
-df3 = pd.read_csv('../data/N2/omega0.1_alpha0.97_beta0.35_without-jastrow.csv')
-df4 = pd.read_csv('../data/N2/omega0.05_alpha0.98_beta0.24_without-jastrow.csv')
-df5 = pd.read_csv('../data/N2/omega0.01_alpha0.93_beta0.16_without-jastrow.csv')
+df1 = pd.read_csv('../data/N2/omega1_alpha0.98_beta0.43_with-jastrow.csv')
+df2 = pd.read_csv('../data/N2/omega0.5_alpha0.97_beta0.38_with-jastrow.csv')
+df3 = pd.read_csv('../data/N2/omega0.1_alpha0.97_beta0.35_with-jastrow.csv')
+df4 = pd.read_csv('../data/N2/omega0.05_alpha0.98_beta0.24_with-jastrow.csv')
+df5 = pd.read_csv('../data/N2/omega0.01_alpha0.93_beta0.16_with-jastrow.csv')
 
 
 energy1 = df1['energy[au]']
@@ -41,6 +41,12 @@ distance3 = df3['avg_distance']
 distance4 = df4['avg_distance']
 distance5 = df5['avg_distance']
 
+potential1 = energy1 - kinetic1
+potential2 = energy2 - kinetic2
+potential3 = energy3 - kinetic3
+potential4 = energy4 - kinetic4
+potential5 = energy5 - kinetic5
+
 
 print(type(distance5))
 
@@ -52,6 +58,9 @@ print('0.3:     {:f}   {:f}   {:f}   {:f}   {:f} '.format(float(energy3), float(
 print('0.05:    {:f}   {:f}   {:f}   {:f}   {:f} '.format(float(energy4), float(kinetic4), float(variance4), float(acceptance_ratio4), float(distance4)))
 print('0.05:    {:f}   {:f}   {:f}   {:f}   {:f} '.format(float(energy5), float(kinetic5), float(variance5), float(acceptance_ratio5), float(distance5)))
 
+
+
+print(potential1, potential2, potential3, potential4, potential5)
 
 
 

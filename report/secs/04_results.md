@@ -34,25 +34,24 @@ Table: Optimal variational parameters for $N = 2$ electrons obtained with the st
 
 ### Minimum energy and particle distance
 
-| $\omega$ 	| $E_{\text{min}}$ 	| $\sigma_{\text{blocking}}$  |$E_{\text{kinetic}}$	| $r_{12}$ 	| Acceptance ratio 	|
-|----------	|------------------	|---------------------------- | ------------------  |----------	|------------------	|
-| $1.0$    	|   3.05           	|   1.509                     |	                    |          	|     0.979        	|
-| $0.5$    	|   1.72           	|   0.551                     |	                    |          	|     0.985        	|
-| $0.1$    	|   0.48          	|   0.057                     |	                    |          	|     0.992        	|
-| $0.05$   	|   0.31           	|   0.012                     | 	                |          	|     0.995        	|
-| $0.01$   	|   0.17           	|   0.031                     |  	                |          	|     0.998       	|
+| $\omega$ 	| $E_{\text{min}}$ 	| $\sigma_{\text{blocking}}$ 	| $r_{12}$ 	| Acceptance ratio 	|
+|----------	|------------------	|----------------------------	|----------	|------------------	|
+| $1.0$    	| 3.07             	| 1.509                      	| 1.39     	| 0.979            	|
+| $0.5$    	| 1.74             	| 0.551                      	| 2.00     	| 0.985            	|
+| $0.1$    	| 0.513            	| 0.057                      	| 4.64     	| 0.992            	|
+| $0.05$   	| 0.344            	| 0.012                      	| 6.66     	| 0.995            	|
+| $0.01$   	| 0.103            	| 0.031                      	| 16.6     	| 0.998            	|
 
 Table: Energy minimum computed and avarage particle distance computed for $N = 2$ electrons *with* the Jastrow factor. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N].{#tbl:results-min-energy-particle-distance-2N}
 
 
-| $\omega$ 	| $E_{\text{min, wo/Jastrow}}$ 	| $\sigma_{\text{blocking}}$  | $E_{\text{kinetic}}$    | $r_{12, wo/Jastrow}$ 	| Acceptance ratio 	|
-|----------	|------------------------------	|---------------------------- | ----------------------  |----------------------	|------------------	|
-| $1.0$    	|  3.24                       	|   10.1                      |	0.983                   | 1.267                	|  0.892          	|
-| $0.5$    	|  1.86                        	|   2.433                     |	0.502                   | 1.768                	|  0.925           	|
-| $0.1$    	|  0.617                      	|   0.602                     | 0.102                   | 3.943                	|  0.967           	|
-| $0.05$   	|  0.400                       	|   0.447                     | 0.053                   | 5.366                	|  0.977           	|
-| $0.01$   	|  0.148                       	|   0.058                     | 0.010                   | 12.365               	|  0.990           	|
-
+| $\omega$ 	| $E_{\text{min, wo/Jastrow}}$ 	| $\sigma_{\text{blocking}}$ 	| $r_{12, wo/Jastrow}$ 	| Acceptance ratio 	|
+|----------	|------------------------------	|----------------------------	|----------------------	|------------------	|
+| $1.0$    	| 3.24                         	| 10.1                       	| 1.267                	| 0.892            	|
+| $0.5$    	| 1.86                         	| 2.433                      	| 1.768                	| 0.925            	|
+| $0.1$    	| 0.617                        	| 0.602                      	| 3.943                	| 0.967            	|
+| $0.05$   	| 0.400                        	| 0.447                      	| 5.366                	| 0.977            	|
+| $0.01$   	| 0.148                        	| 0.058                      	| 12.365               	| 0.990            	|
 Table: Energy minimum computed and avarage particle distance computed for $N = 2$ electrons *without* the Jastrow factor. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N].{#tbl:results-min-energy-particle-distance-2N}
 
 ### One-body density
@@ -67,11 +66,11 @@ The expectation value of the kinetic and potential energy using a set of frequen
 
 | $\omega$ 	| $E_{\text{kinetic}}$ 	| $E_{\text{potential}}$ 	|
 |----------	|----------------------	|------------------------	|
-| $1.0$    	|                      	|                        	|
-| $0.5$    	|                      	|                        	|
-| $0.1$    	|                      	|                        	|
-| $0.05$   	|                      	|                        	|
-| $0.01$   	|                      	|                        	|
+| $1.0$    	|       0.945          	|    2.12                 	|
+| $0.5$    	|       0.447          	|    1.29                  	|
+| $0.1$    	|       0.097         	|    0.417                 	|
+| $0.05$   	|       0.036          	|    0.308                	|
+| $0.01$   	|       0.008         	|    0.095                 	|
 
 Table: Frequency dependent calculations of the kinetic and potential energies. {#tbl:freq-dep-energies-2N}
 
