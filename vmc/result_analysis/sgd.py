@@ -47,7 +47,7 @@ start_alphas= ["0.4", "0.6", "0.8", "1", "1.2", "1.4", "1.6", "1.8"]
 Energies = []
 filenames = []
 for start_beta in start_betas:
-    for start_alpha in start_alphas[0:5]:
+    for start_alpha in start_alphas[0:6]:
         filename = f"a-{start_alpha}_b-{start_beta}.csv"
         print(filename)
         DATA_DIR = "./data/sgd/start_params/"+filename

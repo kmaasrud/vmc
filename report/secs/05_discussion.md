@@ -8,10 +8,13 @@ As shown in our previous work [@Vmc-bosonic2021], importance sampling generally 
 
 <!-- The effect of blocking on the results Metropolis vs Importance-->
 
+
 ## Variational parameters
 <!-- Two particle system-->
 
-The variational parameters were obtained using the steepest gradient decent method both with and without the Jastrow factor. The results for the two electron system are to be found in Table [@tbl:results-variational-parameters-2N], while calculations of $6$ and $12$ electrons are listed in Table [@tbl:results-variational-parameters-larger-sys]. Without the Jastrow factor our calculations returned $\alpha = FILL$, with the expectation of $\alpha = 1$. With the Jastrow factor, there is an additional variational parameter, $\beta$. 
+The variational parameters were obtained using the steepest gradient decent method with the Jastrow factor. The results for the two electron system are to be found in Table [@tbl:results-variational-parameters-2N], while calculations of $6$ and $12$ electrons are listed in Table [@tbl:results-variational-parameters-larger-sys]. With the Jastrow factor, both $\alpha$ and $\beta$ are to be variated during the same simulation. This has led to immense debugging as the beta value simply will not converge, except when it hits zero. We have gone over the code for days without finding what can be the cause of this, and made the tough decision that we could not spend more time on the issue. $\alpha$ still seems to converge, however because the energy from the monte carlo solver is not accurate enough, the SGD seems to have some issues reaching the lowest energy state.
+
+Before doing the big run, different learning rates for the SGD was performed, and we saw no stability gains when having lower learning rates and more iterations in the SGD. Again, we believe that this ties back to the accuracy of the MC cycling, and the fact that something regarding the $\beta$ variable is malfunctioning.
 
 <!-- Maybe write something about the influence of the step size, how it influences the steepest decent method performance - smaller step size = higher accuracy and more likely to hit the lowest energy, while a higher step size gives a higher performance/uses less time, but is less likely to hit bottom of the energy -->
 
@@ -24,48 +27,40 @@ The variational parameters were obtained using the steepest gradient decent meth
 
 <!-- Compare values to Taut's article. E.g. for omega = 1, the energy should be 3 au. Then maybe give a deviation \% from Taut’s (2 omega). Also compare with and without the Jastrow factor and with and without interaction (Hamiltonian)-->
 
-The results from the energy minima calculations using the optimal variational parameters are also listed in Table [@tbl:results-variational-parameters-2N] and [@tbl:results-variational-parameters-larger-sys] for 2 and 6 and 12 particles, respectivly.  
+The results from the energy minima calculations using the optimal variational parameters are also listed in Table [@tbl:results-min-energy-particle-distance-2N-with] and [@tbl:results-min-energy-particle-distance-2N-without], for calculations with and without the Jastrow factor, respectivly. For the largest frequency, $\omega = 1$ we can from Taut's article [@Taut1993] expect an energy of 3 au when computing both with the Jastrow factor and with particle interaction. Our results in this mentioned case shows an energy of 3.07, which is fairly close. 
+
+The variance is however a great deal larger than what we aimed for, especially for the larger frequencies. There could be many possible explenations for this. **FILL**. 
 
 <!-- Mean distance between two electrons. Should be dependent on omega(frequency). Is there any dependence on the energy, e.g., higher energy allows for a shorter distance?? -->
 
-The obtained mean distance between two fermions shows to be strongly (inverse) **dependent/independent** on the frequency, $\omega$, which is **expected/unexpected**. Decreasing the frequency with a factor of $FILL$ increases the distance with a factor of $FILL$. Looking at the energy, there is a **decrease/increase** in energy when **decreasing** the frequency. 
+The obtained mean distance between two fermions shows to be strongly dependent on the frequency, $\omega$, as shown in Table [@tbl:results-min-energy-particle-distance-2N-with] and [@tbl:results-min-energy-particle-distance-2N-without]. A decrease in frequency of a factor 100 increases the distance with a factor of approximatly 10. Higher frequencies induces higher energies and particles then tends to be closer togheter. Studying the effect of the Jastrow factor, which are shown in the abovemention tables, it is clearly that the Jastrow factor keeps the particles further apart. 
 
-<!-- Dependence of omega on kinetic energy - HO has energy steps of $\frac{1}{2}\hbar \omega$, so the kinetic energy should increase with omega-->
+The same dependecies is natrurally reflected in the kinetic and potential energies calculated for different frequencies, listed in Table [@tbl:freq-dep-energies-2N]. 
+The Jastrow factor, in generall, gives a calculated energy closer to the one expected from Taut's article [@Taut1993]. Calculating the energy for two electrons with interaction and without the Jastrow factor gives a energy of 3.24, while adding the Jastrow factor gives an energy of 3.07. Hence one sees the importance of adding the factor for a more accurate result. 
 
 
-<!--Higher number of particles -->
-
-<!-- Dependence of omega on (kinetic) energy - HO has energy steps of $\frac{1}{2}\hbar \omega$, so the kinetic energy should increase with omega-->
-
-<!-- Comment on the effect of using/not using the Jastrow factor  + time consumption -->
-
-<!-- Viral theorem  - compare the analytical results with the viral theorem. Viral theorem does not take into consideration the interaction between the particles--> 
-
-## One Body density
+## One Body density{#sec:one-body-dens-discussion}
 <!-- Two particle system-->
 
-<!-- With and without the Jastrow factor - could also be interesting to compare with and without electron interaction. Is there a dependency of the distance between the particles, the density should probably be higher when the particles are closer together --> 
+The results from the one body density calculations utilizing optimal parameters are shown in Figure [@fig:one-body-densities]. For both the calculations with and without the Jastrow factor, there is a peak density at $|\mathbf{r}| \approx 1$, which hence is where the particles are most likely located. For $|\mathbf{r}|$ approximatly less  than one,  the calculations without the Jastrow factor has a higher density, while for larger $|\mathbf{r}|$, the density is greater when the Jastrow factor is on. 
 
-The results from the one body density calculations utilizing optimal parameters are shown in Figure [@fig:one-body-densities]. With perturbation (interaction term), there is a (small?) **increase/decrease** 
-
-<!--Higher number of particles-->
-
-<!--Comment on the difference between N = 2 vs. 6, 12 (20) + comment on the effect of distance between the particles (with Jastrow and interaction off) -->
-
+One-body density is not calculated for systems with larger number of particles due to reasons mentioned in earlier sections.  
 
 ## Frequency dependent energy calculations
 
-As seen in table [@tbl:freq-dep-energies-2N] the expecation value of the kinetic and potential energy **increases/decreases** with increasing frequency. <!-- Is it the same for N = 2, 6 and 12? -->.  <!-- How does it behvave compared to the Virial theorem?-->
+As seen in table [@tbl:freq-dep-energies-2N], the expecation value of the kinetic and potential energy increases with increasing frequency , $\omega$. This is expected, as a harmonic oscillator has an stepwise increase in energy of $\frac{1}{2} \hbar \omega^2$  <!-- How does it behvave compared to the Virial theorem?-->
+
+According to the Virial theorem for a Harmonic occilator, the mean potential energy, should equal the mean kinetic energy, which is however not the case. Indipendent of the frequencies, the potential energy is larger than the kinetic energy. 
+
 
 ## Larger systems and bugs in the code
 
 We experienced a lot of trouble with getting the larger systems ($N > 2$) to work. The issue was that the Greens factor evaluated to $0$ with every step, leaving us with no results to do anything with. We suspect the issue is with our evaluation of the Slater gradient, and subsequently with how our quantum force is found, in order to do a step. We were not, however, able to locate this issue in due time, which left us in the awkward situation of not having anything to present.
 
 ## Performance analysis
-Table [@tbl:results-performence-analysis] gives an overview of the performance analysis of running our algorithm with and without vectorization and parallelization for $N = 6$ electrons. 
-
-<!-- Write something about using different flags-->
+Table [@tbl:results-performence-analysis] gives an overview of the performance analysis of running our algorithm with and without vectorization and parallelization for $N = 2$ electrons. As seen, there is a immense speedup utulizing vectorization. This results shows the importance of utilizing the tools available, especially for increased sized systems. 
 
 <!-- Write something about how we use parallelization (running one experiment on core??) and if/how it gives a speed-up when running our algorithm. Maybe something about how it can be improved in the future.--> 
+Our code is parallelized in a way where different experiments are ran at seperate cores. Hence, it is not a proper parallized code and therefore a seperate performance analysis only utilizing parallelization is not conducted. 
 
 
