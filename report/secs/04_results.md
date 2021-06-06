@@ -28,6 +28,7 @@ To obtain the optimal variational parameters for the ground state energy, the st
 | $0.1$    	|          	|         	|            	|
 | $0.05$   	|          	|         	|            	|
 | $0.01$   	|          	|         	|            	|
+
 Table: Optimal variational parameters for $N = 2$ electrons obtained with the steepest gradient decent method. {#tbl:results-variational-parameters-2N}
 
 
@@ -40,6 +41,7 @@ Table: Optimal variational parameters for $N = 2$ electrons obtained with the st
 | $0.1$    	|   0.48          	|   0.057                     |	                    |          	|     0.992        	|
 | $0.05$   	|   0.31           	|   0.012                     | 	                |          	|     0.995        	|
 | $0.01$   	|   0.17           	|   0.031                     |  	                |          	|     0.998       	|
+
 Table: Energy minimum computed and avarage particle distance computed for $N = 2$ electrons *with* the Jastrow factor. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N].{#tbl:results-min-energy-particle-distance-2N}
 
 
@@ -50,13 +52,14 @@ Table: Energy minimum computed and avarage particle distance computed for $N = 2
 | $0.1$    	|  0.617                      	|   0.602                     | 0.102                   | 3.943                	|  0.967           	|
 | $0.05$   	|  0.400                       	|   0.447                     | 0.053                   | 5.366                	|  0.977           	|
 | $0.01$   	|  0.148                       	|   0.058                     | 0.010                   | 12.365               	|  0.990           	|
+
 Table: Energy minimum computed and avarage particle distance computed for $N = 2$ electrons *without* the Jastrow factor. All enteties are calculated with the optimal set of variational parameters, see table [@tbl:results-variational-parameters-2N].{#tbl:results-min-energy-particle-distance-2N}
 
 ### One-body density
 
 The One-body density for the two electron system with optimal set of variational parameters with and without the Jastrow factor is shown in Figure [@fig:one-body-densities-2N]
 
-![One Body densities for 2 fermions with and without the Jastrow factor. The computations are done with $\alpha = FILL$, $\beta = FILL$ and $\omega = 1$](onebodydens-2N.png){#fig:one-body-densities-2N width=300px}
+![One Body densities for 2 fermions with and without the Jastrow factor. The computations are done with $\alpha = 0.98$, $\beta = 0.43$ and $\omega = 1$](onebodydens-2N.png){#fig:one-body-densities-2N width=300px}
 
 ### Freqeuncy dependency
 
@@ -74,7 +77,7 @@ Table: Frequency dependent calculations of the kinetic and potential energies. {
 
 ## Larger systems
 
-Our code 
+Our code has a bug that leads to the steps in systems with $N > 2$ not being accepted. This leads to us not having any results to show for said systems. We were not able to fix this in time for the delivery.
 
 ## Performance analysis
 
