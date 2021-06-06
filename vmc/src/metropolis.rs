@@ -38,6 +38,8 @@ pub trait Metropolis {
         if sys.particles.len() == 2 {
             let distance = sys.particles[0].distance_to(&sys.particles[1])?;
             map.insert("distance".to_string(), distance);
+            let wf_squared = sys.wf.evaluate::<N>(&sys.particles)?;
+            map.insert("wf_squared".to_string(), wf_squared);
         }
         Ok(SampledValues { map, accepted_steps: 0 })
     }
