@@ -82,7 +82,7 @@ pub fn simple() {
 
 #[allow(dead_code)]
 pub fn multiple() {
-    const JASTROW: bool = false;
+    const JASTROW: bool = true;
     const NUMERICAL_LAPLACE: bool = true;
     const INTERACTING: bool = true;
     const STEP_SIZE: f64 = 0.5;
@@ -100,7 +100,7 @@ pub fn multiple() {
         path.push(format!("N{}", N));
         create_dir(&path);
 
-        path.push(format!("omega{}_alpha{}_beta{}_without-jastrow.csv", omega, alpha, beta));
+        path.push(format!("omega{}_alpha{}_beta{}_with-jastrow.csv", omega, alpha, beta));
         let mut f = create_file(&path);
         f.write_all("energy[au],time[s],kinetic,variance,acceptance_rate,avg_distance\n".as_bytes()).expect("Unable to write data");
 
