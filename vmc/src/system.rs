@@ -107,7 +107,7 @@ impl<const N: usize> System<N> {
                 let nx = crate::QUANTUM_NUMBERS[j].0;
                 let ny = crate::QUANTUM_NUMBERS[j].1;
                 result += if n == 2 {
-                    let laplace_jastrow = if self.wf.jastrow_on && j != i {
+                    let laplace_jastrow = if j != i {
                         let distance = self.particles[i].distance_to(&self.particles[j])?;
                         let fraction = a(i, j, n) / (1. + self.wf.beta * distance).powi(2);
                         fraction / distance - 2. * self.wf.beta * fraction / (1. + self.wf.beta * distance)
